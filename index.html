@@ -148,7 +148,7 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
    Everything is saved in this browser's localStorage (keys below).
    To also collect replies from OTHER people's phones, paste a web-app URL
    (Google Apps Script / Formspree / your own API) into ENDPOINT. */
-const CONFIG={ENDPOINT:'https://script.google.com/macros/s/AKfycbwkWCdtVebCGZbV4oNyQEsVWbGnruoylVGi5qwk8LeHFBmUD-GgkQr_sVY4ZJrFZoXk/exec',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+const CONFIG={ENDPOINT:'https://script.google.com/macros/s/AKfycbyu9tqVNfp4Y3y5wS8XIm9CyRNPWAzjDBA4WlVVjVauJ93XNshbQF6-0-awwE_UQD1Z/exec',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
 const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
 function remote(type,data){if(!CONFIG.ENDPOINT)return;try{fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({type,...data})})}catch(e){}}
