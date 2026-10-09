@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Friendship Museum</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Shantell+Sans:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--a:#F5A524;--b:#FF6B57;--c:#14A38B;--d:#5B62E8;--e:#E14B8A;--ink:#17332d;--bg1:#e6f6f0;--bg2:#fff3dc;--card:#fff;--acc:#F5A524;--acc2:#FF6B57;--mut:#6b8079}
+[data-vibe=calm]{--bg1:#e4eefb;--bg2:#e6f6f0;--acc:#5B62E8;--acc2:#14A38B}
+[data-vibe=roast]{--bg1:#ffe6e0;--bg2:#fff0d6;--acc:#FF6B57;--acc2:#E14B8A}
+[data-vibe=ride]{--bg1:#e9e4fb;--bg2:#dff4ee;--acc:#14A38B;--acc2:#5B62E8}
+*{box-sizing:border-box;margin:0}
+body{font-family:Outfit,system-ui,sans-serif;color:var(--ink);min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));overflow-x:hidden}
+#bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.thread{position:absolute;bottom:-12vh;border-radius:4px;opacity:.55;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-125vh) rotate(40deg)}}
+.shell{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{background:var(--card);border-radius:24px;box-shadow:0 20px 60px #17332d22;width:100%;max-width:460px;padding:26px 22px;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.brand{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
+.knot{width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--b),var(--a),var(--c),var(--d),var(--e),var(--b));-webkit-mask:radial-gradient(circle 5px,transparent 98%,#000 100%);mask:radial-gradient(circle 5px,transparent 98%,#000 100%)}
+.bn{font-weight:800;font-family:'Bricolage Grotesque'}.bn b{color:var(--acc2)}
+.tag{background:#fff0cc;color:#b36b00;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em}
+.dots{display:flex;gap:5px;margin:8px 0 16px}.dot{flex:1;height:4px;border-radius:9px;background:#e3ece8}.dot.on{background:var(--acc)}
+.chip{display:inline-block;background:#fff0cc;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:600;margin-bottom:10px}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);font-weight:700;text-align:center;margin-bottom:6px}
+h1{font-family:'Bricolage Grotesque';font-size:28px;line-height:1.1;text-align:center;font-weight:800}
+h1 em{font-style:normal;color:var(--acc);text-decoration:underline wavy var(--acc);text-underline-offset:5px}
+.sub{text-align:center;color:var(--mut);margin:10px 0 16px;font-size:14px}
+label{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}label small{font-weight:400;color:var(--mut)}
+input[type=text],select,textarea{width:100%;font:inherit;padding:12px 14px;border:1.5px solid #dbe7e2;border-radius:12px;background:#f8fbfa;color:var(--ink)}
+textarea{min-height:130px;resize:vertical}input:focus,textarea:focus,select:focus{outline:2px solid var(--acc);border-color:transparent}
+.duo{display:flex;gap:8px}
+.btn{width:100%;font:inherit;font-weight:700;border:0;border-radius:14px;padding:14px;color:#fff;background:linear-gradient(90deg,var(--acc),var(--acc2));cursor:pointer;margin-top:16px;transition:.15s}
+.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.ghost{background:#eef5f2;color:var(--ink)}.row{display:flex;gap:8px}.row .btn{margin-top:16px}.row .btn.ghost{width:56px;flex:none}
+.hint{text-align:center;font-size:12px;color:var(--mut);margin-top:10px}
+.tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px}
+.tile,.opt,.pill{font:inherit;border:1.5px solid #dbe7e2;background:#fff;border-radius:14px;cursor:pointer;color:var(--ink);transition:.15s}
+.tile{padding:14px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:600;font-size:13px}.tile span:first-child{font-size:24px}
+.tile.on,.opt.on,.pill.on{border-color:var(--acc);background:#fff7e6;box-shadow:0 0 0 2px var(--acc) inset}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:12px;margin-bottom:8px}.opt .em{font-size:26px}.opt b{display:block}.opt small{color:var(--mut)}
+.pill{padding:9px 13px;margin:0 6px 8px 0;font-size:13.5px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.ph{border-radius:14px;border:1.5px solid #dbe7e2;padding:6px;font-size:12px}.ph img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}.ph input{margin-top:5px;padding:7px 9px;font-size:12px}
+.ph button{font:inherit;font-size:12px;margin-top:5px;width:100%;border:0;border-radius:8px;padding:5px;background:#eef5f2;cursor:pointer}.ph button.on{background:var(--acc);color:#fff}
+.drop{display:block;border:2px dashed #c4d8d1;border-radius:16px;text-align:center;padding:22px 10px;cursor:pointer;color:var(--mut);font-size:14px}
+.stamps{display:flex;gap:8px;flex-wrap:wrap}.stamps .pill{font-size:22px;padding:6px 12px;margin:0}
+.count{text-align:right;font-size:12px;color:var(--mut)}
+.badge{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:5;background:var(--ink);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;letter-spacing:.1em;display:none}
+.fix{position:fixed;top:10px;z-index:6;font:inherit;font-weight:600;font-size:13px;border:0;background:#ffffffcc;backdrop-filter:blur(6px);border-radius:99px;padding:8px 14px;cursor:pointer;box-shadow:0 2px 8px #0002}
+#back{left:10px;display:none}#mute{right:10px}
+.hidden{display:none!important}
+
+/* museum */
+.museum{width:100%;max-width:480px;position:relative}
+.pill-room{text-align:center;margin-bottom:10px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.pill-room i{display:flex;gap:4px;margin-top:6px;justify-content:center}.pill-room i s{width:20px;height:4px;border-radius:9px;background:#00000018}.pill-room i s.on{background:var(--acc2)}
+.room{background:#fff;border-radius:24px;box-shadow:0 20px 60px #17332d22;padding:28px 22px;text-align:center;animation:pop .4s ease;min-height:420px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px}
+.room h2{font-family:'Bricolage Grotesque';font-size:27px;line-height:1.15}.room p{color:var(--mut);font-size:15px}
+.door{width:150px;height:220px;border-radius:80px 80px 6px 6px;background:linear-gradient(var(--acc),var(--acc2));position:relative;cursor:pointer;box-shadow:inset 0 0 0 8px #ffffff55;transition:.1s;user-select:none}
+.door::after{content:"";position:absolute;right:20px;top:110px;width:14px;height:14px;border-radius:50%;background:#fff}
+.door.k{animation:knock .25s}@keyframes knock{30%{transform:rotate(-2deg) scale(.98)}60%{transform:rotate(2deg)}}
+.door.open{transform:perspective(500px) rotateY(-70deg);transform-origin:left;opacity:.4;transition:.8s}
+.odo{display:flex;gap:4px;justify-content:center}.odo span{background:var(--ink);color:#fff;font-family:'Bricolage Grotesque';font-weight:800;font-size:34px;padding:6px 10px;border-radius:10px}
+.note{background:#fff7e6;border:2px dashed var(--acc);border-radius:16px;padding:16px;font-family:'Shantell Sans';font-size:17px;width:100%;animation:pop .35s;transform:rotate(-1deg)}.note:nth-child(even){transform:rotate(1.2deg)}
+.notes{display:flex;flex-direction:column;gap:10px;width:100%}
+.frame{width:100%;max-width:300px;aspect-ratio:1;border:10px solid #8a5a2b;border-radius:6px;background:#fffdf7;box-shadow:0 8px 20px #0003;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:70px}
+.frame img{width:100%;height:100%;object-fit:cover}
+.cap{font-family:'Shantell Sans';font-size:17px;color:var(--ink);min-height:26px}
+.nav{display:flex;gap:10px;align-items:center}.nav button{font:inherit;border:0;background:#eef5f2;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px}
+.pz{display:grid;gap:3px;width:100%;max-width:300px;aspect-ratio:1;background:var(--ink);padding:3px;border-radius:10px}
+.pz div{background-size:var(--sz);cursor:pointer;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff}.pz div.sel{outline:4px solid var(--a);z-index:2}
+.env{width:260px;height:170px;background:#f7d9a6;border-radius:8px;position:relative;cursor:pointer;box-shadow:0 10px 24px #0003}
+.env::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 49.5%,#e4b878 50%) top/100% 55% no-repeat,linear-gradient(to bottom left,transparent 49.5%,#e4b878 50%) top/100% 55% no-repeat;border-radius:8px}
+.seal{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 3px 8px #0005;transition:.4s}
+.env.broken .seal{transform:translate(-50%,-50%) scale(0);opacity:0}
+.letter{background:#fffdf5;border-radius:14px;padding:18px;font-family:'Shantell Sans';font-size:16.5px;line-height:1.55;text-align:left;white-space:pre-wrap;width:100%;border:1px solid #f0e3c4;box-shadow:0 4px 14px #0001}
+.rule{display:flex;gap:10px;align-items:center;text-align:left;padding:12px;border:1.5px solid #dbe7e2;border-radius:12px;width:100%;cursor:pointer;font-weight:500;background:#fff;font:inherit}
+.rule .bx{width:24px;height:24px;border-radius:7px;border:2px solid #b8cbc4;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}.rule.on{background:#effaf6;border-color:var(--c)}.rule.on .bx{background:var(--c);border-color:var(--c)}
+canvas.sig{width:100%;height:150px;background:#fff;border:2px dashed #b8cbc4;border-radius:12px;touch-action:none}
+.cert{border:3px double var(--acc);border-radius:16px;padding:18px;width:100%;background:#fffdf7}
+.cert big{font-family:'Bricolage Grotesque';font-size:22px;font-weight:800;display:block;margin:6px 0}
+.stats{display:flex;gap:8px;justify-content:center;margin-top:10px}.stats div{background:#f2f8f6;padding:8px 12px;border-radius:10px;font-size:12px}.stats b{display:block;font-size:18px}
+.confetti{position:fixed;top:-20px;font-size:22px;animation:fall linear forwards;z-index:9;pointer-events:none}@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
+.share{width:100%;font:inherit;font-size:12px;padding:10px;border:1.5px solid #dbe7e2;border-radius:10px}
+
+/* ---- v2 design ---- */
+body{background:radial-gradient(circle at 15% 10%,#fff6 0,transparent 40%),radial-gradient(circle at 85% 90%,var(--bg2) 0,transparent 50%),linear-gradient(135deg,var(--bg1),var(--bg2));background-attachment:fixed}
+.fl{position:absolute;bottom:-10vh;font-size:26px;opacity:.7;animation:rise linear infinite;filter:drop-shadow(0 3px 4px #0002)}
+.card,.room{border:2px solid #fff;background:linear-gradient(#fff,#fffdf8);position:relative;overflow:hidden}
+.card::before,.room::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,var(--a),var(--b),var(--e),var(--d),var(--c))}
+.card::after{content:"✨";position:absolute;right:14px;top:16px;font-size:20px;animation:tw 2s infinite}
+@keyframes tw{50%{transform:scale(1.3) rotate(15deg);opacity:.6}}
+h1,.room h2{background:linear-gradient(90deg,var(--ink),var(--ink) 60%,var(--acc2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h1 em{-webkit-text-fill-color:var(--acc)}
+.btn{box-shadow:0 6px 0 #0002,0 10px 18px #0001;position:relative;overflow:hidden}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #0002}
+.btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,#fff7,transparent);transform:skewX(-20deg);animation:shine 3s infinite}
+@keyframes shine{to{left:130%}}
+.btn.ghost::after{display:none}
+.tile:hover,.opt:hover,.pill:hover{transform:translateY(-2px) rotate(-1deg)}
+.tile span:first-child{font-size:30px;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.rico{font-size:54px;animation:bob 2.5s ease-in-out infinite;filter:drop-shadow(0 6px 6px #0002)}
+.note::before{content:"📌";position:absolute;margin:-26px 0 0 -8px}.note{position:relative;margin-top:12px}
+.frame{position:relative}.frame::after{content:"🌟";position:absolute;right:-6px;top:-8px;font-size:22px}
+.cert{background:repeating-linear-gradient(45deg,#fffdf7,#fffdf7 12px,#fff8e6 12px,#fff8e6 24px)}
+.reply textarea{min-height:70px;margin-top:8px}
+.dash{width:100%;max-width:640px;background:#fff;border-radius:22px;padding:22px;box-shadow:0 20px 60px #17332d22}
+.dash table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 14px}.dash td,.dash th{border-bottom:1px solid #e3ece8;padding:7px 5px;text-align:left;vertical-align:top}
+.dash .tools{display:flex;gap:8px;flex-wrap:wrap}.dash .tools .btn{margin:0;width:auto;padding:10px 14px;font-size:13px}
+.dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<button class="fix" id="back">← Back</button>
+<button class="fix" id="mute" aria-label="Toggle sound">🔊</button>
+<div class="badge" id="badge">PREVIEW</div>
+<div class="shell" id="shell"></div>
+
+<script>
+(()=>{
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shell=$('#shell');
+const KINDS=[['bestie','💛','Bestie'],['child','🧒','Childhood'],['college','🎓','College crew'],['work','💼','Work bestie'],['sib','🏠','Sibling-coded'],['online','🌐','Online friend']];
+const VIBES=[['chaos','🤪','Chaotic & loud','Screaming, memes, zero volume control'],['calm','🌱','Calm & deep','3am talks and comfortable silences'],['roast','😈','Roast first, love later','Insults are our love language'],['ride','🛡️','Ride or die','One call and I am already there']];
+const NOTES=['You never let me spiral alone','You laugh at my worst jokes','You show up. Every single time.','You know all my stories','You tell me when I am being an idiot','You have seen me at my worst','You are my emergency contact','You make boring days fun'];
+const RULES=['Reply to my texts within one business week','Never let me leave the house in that shirt','Show up when it matters, without being asked','Keep every secret, forever, no exceptions','Split the last slice, always','Answer the phone at 3am at least once a year','Roast me in private, defend me in public'];
+const SEALS=['💛','🤝','⭐','🔥','♾️'],STICKERS=['🤗','🥳','🥹','😎','😻'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const KIND_LINE={bestie:'best friend',child:'oldest friend',college:'college partner-in-crime',work:'work bestie',sib:'sibling in all but blood',online:'favourite person on the internet'};
+
+let S={step:1,name:'',from:'',kind:'bestie',sm:'',sy:'',vibe:'chaos',notes:[],photos:[],pz:0,grid:3,msg:'',seal:'💛',sticker:'🤗',rules:[]};
+let V=null; // view state
+let muted=false,actx=null;
+
+/* ---------- background threads ---------- */
+const cols=['#F5A524','#FF6B57','#14A38B','#5B62E8','#E14B8A','#93C93C'];
+$('#bg').innerHTML=Array.from({length:10},(_,i)=>`<span class="thread" style="width:${10+Math.random()*20}px;height:${3+Math.random()*2}px;left:${Math.random()*100}%;background:${cols[i%6]};animation-duration:${24+Math.random()*10}s;animation-delay:-${Math.random()*25}s"></span>`).join('');
+
+$('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','📸','🌈','🤝','🍦','⭐','🎁','🦋'].map((e,i)=>`<span class="fl" style="left:${4+i*8}%;animation-duration:${20+(i*3)%14}s;animation-delay:-${(i*5)%22}s">${e}</span>`).join(''));
+
+/* ---------- storage ----------
+   Everything is saved in this browser's localStorage (keys below).
+   To also collect replies from OTHER people's phones, paste a web-app URL
+   (Google Apps Script / Formspree / your own API) into ENDPOINT. */
+const CONFIG={ENDPOINT:'https://script.google.com/macros/s/AKfycbwkWCdtVebCGZbV4oNyQEsVWbGnruoylVGi5qwk8LeHFBmUD-GgkQr_sVY4ZJrFZoXk/exec',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
+const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
+function remote(type,data){if(!CONFIG.ENDPOINT)return;try{fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({type,...data})})}catch(e){}}
+const uid=()=>Math.random().toString(36).slice(2,9);
+
+/* ---------- sound ---------- */
+function beep(f=520,d=.12,t='sine',v=.08){if(muted)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+const chime=()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.25),i*110));
+$('#mute').onclick=()=>{muted=!muted;$('#mute').textContent=muted?'🔇':'🔊'};
+function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(let i=0;i<n;i++){const e=document.createElement('span');e.className='confetti';e.textContent=em[i%em.length];e.style.left=Math.random()*100+'vw';e.style.animationDuration=2+Math.random()*2.5+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),5000)}}
+
+/* ---------- WIZARD ---------- */
+function wiz(){
+  document.body.dataset.vibe=S.vibe;
+  $('#back').style.display='none';$('#badge').style.display='none';
+  const n=S.step;
+  const dots=Array.from({length:7},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
+  const nav=(next,label='Next →',ok=true)=>`<div class="row"><button class="btn ghost" data-act="prev">←</button><button class="btn" data-act="${next}" ${ok?'':'disabled'}>${label}</button></div>`;
+  let h='';
+  if(n==1)h=`<span class="chip">🚪 No occasion needed · send it any day</span><p class="eyebrow">Not a card · a 9-room adventure</p><h1>Build your best friend a <em>museum</em>.</h1><p class="sub">You’re about to make someone’s day unforgettable 🎀</p>
+  <label>Who is this for?</label><input type="text" id="f-name" maxlength="40" placeholder="Your friend’s name" value="${esc(S.name)}">
+  <label>And what’s your name?</label><input type="text" id="f-from" maxlength="40" placeholder="Your name" value="${esc(S.from)}">
+  <button class="btn" id="go1" data-act="next" ${S.name&&S.from?'':'disabled'}>Start building →</button><p class="hint">Takes about 4 minutes · works on any phone</p><button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
+  if(n==2){const yrs=Array.from({length:50},(_,i)=>2026-i);h=`<p class="eyebrow">Step 2 · About them</p><h1>What kind of <em>friend</em> are they?</h1><p class="sub">Pick the one that fits <b>${esc(S.name)}</b> best.</p>
+  <div class="tiles">${KINDS.map(k=>`<button class="tile ${S.kind==k[0]?'on':''}" data-kind="${k[0]}"><span>${k[1]}</span><span>${k[2]}</span></button>`).join('')}</div>
+  <label>When did you two become friends? <small>— optional. We’ll count the days for them.</small></label>
+  <div class="duo"><select id="f-sm"><option value="">Month</option>${MONTHS.map((m,i)=>`<option value="${i+1}" ${S.sm==i+1?'selected':''}>${m}</option>`).join('')}</select><select id="f-sy"><option value="">Year</option>${yrs.map(y=>`<option ${S.sy==y?'selected':''}>${y}</option>`).join('')}</select></div>${nav('next')}`}
+  if(n==3)h=`<p class="eyebrow">Step 3 · Your vibe & little notes</p><h1>How are you two <em>together</em>?</h1><p class="sub">This sets the colours and the mood of the whole gift.</p>
+  ${VIBES.map(v=>`<button class="opt ${S.vibe==v[0]?'on':''}" data-vibe="${v[0]}"><span class="em">${v[1]}</span><span><b>${v[2]}</b><small>${v[3]}</small></span></button>`).join('')}
+  <label>Now, why they matter to you — tap up to 5. <small>They open each note one by one.</small></label>
+  <div id="notes">${[...NOTES,...S.notes.filter(x=>!NOTES.includes(x))].map(x=>`<button class="pill ${S.notes.includes(x)?'on':''}" data-note="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+  <div class="duo"><input type="text" id="f-cn" maxlength="80" placeholder="Write your own…"><button class="btn ghost" style="width:80px;margin:0" data-act="addnote">Add</button></div>${nav('next','Next →',S.notes.length>0)}`;
+  if(n==4)h=`<p class="eyebrow">Step 4 · Your photos</p><h1>Add your favourite <em>photos</em>.</h1><p class="sub">Up to 4. Each one gets a caption — and one of them turns into a puzzle they have to put back together.</p>
+  <label class="drop"><input type="file" id="f-ph" accept="image/*" multiple hidden>📸 Tap to add photos<br><small>JPG or PNG · up to 4 · we shrink them for you</small></label>
+  <div class="photos">${S.photos.map((p,i)=>`<div class="ph"><img src="${p.src}"><input type="text" data-cap="${i}" maxlength="60" placeholder="Caption" value="${esc(p.cap)}"><button data-pz="${i}" class="${S.pz==i?'on':''}">🧩 Puzzle</button><button data-rm="${i}">Remove</button></div>`).join('')}</div>
+  <label>How hard should the puzzle be?</label><div class="duo"><button class="opt ${S.grid==3?'on':''}" data-grid="3"><span class="em">🧩</span><span><b>Easy</b><small>9 pieces</small></span></button><button class="opt ${S.grid==4?'on':''}" data-grid="4"><span class="em">🧠</span><span><b>Hard</b><small>16 pieces</small></span></button></div>${nav('next')}`;
+  if(n==5)h=`<p class="eyebrow">Step 5 · Your message</p><h1>Write them a <em>message</em>.</h1><p class="sub">It arrives sealed inside an envelope, so they have to break the seal to read it. Say the thing you never say out loud.</p>
+  <textarea id="f-msg" maxlength="500" placeholder="Ten years and you still pick up on the first ring. I don't say it enough, so here it is in writing.">${esc(S.msg)}</textarea><div class="count"><span id="cnt">${S.msg.length}</span> / 500</div>
+  <label>Pick a stamp for the seal</label><div class="stamps">${SEALS.map(x=>`<button class="pill ${S.seal==x?'on':''}" data-seal="${x}">${x}</button>`).join('')}</div>
+  <label>Pick a sticker to go with it</label><div class="stamps">${STICKERS.map(x=>`<button class="pill ${S.sticker==x?'on':''}" data-stk="${x}">${x}</button>`).join('')}</div>${nav('next')}`;
+  if(n==6)h=`<p class="eyebrow">Step 6 · Your friendship rules</p><h1>Set your friendship <em>rules</em>.</h1><p class="sub">The promises you two already live by. At the end they tick each one and sign it with their finger.</p>
+  <label>Your rules — pick up to 5</label><div id="rules">${[...RULES,...S.rules.filter(x=>!RULES.includes(x))].map(x=>`<button class="pill ${S.rules.includes(x)?'on':''}" data-rule="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+  <div class="duo"><input type="text" id="f-cr" maxlength="80" placeholder="Write your own rule…"><button class="btn ghost" style="width:80px;margin:0" data-act="addrule">Add</button></div>${nav('next','See how it looks →',S.rules.length>0)}`;
+  if(n==7)h=`<p class="eyebrow">Step 7 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
+  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">Create the link →</button><div id="out"></div><p class="hint">Your link is free · no account needed</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Friendship</span></div><div class="dots">${dots}</div>${h}</div>`;
+}
+shell.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id=='f-name'||t.id=='f-from'){S.name=$('#f-name').value.trim();S.from=$('#f-from').value.trim();$('#go1').disabled=!(S.name&&S.from)}
+  if(t.id=='f-msg'){S.msg=t.value;$('#cnt').textContent=t.value.length}
+  if(t.dataset.cap!=null)S.photos[t.dataset.cap].cap=t.value;
+});
+shell.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id=='f-sm')S.sm=t.value;if(t.id=='f-sy')S.sy=t.value;
+  if(t.id=='f-ph')addPhotos([...t.files]);
+});
+shell.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||V)return;const d=b.dataset;
+  if(d.kind){S.kind=d.kind;wiz()}
+  else if(d.vibe){S.vibe=d.vibe;wiz()}
+  else if(d.note!=null){tog(S.notes,d.note,5);wiz()}
+  else if(d.rule!=null){tog(S.rules,d.rule,5);wiz()}
+  else if(d.seal){S.seal=d.seal;wiz()}
+  else if(d.stk){S.sticker=d.stk;wiz()}
+  else if(d.grid){S.grid=+d.grid;wiz()}
+  else if(d.pz!=null){S.pz=+d.pz;wiz()}
+  else if(d.rm!=null){S.photos.splice(+d.rm,1);S.pz=0;wiz()}
+  else if(d.act=='next'){S.step++;wiz()}
+  else if(d.act=='prev'){S.step=Math.max(1,S.step-1);wiz()}
+  else if(d.act=='addnote'){const v=$('#f-cn').value.trim();if(v){if(!S.notes.includes(v)&&S.notes.length<5)S.notes.push(v);wiz()}}
+  else if(d.act=='addrule'){const v=$('#f-cr').value.trim();if(v){if(!S.rules.includes(v)&&S.rules.length<5)S.rules.push(v);wiz()}}
+  else if(d.act=='preview')startMuseum(S,true);
+  else if(d.act=='link')makeLink();
+  else if(d.act=='dash')dashboard();
+});
+function dashboard(){
+  const gifts=dbGet(CONFIG.KEY_GIFTS),reps=dbGet(CONFIG.KEY_REPLIES);
+  const f=s=>new Date(s).toLocaleString();
+  shell.innerHTML=`<div class="dash"><h1>📂 My gifts & replies</h1><p class="sub">Saved in this browser (localStorage)${CONFIG.ENDPOINT?' and sent to your endpoint':'. Set CONFIG.ENDPOINT in the file to also collect replies from friends’ phones'}.</p>
+  <h3>🎁 Gifts created (${gifts.length})</h3><table><tr><th>For</th><th>From</th><th>Vibe</th><th>Created</th></tr>${gifts.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.from)}</td><td>${esc(g.vibe)}</td><td>${f(g.created)}</td></tr>`).join('')||'<tr><td colspan=4>None yet</td></tr>'}</table>
+  <h3>💌 Replies received (${reps.length})</h3><table><tr><th>Friend</th><th>Reply</th><th>Time · moves</th><th>When</th></tr>${reps.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.reply||'—')}</td><td>${r.elapsed}s · ${r.moves}</td><td>${f(r.ts)}</td></tr>`).join('')||'<tr><td colspan=4>None yet</td></tr>'}</table>
+  <div class="tools"><button class="btn" id="ej">⬇ Export JSON</button><button class="btn" id="ec">⬇ Export CSV</button><button class="btn ghost" id="cl">🗑 Clear all</button><button class="btn ghost" id="bk">← Back</button></div></div>`;
+  const dl=(n,t,m)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()};
+  $('#ej').onclick=()=>dl('moments-data.json',JSON.stringify({gifts,replies:reps.map(({sig,...r})=>r)},null,2),'application/json');
+  $('#ec').onclick=()=>dl('moments-replies.csv','gift,friend,reply,seconds,moves,when\n'+reps.map(r=>[r.gid,r.name,r.reply||'',r.elapsed,r.moves,r.ts].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv');
+  $('#cl').onclick=()=>{if(confirm('Delete all saved gifts and replies from this browser?')){localStorage.removeItem(CONFIG.KEY_GIFTS);localStorage.removeItem(CONFIG.KEY_REPLIES);dashboard()}};
+  $('#bk').onclick=wiz;
+}
+function tog(a,v,max){const i=a.indexOf(v);if(i>=0)a.splice(i,1);else if(a.length<max)a.push(v)}
+function addPhotos(files){
+  files.slice(0,4-S.photos.length).forEach(f=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
+    const m=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=480;
+    c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,480,480);
+    S.photos.push({src:c.toDataURL('image/jpeg',.6),cap:''});wiz()};im.src=r.result};r.readAsDataURL(f)});
+}
+function makeLink(){
+  if(!S.id)S.id=uid();
+  const rec={id:S.id,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,created:new Date().toISOString()};
+  dbAdd(CONFIG.KEY_GIFTS,rec);remote('gift',rec);
+  const o=JSON.stringify(S),b=btoa(unescape(encodeURIComponent(o)));
+  const url=location.href.split('#')[0]+'#g='+b;
+  $('#out').innerHTML=`<label>Your gift link</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">Copy link</button><p class="hint">${(url.length/1024).toFixed(0)} KB link — send it over WhatsApp or anywhere.</p>`;
+  $('#cp').onclick=()=>{navigator.clipboard.writeText(url).then(()=>{$('#cp').textContent='Copied ✓'})};
+}
+
+/* ---------- MUSEUM ---------- */
+const ROOMS=['Front Door','Lobby','Hall of Reasons','Gallery','Puzzle Workshop','Letter Room','Rules Chamber','Signing Desk','Grand Finale'];
+function startMuseum(g,preview){
+  V={g,preview,i:0,knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
+  document.body.dataset.vibe=g.vibe;
+  $('#badge').style.display=preview?'block':'none';
+  $('#back').style.display=preview?'block':'none';
+  room();
+}
+$('#back').onclick=()=>{V=null;wiz()};
+function days(g){if(!g.sy)return null;const d=new Date(+g.sy,(+g.sm||1)-1,1);return Math.max(1,Math.floor((Date.now()-d)/864e5))}
+function frame(inner){
+  const pr=ROOMS.map((_,i)=>`<s class="${i<=V.i?'on':''}"></s>`).join('');
+  const ic=['🚪','🏛️','💌','🖼️','🧩','✉️','📜','✍️','🏆'][V.i];
+  shell.innerHTML=`<div class="museum"><div class="pill-room">Room ${V.i+1} of 9 · ${ROOMS[V.i]}<i>${pr}</i></div><div class="room" id="room"><div class="rico">${ic}</div>${inner}</div></div>`;
+}
+const next=(label='Next room →')=>`<button class="btn" id="nx">${label}</button>`;
+function go(){V.i++;room()}
+function room(){
+  const g=V.g,i=V.i;
+  if(i==0){
+    frame(`<p class="eyebrow">A museum for</p><h2>${esc(g.name)}</h2><p>${esc(g.from)} built this for their ${KIND_LINE[g.kind]}.<br>Knock 3 times to enter.</p><div class="door" id="door"></div><p id="kc">Knocks: 0 / 3</p>`);
+    $('#door').onclick=()=>{V.knocks++;beep(180,.12,'square',.1);const d=$('#door');d.classList.remove('k');void d.offsetWidth;d.classList.add('k');$('#kc').textContent=`Knocks: ${V.knocks} / 3`;
+      if(V.knocks>=3){d.classList.add('open');chime();setTimeout(go,900)}};
+  }
+  if(i==1){
+    const n=days(g);
+    frame(`<h2>Welcome, ${esc(g.name)} ${g.sticker||'💛'}</h2><p>${n?'You two have been friends for':'This is a museum of everything'+(g.from?` ${esc(g.from)} loves about you`:'')+'.'}</p>${n?`<div class="odo" id="odo"></div><p>days · and counting</p>`:''}<p>The next rooms hold ${g.notes.length} reasons, ${g.photos.length} photo${g.photos.length==1?'':'s'}, a puzzle, a letter and ${g.rules.length} rule${g.rules.length==1?'':'s'}.</p>${next()}`);
+    if(n){const o=$('#odo'),t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/1500),v=Math.round(n*(1-Math.pow(1-p,3)));o.innerHTML=String(v).split('').map(c=>`<span>${c}</span>`).join('');if(p<1)requestAnimationFrame(f);else chime()})(t0)}
+    $('#nx').onclick=go;
+  }
+  if(i==2){
+    frame(`<h2>Hall of Reasons</h2><p>Why ${esc(g.name)} matters. Tap to open each note.</p><div class="notes" id="nl"></div><button class="btn" id="nx">Open note 1 of ${g.notes.length}</button>`);
+    $('#nx').onclick=()=>{if(V.notes<g.notes.length){const d=document.createElement('div');d.className='note';d.textContent=g.notes[V.notes];$('#nl').appendChild(d);V.notes++;beep(660+V.notes*60,.15);
+      $('#nx').textContent=V.notes<g.notes.length?`Open note ${V.notes+1} of ${g.notes.length}`:'Next room →'}else go()};
+  }
+  if(i==3){
+    if(!g.photos.length){V.i++;return room()}
+    const draw=()=>{const p=g.photos[V.ex];$('#room').innerHTML=`<h2>The Gallery</h2><div class="frame"><img src="${p.src}"></div><div class="cap">${esc(p.cap)}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${g.photos.length}</span><button id="nt">›</button></div>${next()}`;
+      $('#pv').onclick=()=>{V.ex=(V.ex+g.photos.length-1)%g.photos.length;draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%g.photos.length;draw()};$('#nx').onclick=go};
+    frame('');draw();
+  }
+  if(i==4){
+    const p=g.photos[g.pz]||g.photos[0];
+    if(!p){V.i++;return room()}
+    puzzle(p,g.grid||3);
+  }
+  if(i==5){
+    frame(`<h2>The Letter Room</h2><p>A sealed envelope from ${esc(g.from)}. Tap the seal to break it.</p><div class="env" id="env"><div class="seal">${g.seal}</div></div>`);
+    $('#env').onclick=()=>{$('#env').classList.add('broken');beep(300,.1,'square');
+      setTimeout(()=>{$('#room').innerHTML=`<div class="letter" id="lt"></div><div style="font-size:48px">${g.sticker}</div>${next()}`;const t=g.msg||`${g.name}, you mean the world to me.`;let k=0;const iv=setInterval(()=>{$('#lt').textContent=t.slice(0,++k);if(k>=t.length)clearInterval(iv)},26);$('#nx').onclick=()=>{clearInterval(iv);go()}},600)};
+  }
+  if(i==6){
+    frame(`<h2>The Friendship Rules</h2><p>Tick every promise to continue.</p>${g.rules.map((r,k)=>`<button class="rule" data-k="${k}"><span class="bx"></span>${esc(r)}</button>`).join('')}<button class="btn" id="nx" disabled>Next room →</button>`);
+    document.querySelectorAll('.rule').forEach(b=>b.onclick=()=>{b.classList.toggle('on');b.firstChild.textContent=b.classList.contains('on')?'✓':'';beep(600,.08);V.rules[b.classList.contains('on')?'add':'delete'](b.dataset.k);$('#nx').disabled=V.rules.size<g.rules.length});
+    $('#nx').onclick=go;
+  }
+  if(i==7){
+    frame(`<h2>Sign it</h2><p>Use your finger or mouse to sign below.</p><canvas class="sig" id="sg"></canvas><button class="btn" id="nx" disabled>I solemnly swear →</button>`);
+    const c=$('#sg'),r=c.getBoundingClientRect();c.width=r.width*2;c.height=300;const x=c.getContext('2d');x.scale(2,2);x.lineWidth=2.5;x.lineCap='round';x.strokeStyle='#17332d';
+    let dr=false,ink=0;const pt=e=>{const b=c.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top]};
+    c.onpointerdown=e=>{dr=true;c.setPointerCapture(e.pointerId);const[a,b]=pt(e);x.beginPath();x.moveTo(a,b)};
+    c.onpointermove=e=>{if(!dr)return;const[a,b]=pt(e);x.lineTo(a,b);x.stroke();if(++ink>25)$('#nx').disabled=false};
+    c.onpointerup=()=>dr=false;
+    $('#nx').onclick=()=>{V.sig=c.toDataURL();V.elapsed=Math.round((Date.now()-V.t0)/1000);go()};
+  }
+  if(i==8){
+    confetti();chime();
+    frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats"><div><b>${g.notes.length}</b>reasons</div><div><b>${V.moves||'—'}</b>puzzle moves</div><div><b>${Math.floor(V.elapsed/60)}:${String(V.elapsed%60).padStart(2,'0')}</b>time</div></div></div><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Walk through again</button>`);
+    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:V.elapsed,moves:V.moves,rules:g.rules.length,sig:V.sig||'',ts:new Date().toISOString()};V.rec=rec;dbAdd(CONFIG.KEY_REPLIES,rec);remote('reply',rec)}
+    $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
+      const all=dbGet(CONFIG.KEY_REPLIES),last=all[all.length-1];if(last&&last.ts===V.rec.ts){last.reply=t;localStorage.setItem(CONFIG.KEY_REPLIES,JSON.stringify(all))}
+      remote('reply',{...V.rec,reply:t});$('#sr').textContent='Sent ✓ 💛';chime()};
+    $('#nx').onclick=()=>{V.i=0;V.knocks=0;V.notes=0;V.ex=0;V.rules=new Set();room()};
+  }
+}
+function puzzle(p,n){
+  frame(`<h2>Puzzle Workshop</h2><p>Tap two pieces to swap them. Put the photo back together.</p><div class="pz" id="pz" style="grid-template-columns:repeat(${n},1fr)"></div><p id="mv">Moves: 0</p>`);
+  const N=n*n;let order=[...Array(N).keys()];
+  do{for(let k=N-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]]}}while(order.every((v,k)=>v==k)||false);
+  let sel=null;const el=$('#pz');
+  const draw=()=>{el.innerHTML=order.map((v,k)=>`<div data-k="${k}" class="${sel===k?'sel':''}" style="--sz:${n*100}% ${n*100}%;background-image:url(${p.src});background-size:${n*100}% ${n*100}%;background-position:${(v%n)*100/(n-1)}% ${Math.floor(v/n)*100/(n-1)}%"></div>`).join('')};
+  draw();
+  el.onclick=e=>{const d=e.target.closest('[data-k]');if(!d)return;const k=+d.dataset.k;
+    if(sel===null){sel=k;draw();return}
+    if(sel!==k){[order[sel],order[k]]=[order[k],order[sel]];V.moves++;$('#mv').textContent='Moves: '+V.moves;beep(440,.07)}
+    sel=null;draw();
+    if(order.every((v,j)=>v==j)){chime();confetti(25);setTimeout(()=>{$('#room').insertAdjacentHTML('beforeend',next());$('#nx').onclick=go},300)}};
+}
+
+/* ---------- boot ---------- */
+const m=location.hash.match(/#g=(.+)/);
+if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}else wiz();
+})();
+</script>
+</body>
+</html>
