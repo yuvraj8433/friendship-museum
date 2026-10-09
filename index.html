@@ -145,13 +145,17 @@ $('#bg').innerHTML=Array.from({length:10},(_,i)=>`<span class="thread" style="wi
 $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','📸','🌈','🤝','🍦','⭐','🎁','🦋'].map((e,i)=>`<span class="fl" style="left:${4+i*8}%;animation-duration:${20+(i*3)%14}s;animation-delay:-${(i*5)%22}s">${e}</span>`).join(''));
 
 /* ---------- storage ----------
-   Everything is saved in this browser's localStorage (keys below).
-   To also collect replies from OTHER people's phones, paste a web-app URL
-   (Google Apps Script / Formspree / your own API) into ENDPOINT. */
-const CONFIG={ENDPOINT:'https://script.google.com/macros/s/AKfycbwa-_dVFYF24ek8b2EHIryDg6YMjsV3b8W-_C5xxxasTXUrZfKsciKmDXyK_02OexDC/exec',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+   Gifts and replies are always saved in this browser (localStorage).
+   To ALSO collect them from your friends' phones into a Google Sheet, paste your
+   Google Apps Script web-app URL (ends with /exec) into ENDPOINT. Leave '' to skip. */
+const CONFIG={ENDPOINT:'https://script.google.com/macros/s/AKfycbw-vj5qqvDrOQQV3WkCRuvonKubidtwIuL6s24JVbdPAJpIOGh9tBM1sK6nnbWi_AuV/exec',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
 const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
-function remote(type,data){if(!CONFIG.ENDPOINT)return;try{fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({type,...data})})}catch(e){}}
+// Send to the Sheet. "no-cors" + text/plain keeps it a simple request, so Google never blocks it.
+function remote(type,data){if(!CONFIG.ENDPOINT)return;try{fetch(CONFIG.ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type,...data})}).catch(()=>{})}catch(e){}}
+// Read replies back for the dashboard; fails quietly if the script is not reachable.
+async function remoteReplies(gid){try{const r=await fetch(CONFIG.ENDPOINT+'?gid='+encodeURIComponent(gid));return await r.json()}catch(e){return[]}}
+async function loadGift(code){try{const r=await fetch(CONFIG.ENDPOINT+'?c='+encodeURIComponent(code));const g=await r.json();return g&&!g.error?g:null}catch(e){return null}}
 const uid=()=>Math.random().toString(36).slice(2,9);
 
 /* ---------- sound ---------- */
@@ -226,10 +230,16 @@ shell.addEventListener('click',e=>{
   else if(d.act=='link')makeLink();
   else if(d.act=='dash')dashboard();
 });
-function dashboard(){
-  const gifts=dbGet(CONFIG.KEY_GIFTS),reps=dbGet(CONFIG.KEY_REPLIES);
+async function dashboard(){
+  const gifts=dbGet(CONFIG.KEY_GIFTS);let reps=dbGet(CONFIG.KEY_REPLIES);
+  if(CONFIG.ENDPOINT){ // replies sent from friends' phones are in your Google Sheet
+    shell.innerHTML='<div class="card"><h1>Loading… 💌</h1></div>';
+    const got=[];
+    for(const g of gifts){const o=await remoteReplies(g.id);if(Array.isArray(o))got.push(...o)}
+    if(got.length)reps=got.sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));
+  }
   const f=s=>new Date(s).toLocaleString();
-  shell.innerHTML=`<div class="dash"><h1>📂 My gifts & replies</h1><p class="sub">Saved in this browser (localStorage)${CONFIG.ENDPOINT?' and sent to your endpoint':'. Set CONFIG.ENDPOINT in the file to also collect replies from friends’ phones'}.</p>
+  shell.innerHTML=`<div class="dash"><h1>📂 My gifts & replies</h1><p class="sub">${CONFIG.ENDPOINT?'Gifts are listed from this browser; replies are loaded from your Google Sheet.':'Saved in this browser only. Set CONFIG.ENDPOINT to collect replies from friends’ phones.'}</p>
   <h3>🎁 Gifts created (${gifts.length})</h3><table><tr><th>For</th><th>From</th><th>Vibe</th><th>Created</th></tr>${gifts.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.from)}</td><td>${esc(g.vibe)}</td><td>${f(g.created)}</td></tr>`).join('')||'<tr><td colspan=4>None yet</td></tr>'}</table>
   <h3>💌 Replies received (${reps.length})</h3><table><tr><th>Friend</th><th>Reply</th><th>Time · moves</th><th>When</th></tr>${reps.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.reply||'—')}</td><td>${r.elapsed}s · ${r.moves}</td><td>${f(r.ts)}</td></tr>`).join('')||'<tr><td colspan=4>None yet</td></tr>'}</table>
   <div class="tools"><button class="btn" id="ej">⬇ Export JSON</button><button class="btn" id="ec">⬇ Export CSV</button><button class="btn ghost" id="cl">🗑 Clear all</button><button class="btn ghost" id="bk">← Back</button></div></div>`;
@@ -242,20 +252,29 @@ function dashboard(){
 function tog(a,v,max){const i=a.indexOf(v);if(i>=0)a.splice(i,1);else if(a.length<max)a.push(v)}
 function addPhotos(files){
   files.slice(0,4-S.photos.length).forEach(f=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
-    const m=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=480;
-    c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,480,480);
-    S.photos.push({src:c.toDataURL('image/jpeg',.6),cap:''});wiz()};im.src=r.result};r.readAsDataURL(f)});
+    const m=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=400;
+    c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,400,400);
+    S.photos.push({src:c.toDataURL('image/jpeg',.55),cap:''});wiz()};im.src=r.result};r.readAsDataURL(f)});
 }
-function makeLink(){
+async function makeLink(){
   if(!S.id)S.id=uid();
-  const rec={id:S.id,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,created:new Date().toISOString()};
-  dbAdd(CONFIG.KEY_GIFTS,rec);remote('gift',rec);
-  const base=location.href.split('#')[0];
+  const out=$('#out'),base=location.href.split('#')[0];
+  if(!S.recorded){S.recorded=1;const rec={id:S.id,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec);remote('gift',rec)}
   let url,short=false;
-  if(CONFIG.ENDPOINT){const code=uid()+uid().slice(0,2);remote('save',{code,data:S});url=base+'#c='+code;short=true}
-  else url=base+'#g='+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  if(CONFIG.ENDPOINT){
+    out.innerHTML='<p class="hint">⏳ Saving your gift online… (up to 20 seconds)</p>';
+    const code=Math.random().toString(36).slice(2,8);
+    remote('save',{code,data:JSON.stringify(S)});
+    // Do not show the link until the server can really return the gift.
+    for(let t=0;t<10&&!short;t++){
+      await new Promise(r=>setTimeout(r,t?2000:1200));
+      const g=await loadGift(code);
+      if(g&&g.name){short=true;url=base+'#c='+code}
+    }
+  }
+  if(!short)url=base+'#g='+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
   const txt=`💛 ${S.from} made a little museum just for you, ${S.name}: ${url}`;
-  $('#out').innerHTML=`<label>Your gift link ${short?'(short)':''}</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">📋 Copy link</button><div class="row"><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Send on WhatsApp</a><button class="btn ghost" id="sh" style="width:56px">📤</button></div><p class="hint">${short?'Short link · the gift is saved online, so give it a few seconds before sending.':'Long link (no ENDPOINT set) · '+(url.length/1024).toFixed(0)+' KB'}</p>`;
+  out.innerHTML=`<label>Your gift link ${short?"(short ✓ saved online)":""}</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">📋 Copy link</button><div class="row"><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Send on WhatsApp</a><button class="btn ghost" id="sh" style="width:56px">📤</button></div><p class="hint">${short?"Short link · saved online and verified ✓":(CONFIG.ENDPOINT?"⚠️ Could not reach your Google script, so this is the long link (it still works). Check the setup steps.":"Long link (ENDPOINT not set)")+" · "+(url.length/1024).toFixed(0)+" KB"}</p>`;
   $('#cp').onclick=()=>{navigator.clipboard.writeText(url).then(()=>{$('#cp').textContent='Copied ✓'})};
   $('#sh').onclick=()=>{if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt)};
 }
@@ -331,10 +350,10 @@ function room(){
   if(i==8){
     confetti();chime();
     frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats"><div><b>${g.notes.length}</b>reasons</div><div><b>${V.moves||'—'}</b>puzzle moves</div><div><b>${Math.floor(V.elapsed/60)}:${String(V.elapsed%60).padStart(2,'0')}</b>time</div></div></div><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Walk through again</button>`);
-    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:V.elapsed,moves:V.moves,rules:g.rules.length,sig:V.sig||'',ts:new Date().toISOString()};V.rec=rec;dbAdd(CONFIG.KEY_REPLIES,rec);remote('reply',rec)}
+    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:V.elapsed,moves:V.moves,rules:g.rules.length,sig:V.sig||'',ts:new Date().toISOString()};V.rec=rec;dbAdd(CONFIG.KEY_REPLIES,rec);remote('reply',(({sig,...s})=>s)(rec))}
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
       const all=dbGet(CONFIG.KEY_REPLIES),last=all[all.length-1];if(last&&last.ts===V.rec.ts){last.reply=t;localStorage.setItem(CONFIG.KEY_REPLIES,JSON.stringify(all))}
-      remote('reply',{...V.rec,reply:t});$('#sr').textContent='Sent ✓ 💛';chime()};
+      remote('reply',(({sig,...s})=>({...s,reply:t}))(V.rec));$('#sr').textContent='Sent ✓ 💛';chime()};
     $('#nx').onclick=()=>{V.i=0;V.knocks=0;V.notes=0;V.ex=0;V.rules=new Set();room()};
   }
 }
@@ -353,13 +372,12 @@ function puzzle(p,n){
 }
 
 /* ---------- boot ---------- */
-const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([\w-]+)/);
+const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([a-z0-9]+)/);
 if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}
 else if(mc&&CONFIG.ENDPOINT){
   shell.innerHTML='<div class="card"><h1>Opening your gift… 🎁</h1><p class="sub">Just a moment</p></div>';
-  const tryLoad=n=>fetch(CONFIG.ENDPOINT+'?c='+mc[1]).then(r=>r.json()).then(g=>{if(!g||g.error)throw 0;startMuseum(g,false)})
-    .catch(()=>{if(n<3)setTimeout(()=>tryLoad(n+1),2000);else shell.innerHTML='<div class="card"><h1>Gift not found 😢</h1><p class="sub">Ask your friend to send the link again.</p></div>'});
-  tryLoad(0);
+  (async()=>{let g=null;for(let t=0;t<4&&!g;t++){g=await loadGift(mc[1]);if(!g)await new Promise(r=>setTimeout(r,1500))}
+    if(g)startMuseum(g,false);else shell.innerHTML='<div class="card"><h1>Gift not found 😢</h1><p class="sub">Ask your friend to send the link again.</p></div>'})();
 }else wiz();
 })();
 </script>
