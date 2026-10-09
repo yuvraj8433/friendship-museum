@@ -250,10 +250,14 @@ function makeLink(){
   if(!S.id)S.id=uid();
   const rec={id:S.id,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,created:new Date().toISOString()};
   dbAdd(CONFIG.KEY_GIFTS,rec);remote('gift',rec);
-  const o=JSON.stringify(S),b=btoa(unescape(encodeURIComponent(o)));
-  const url=location.href.split('#')[0]+'#g='+b;
-  $('#out').innerHTML=`<label>Your gift link</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">Copy link</button><p class="hint">${(url.length/1024).toFixed(0)} KB link — send it over WhatsApp or anywhere.</p>`;
+  const base=location.href.split('#')[0];
+  let url,short=false;
+  if(CONFIG.ENDPOINT){const code=uid()+uid().slice(0,2);remote('save',{code,data:S});url=base+'#c='+code;short=true}
+  else url=base+'#g='+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  const txt=`💛 ${S.from} made a little museum just for you, ${S.name}: ${url}`;
+  $('#out').innerHTML=`<label>Your gift link ${short?'(short)':''}</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">📋 Copy link</button><div class="row"><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Send on WhatsApp</a><button class="btn ghost" id="sh" style="width:56px">📤</button></div><p class="hint">${short?'Short link · the gift is saved online, so give it a few seconds before sending.':'Long link (no ENDPOINT set) · '+(url.length/1024).toFixed(0)+' KB'}</p>`;
   $('#cp').onclick=()=>{navigator.clipboard.writeText(url).then(()=>{$('#cp').textContent='Copied ✓'})};
+  $('#sh').onclick=()=>{if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt)};
 }
 
 /* ---------- MUSEUM ---------- */
@@ -294,8 +298,10 @@ function room(){
   }
   if(i==3){
     if(!g.photos.length){V.i++;return room()}
-    const draw=()=>{const p=g.photos[V.ex];$('#room').innerHTML=`<h2>The Gallery</h2><div class="frame"><img src="${p.src}"></div><div class="cap">${esc(p.cap)}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${g.photos.length}</span><button id="nt">›</button></div>${next()}`;
-      $('#pv').onclick=()=>{V.ex=(V.ex+g.photos.length-1)%g.photos.length;draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%g.photos.length;draw()};$('#nx').onclick=go};
+    V.seen=V.seen||new Set();
+    const draw=()=>{const p=g.photos[V.ex],N=g.photos.length;V.seen.add(V.ex);const all=V.seen.size>=N;
+      $('#room').innerHTML=`<h2>The Gallery</h2><div class="frame"><img src="${p.src}"></div><div class="cap">${esc(p.cap)}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${N}</span><button id="nt">›</button></div><p>${all?'You have seen every photo 🎉':'👀 Seen '+V.seen.size+' of '+N+' — look at all of them to continue'}</p><button class="btn" id="nx" ${all?'':'disabled'}>${all?'Next room →':'🔒 See all photos first'}</button>`;
+      $('#pv').onclick=()=>{V.ex=(V.ex+N-1)%N;beep(500,.06);draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%N;beep(560,.06);draw()};$('#nx').onclick=go;if(all&&N>1&&V.seen.size==N&&!V.gdone){V.gdone=1;chime()}};
     frame('');draw();
   }
   if(i==4){
@@ -347,8 +353,14 @@ function puzzle(p,n){
 }
 
 /* ---------- boot ---------- */
-const m=location.hash.match(/#g=(.+)/);
-if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}else wiz();
+const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([\w-]+)/);
+if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}
+else if(mc&&CONFIG.ENDPOINT){
+  shell.innerHTML='<div class="card"><h1>Opening your gift… 🎁</h1><p class="sub">Just a moment</p></div>';
+  const tryLoad=n=>fetch(CONFIG.ENDPOINT+'?c='+mc[1]).then(r=>r.json()).then(g=>{if(!g||g.error)throw 0;startMuseum(g,false)})
+    .catch(()=>{if(n<3)setTimeout(()=>tryLoad(n+1),2000);else shell.innerHTML='<div class="card"><h1>Gift not found 😢</h1><p class="sub">Ask your friend to send the link again.</p></div>'});
+  tryLoad(0);
+}else wiz();
 })();
 </script>
 </body>
