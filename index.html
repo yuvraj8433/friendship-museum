@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Friendship Museum</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Shantell+Sans:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 :root{--a:#F5A524;--b:#FF6B57;--c:#14A38B;--d:#5B62E8;--e:#E14B8A;--ink:#17332d;--bg1:#e6f6f0;--bg2:#fff3dc;--card:#fff;--acc:#F5A524;--acc2:#FF6B57;--mut:#6b8079}
 [data-vibe=calm]{--bg1:#e4eefb;--bg2:#e6f6f0;--acc:#5B62E8;--acc2:#14A38B}
@@ -111,6 +112,9 @@ h1 em{-webkit-text-fill-color:var(--acc)}
 .dash{width:100%;max-width:640px;background:#fff;border-radius:22px;padding:22px;box-shadow:0 20px 60px #17332d22}
 .dash table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 14px}.dash td,.dash th{border-bottom:1px solid #e3ece8;padding:7px 5px;text-align:left;vertical-align:top}
 .dash .tools{display:flex;gap:8px;flex-wrap:wrap}.dash .tools .btn{margin:0;width:auto;padding:10px 14px;font-size:13px}
+.bill{border:2px dashed var(--acc);border-radius:16px;padding:14px 16px;background:#fffdf7;margin-bottom:6px}
+.bill-h{display:flex;justify-content:space-between;gap:10px;font-size:15px;border-bottom:1px solid #f0e3c4;padding-bottom:10px;margin-bottom:8px}.bill-h b:last-child{font-family:'Bricolage Grotesque';font-size:22px;color:var(--acc2)}
+.bill ul{list-style:none;padding:0;font-size:14px;display:grid;gap:6px}
 .dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
 </style>
 </head>
@@ -148,7 +152,9 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
    Gifts and replies are always kept in this browser (localStorage).
    DB = your Firebase Realtime Database URL, e.g. 'https://my-museum-default-rtdb.firebaseio.com'  (no trailing slash).
    With DB set you get short links and replies from friends' phones. Leave '' to use long links only. */
-const CONFIG={DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+/* PAYMENT: paste your Razorpay *Key ID* (starts with rzp_test_ or rzp_live_). Never put the Key Secret in this file.
+   PRICE_INR is the price in rupees. Leave RZP_KEY '' to skip payment (links are free). */
+const CONFIG={RZP_KEY:'rzp_test_Tn41ZqwUOjAU0h',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
 const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
 // Firebase Realtime Database REST call. Resolves with the JSON, rejects if the request fails.
@@ -172,7 +178,7 @@ function wiz(){
   document.body.dataset.vibe=S.vibe;
   $('#back').style.display='none';$('#badge').style.display='none';
   const n=S.step;
-  const dots=Array.from({length:7},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
+  const dots=Array.from({length:CONFIG.RZP_KEY?8:7},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
   const nav=(next,label='Next →',ok=true)=>`<div class="row"><button class="btn ghost" data-act="prev">←</button><button class="btn" data-act="${next}" ${ok?'':'disabled'}>${label}</button></div>`;
   let h='';
   if(n==1)h=`<span class="chip">🚪 No occasion needed · send it any day</span><p class="eyebrow">Not a card · a 9-room adventure</p><h1>Build your best friend a <em>museum</em>.</h1><p class="sub">You’re about to make someone’s day unforgettable 🎀</p>
@@ -200,7 +206,12 @@ function wiz(){
   <label>Your rules — pick up to 5</label><div id="rules">${[...RULES,...S.rules.filter(x=>!RULES.includes(x))].map(x=>`<button class="pill ${S.rules.includes(x)?'on':''}" data-rule="${esc(x)}">${esc(x)}</button>`).join('')}</div>
   <div class="duo"><input type="text" id="f-cr" maxlength="80" placeholder="Write your own rule…"><button class="btn ghost" style="width:80px;margin:0" data-act="addrule">Add</button></div>${nav('next','See how it looks →',S.rules.length>0)}`;
   if(n==7)h=`<p class="eyebrow">Step 7 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
-  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">Create the link →</button><div id="out"></div><p class="hint">Your link is free · no account needed</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${CONFIG.RZP_KEY&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${CONFIG.RZP_KEY&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  if(n==8)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
+  <div class="bill"><div class="bill-h"><span>🏛️ Friendship Museum for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
+  <ul><li>✅ 9-room museum adventure</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} + a puzzle</li><li>💌 Sealed message & ${S.rules.length} friendship rule${S.rules.length==1?'':'s'}</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
+  <button class="btn" data-act="pay">🔒 Pay ₹${CONFIG.PRICE_INR} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>
+  <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Friendship</span></div><div class="dots">${dots}</div>${h}</div>`;
 }
 shell.addEventListener('input',e=>{
@@ -230,7 +241,8 @@ shell.addEventListener('click',e=>{
   else if(d.act=='addnote'){const v=$('#f-cn').value.trim();if(v){if(!S.notes.includes(v)&&S.notes.length<5)S.notes.push(v);wiz()}}
   else if(d.act=='addrule'){const v=$('#f-cr').value.trim();if(v){if(!S.rules.includes(v)&&S.rules.length<5)S.rules.push(v);wiz()}}
   else if(d.act=='preview')startMuseum(S,true);
-  else if(d.act=='link')makeLink();
+  else if(d.act=='link'){if(CONFIG.RZP_KEY&&!S.payId){S.step=8;wiz()}else makeLink()}
+  else if(d.act=='pay')pay();
   else if(d.act=='dash')dashboard();
 });
 async function dashboard(){
@@ -259,10 +271,24 @@ function addPhotos(files){
     c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,400,400);
     S.photos.push({src:c.toDataURL('image/jpeg',.55),cap:''});wiz()};im.src=r.result};r.readAsDataURL(f)});
 }
+function pay(){
+  const st=$('#payst');
+  if(typeof Razorpay==='undefined'){st.textContent='Payment could not load. Check your internet and try again.';return}
+  try{
+    const rz=new Razorpay({
+      key:CONFIG.RZP_KEY,amount:Math.round(CONFIG.PRICE_INR*100),currency:'INR',
+      name:'OurMoments',description:'Friendship Museum for '+S.name,theme:{color:'#F5A524'},
+      handler:r=>{S.payId=r.razorpay_payment_id;S.step=7;wiz();makeLink()}, // paid: go back and create the link
+      modal:{ondismiss:()=>{st.textContent='Payment cancelled. You can try again.'}}
+    });
+    rz.on('payment.failed',e=>{st.textContent='Payment failed: '+((e.error&&e.error.description)||'please try again')});
+    rz.open();
+  }catch(e){st.textContent='Could not start payment: '+e.message}
+}
 async function makeLink(){
   if(!S.id)S.id=uid();
   const out=$('#out'),base=location.href.split('#')[0];
-  if(!S.recorded){S.recorded=1;const rec={id:S.id,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
+  if(!S.recorded){S.recorded=1;const rec={id:S.id,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,pay:S.payId||'',created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
 let url,short=false,err='';
   if(CONFIG.DB){
     out.innerHTML='<p class="hint">⏳ Saving your gift online…</p>';
