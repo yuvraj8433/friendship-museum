@@ -154,7 +154,7 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
    With DB set you get short links and replies from friends' phones. Leave '' to use long links only. */
 /* PAYMENT: paste your Razorpay *Key ID* (starts with rzp_test_ or rzp_live_). Never put the Key Secret in this file.
    PRICE_INR is the price in rupees. Leave RZP_KEY '' to skip payment (links are free). */
-const CONFIG={RZP_KEY:'rzp_test_Tn41ZqwUOjAU0h',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+const CONFIG={RZP_KEY:'rZVmnHJvTjY55i5NxnhpnW2s',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
 const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
 // Firebase Realtime Database REST call. Resolves with the JSON, rejects if the request fails.
