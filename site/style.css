@@ -1,0 +1,12 @@
+:root{--ink:#17332d;--acc:#F5A524;--acc2:#FF6B57;--mut:#6b8079}
+*{box-sizing:border-box;margin:0}
+body{font-family:Outfit,system-ui,sans-serif;color:var(--ink);background:linear-gradient(135deg,#e6f6f0,#fff3dc);min-height:100vh;padding:24px 16px;line-height:1.65}
+main{max-width:760px;margin:0 auto;background:#fff;border-radius:22px;padding:30px 26px;box-shadow:0 20px 60px #17332d22;border-top:6px solid var(--acc)}
+h1{font-family:'Bricolage Grotesque',Outfit,sans-serif;font-size:30px;margin-bottom:4px}
+h2{font-size:19px;margin:22px 0 6px}
+p,li{font-size:15.5px;color:#2c4a43}ul{padding-left:22px}
+.up{color:var(--mut);font-size:13px;margin-bottom:14px}
+a{color:#0f8a74;font-weight:600}
+nav.l{max-width:760px;margin:0 auto 14px;display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+.box{background:#fff7e6;border:1.5px dashed var(--acc);border-radius:14px;padding:14px 16px;margin:12px 0}
+footer{max-width:760px;margin:18px auto 0;text-align:center;font-size:13px;color:var(--mut)}
