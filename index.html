@@ -193,6 +193,8 @@ body.bd-env .room,body.bd-env .card{border:2px solid #fff;box-shadow:0 18px 50px
 /* ---- photo cards in the game ---- */
 .mc{overflow:hidden;padding:0}.mc .mb.ph{width:100%;height:100%;background-size:cover;background-position:center}
 .mc.up .mb.ph,.mc.ok .mb.ph{display:block}
+.admbar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:30;background:#17332d;color:#fff;padding:8px 14px;border-radius:99px;font-size:12px;font-weight:600;display:flex;gap:10px;align-items:center;box-shadow:0 6px 20px #0004;white-space:nowrap;max-width:96vw}
+.admbar button{border:0;border-radius:99px;padding:5px 10px;font:inherit;font-size:11px;cursor:pointer;background:#ffffff26;color:#fff}
 .dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
 </style>
 </head>
@@ -234,6 +236,14 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
 /* PAYMENT: paste your Razorpay *Key ID* (starts with rzp_test_ or rzp_live_). Never put the Key Secret in this file.
    PRICE_INR is the price in rupees. Leave RZP_KEY '' to skip payment (links are free). */
 const CONFIG={RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+/* Admin-controlled switches for each builder step (loaded from the database; these are the defaults). */
+const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true}};
+let ST=JSON.parse(JSON.stringify(ST_DEFAULT));
+// Is payment required right now? Not in free mode, and not for a signed-in admin.
+const payOn=()=>!!CONFIG.RZP_KEY&&!CONFIG.FREE&&!CONFIG.ADMIN;
+const stepOff=(type,n)=>type=='bday'?((n==3&&!ST.b_balloons)||(n==4&&!ST.b_photos)||(n==5&&!ST.b_letter)):((n==2&&!ST.f_kind)||(n==3&&!ST.f_vibe)||(n==4&&!ST.f_photos)||(n==5&&!ST.f_msg)||(n==6&&!ST.f_rules));
+const stepMove=(n,dir)=>{const last=S.type=='bday'?6:7;let k=n+dir;while(k>1&&k<last&&stepOff(S.type,k))k+=dir;return Math.min(Math.max(k,1),last+1)};
+const allowedSongs=()=>SONGS.filter(x=>ST.songs[x[0]]!==false);
 const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
 const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
 // Firebase Realtime Database REST call. Resolves with the JSON, rejects if the request fails.
@@ -254,19 +264,19 @@ function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(
 
 /* ---------- WIZARD ---------- */
 function wiz(){
-  if(!S.type)return chooser();
+  if(!S.type){const on=[ST.friend&&'friend',ST.bday&&'bday'].filter(Boolean);if(on.length==1){S.type=on[0];S.step=1;S.vibe=on[0]=='bday'?'bday':'chaos'}else return chooser()}
   if(S.type=='bday')return wizB();
   setEnv(false);
   document.body.dataset.vibe=S.vibe;
   $('#back').style.display='none';$('#badge').style.display='none';
   const n=S.step;
-  const dots=Array.from({length:CONFIG.RZP_KEY?8:7},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
+  const dots=Array.from({length:payOn()?8:7},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
   const nav=(next,label='Next →',ok=true)=>`<div class="row"><button class="btn ghost" data-act="prev">←</button><button class="btn" data-act="${next}" ${ok?'':'disabled'}>${label}</button></div>`;
   let h='';
   if(n==1)h=`<span class="chip">🚪 No occasion needed · send it any day</span><p class="eyebrow">Not a card · a 9-room adventure</p><h1>Build your best friend a <em>museum</em>.</h1><p class="sub">You’re about to make someone’s day unforgettable 🎀</p>
   <label>Who is this for?</label><input type="text" id="f-name" maxlength="40" placeholder="Your friend’s name" value="${esc(S.name)}">
   <label>And what’s your name?</label><input type="text" id="f-from" maxlength="40" placeholder="Your name" value="${esc(S.from)}">
-  <button class="btn" id="go1" data-act="next" ${S.name&&S.from?'':'disabled'}>Start building →</button><p class="hint">Takes about 4 minutes · works on any phone</p><button class="dlink" data-act="type">🔄 Change occasion</button><button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
+  <button class="btn" id="go1" data-act="next" ${S.name&&S.from?'':'disabled'}>Start building →</button><p class="hint">Takes about 4 minutes · works on any phone</p>${ST.friend&&ST.bday?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
   if(n==2){const yrs=Array.from({length:50},(_,i)=>2026-i);h=`<p class="eyebrow">Step 2 · About them</p><h1>What kind of <em>friend</em> are they?</h1><p class="sub">Pick the one that fits <b>${esc(S.name)}</b> best.</p>
   <div class="tiles">${KINDS.map(k=>`<button class="tile ${S.kind==k[0]?'on':''}" data-kind="${k[0]}"><span>${k[1]}</span><span>${k[2]}</span></button>`).join('')}</div>
   <label>When did you two become friends? <small>— optional. We’ll count the days for them.</small></label>
@@ -276,10 +286,10 @@ function wiz(){
   <label>Now, why they matter to you — tap up to 5. <small>They open each note one by one.</small></label>
   <div id="notes">${[...NOTES,...S.notes.filter(x=>!NOTES.includes(x))].map(x=>`<button class="pill ${S.notes.includes(x)?'on':''}" data-note="${esc(x)}">${esc(x)}</button>`).join('')}</div>
   <div class="duo"><input type="text" id="f-cn" maxlength="80" placeholder="Write your own…"><button class="btn ghost" style="width:80px;margin:0" data-act="addnote">Add</button></div>${nav('next','Next →',S.notes.length>0)}`;
-  if(n==4)h=`<p class="eyebrow">Step 4 · Your photos</p><h1>Add your favourite <em>photos</em>.</h1><p class="sub">Up to 4. Each one gets a caption — and one of them turns into a puzzle they have to put back together.</p>
-  <label class="drop"><input type="file" id="f-ph" accept="image/*" multiple hidden>📸 Tap to add photos<br><small>JPG or PNG · up to 4 · we shrink them for you</small></label>
-  <div class="photos">${S.photos.map((p,i)=>`<div class="ph"><img src="${p.src}"><input type="text" data-cap="${i}" maxlength="60" placeholder="Caption" value="${esc(p.cap)}"><button data-pz="${i}" class="${S.pz==i?'on':''}">🧩 Puzzle</button><button data-rm="${i}">Remove</button></div>`).join('')}</div>
-  <label>How hard should the puzzle be?</label><div class="duo"><button class="opt ${S.grid==3?'on':''}" data-grid="3"><span class="em">🧩</span><span><b>Easy</b><small>9 pieces</small></span></button><button class="opt ${S.grid==4?'on':''}" data-grid="4"><span class="em">🧠</span><span><b>Hard</b><small>16 pieces</small></span></button></div>${nav('next')}`;
+  if(n==4)h=`<p class="eyebrow">Step 4 · Your photos</p><h1>Add your favourite <em>photos</em>.</h1><p class="sub">Up to ${ST.f_maxPhotos}. Each one gets a caption${ST.f_puzzle?' — and one of them turns into a puzzle they have to put back together':''}.</p>
+  <label class="drop"><input type="file" id="f-ph" accept="image/*" multiple hidden>📸 Tap to add photos<br><small>JPG or PNG · up to ${ST.f_maxPhotos} · we shrink them for you</small></label>
+  <div class="photos">${S.photos.map((p,i)=>`<div class="ph"><img src="${p.src}"><input type="text" data-cap="${i}" maxlength="60" placeholder="Caption" value="${esc(p.cap)}">${ST.f_puzzle?`<button data-pz="${i}" class="${S.pz==i?'on':''}">🧩 Puzzle</button>`:''}<button data-rm="${i}">Remove</button></div>`).join('')}</div>
+  ${ST.f_puzzle?`<label>How hard should the puzzle be?</label><div class="duo"><button class="opt ${S.grid==3?'on':''}" data-grid="3"><span class="em">🧩</span><span><b>Easy</b><small>9 pieces</small></span></button><button class="opt ${S.grid==4?'on':''}" data-grid="4"><span class="em">🧠</span><span><b>Hard</b><small>16 pieces</small></span></button></div>`:''}${nav('next')}`;
   if(n==5)h=`<p class="eyebrow">Step 5 · Your message</p><h1>Write them a <em>message</em>.</h1><p class="sub">It arrives sealed inside an envelope, so they have to break the seal to read it. Say the thing you never say out loud.</p>
   <textarea id="f-msg" maxlength="500" placeholder="Ten years and you still pick up on the first ring. I don't say it enough, so here it is in writing.">${esc(S.msg)}</textarea><div class="count"><span id="cnt">${S.msg.length}</span> / 500</div>
   <label>Pick a stamp for the seal</label><div class="stamps">${SEALS.map(x=>`<button class="pill ${S.seal==x?'on':''}" data-seal="${x}">${x}</button>`).join('')}</div>
@@ -288,7 +298,7 @@ function wiz(){
   <label>Your rules — pick up to 5</label><div id="rules">${[...RULES,...S.rules.filter(x=>!RULES.includes(x))].map(x=>`<button class="pill ${S.rules.includes(x)?'on':''}" data-rule="${esc(x)}">${esc(x)}</button>`).join('')}</div>
   <div class="duo"><input type="text" id="f-cr" maxlength="80" placeholder="Write your own rule…"><button class="btn ghost" style="width:80px;margin:0" data-act="addrule">Add</button></div>${nav('next','See how it looks →',S.rules.length>0)}`;
   if(n==7)h=`<p class="eyebrow">Step 7 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
-  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${CONFIG.RZP_KEY&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${CONFIG.RZP_KEY&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==8)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🏛️ Friendship Museum for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
   <ul><li>✅ 9-room museum adventure</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} + a puzzle</li><li>💌 Sealed message & ${S.rules.length} friendship rule${S.rules.length==1?'':'s'}</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
@@ -318,13 +328,13 @@ shell.addEventListener('click',e=>{
   else if(d.grid){S.grid=+d.grid;wiz()}
   else if(d.pz!=null){S.pz=+d.pz;wiz()}
   else if(d.rm!=null){S.photos.splice(+d.rm,1);S.pz=0;wiz()}
-  else if(d.act=='next'){S.step++;wiz()}
-  else if(d.act=='prev'){S.step=Math.max(1,S.step-1);wiz()}
+  else if(d.act=='next'){S.step=stepMove(S.step,1);wiz()}
+  else if(d.act=='prev'){S.step=stepMove(S.step,-1);wiz()}
   else if(d.act=='addnote'){const v=$('#f-cn').value.trim();if(v){if(!S.notes.includes(v)&&S.notes.length<5)S.notes.push(v);wiz()}}
   else if(d.act=='addrule'){const v=$('#f-cr').value.trim();if(v){if(!S.rules.includes(v)&&S.rules.length<5)S.rules.push(v);wiz()}}
   else if(d.act=='preview')startMuseum(S,true);
-  else if(d.act=='link'){if(CONFIG.PAUSED&&!S.payId){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
-    if(CONFIG.RZP_KEY&&!S.payId){S.step=S.type=='bday'?7:8;wiz()}else makeLink()}
+  else if(d.act=='link'){if(CONFIG.PAUSED&&!S.payId&&!CONFIG.ADMIN){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
+    if(payOn()&&!S.payId){S.step=S.type=='bday'?7:8;wiz()}else makeLink()}
   else if(d.act=='type'){S.type='';wiz()}
   else if(d.act=='pay')pay();
   else if(d.act=='dash')dashboard();
@@ -350,7 +360,7 @@ async function dashboard(){
 }
 function tog(a,v,max){const i=a.indexOf(v);if(i>=0)a.splice(i,1);else if(a.length<max)a.push(v)}
 function addPhotos(files){
-  files.slice(0,(S.type=='bday'?5:4)-S.photos.length).forEach(f=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
+  files.slice(0,(S.type=='bday'?ST.b_maxPhotos:ST.f_maxPhotos)-S.photos.length).forEach(f=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
     const m=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=400;
     c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,400,400);
     S.photos.push({src:c.toDataURL('image/jpeg',.55),cap:''});wiz()};im.src=r.result};r.readAsDataURL(f)});
@@ -372,6 +382,9 @@ function pay(){
 async function makeLink(){
   if(!S.id)S.id=uid();
   if(!S.created)S.created=new Date().toISOString();
+  if(!S.payId&&!payOn())S.payId=CONFIG.ADMIN?'ADMIN':'FREE';   // no payment taken: mark why
+  if(S.type=='bday'){if(ST.b_game=='on')S.game=true;if(ST.b_game=='off')S.game=false;const al=allowedSongs();if(al.length&&!al.some(x=>x[0]==S.song))S.song=al[0][0]}
+  else S.puzzle=ST.f_puzzle!==false;
   const out=$('#out'),base=location.href.split('#')[0];
   if(!S.recorded){S.recorded=1;const rec={id:S.id,type:S.type,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,pay:S.payId||'',created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
 let url,short=false,err='';
@@ -410,7 +423,17 @@ function frame(inner){
   shell.innerHTML=`<div class="museum"><div class="pill-room">Room ${V.i+1} of 9 · ${ROOMS[V.i]}<i>${pr}</i></div><div class="room" id="room"><div class="rico">${ic}</div>${inner}</div></div>`;
 }
 const next=(label='Next room →')=>`<button class="btn" id="nx">${label}</button>`;
-function go(){V.i++;room()}
+function lobbyLine(g){
+  const parts=[];
+  if(g.notes&&g.notes.length)parts.push(g.notes.length+' reason'+(g.notes.length==1?'':'s'));
+  if(g.photos&&g.photos.length)parts.push(g.photos.length+' photo'+(g.photos.length==1?'':'s'));
+  if(g.photos&&g.photos.length&&g.puzzle!==false)parts.push('a puzzle');
+  if(g.msg&&g.msg.trim())parts.push('a letter');
+  if(g.rules&&g.rules.length)parts.push(g.rules.length+' rule'+(g.rules.length==1?'':'s'));
+  return parts.length?'The next rooms hold '+parts.join(', ').replace(/, ([^,]*)$/,' and $1')+'.':'Let’s have a look around.';
+}
+const roomOk=(i,g)=>i==2?!!(g.notes&&g.notes.length):(i==3||i==4)?!!(g.photos&&g.photos.length)&&(i==3||g.puzzle!==false):i==5?!!(g.msg&&g.msg.trim()):(i==6||i==7)?!!(g.rules&&g.rules.length):true;
+function go(){V.i++;while(V.i<8&&!roomOk(V.i,V.g))V.i++;room()}
 function room(){
   const g=V.g,i=V.i;
   if(i==0){
@@ -420,7 +443,7 @@ function room(){
   }
   if(i==1){
     const n=days(g);
-    frame(`<h2>Welcome, ${esc(g.name)} ${g.sticker||'💛'}</h2><p>${n?'You two have been friends for':'This is a museum of everything'+(g.from?` ${esc(g.from)} loves about you`:'')+'.'}</p>${n?`<div class="odo" id="odo"></div><p>days · and counting</p>`:''}<p>The next rooms hold ${g.notes.length} reasons, ${g.photos.length} photo${g.photos.length==1?'':'s'}, a puzzle, a letter and ${g.rules.length} rule${g.rules.length==1?'':'s'}.</p>${next()}`);
+    frame(`<h2>Welcome, ${esc(g.name)} ${g.sticker||'💛'}</h2><p>${n?'You two have been friends for':'This is a museum of everything'+(g.from?` ${esc(g.from)} loves about you`:'')+'.'}</p>${n?`<div class="odo" id="odo"></div><p>days · and counting</p>`:''}<p>${lobbyLine(g)}</p>${next()}`);
     if(n){const o=$('#odo'),t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/1500),v=Math.round(n*(1-Math.pow(1-p,3)));o.innerHTML=String(v).split('').map(c=>`<span>${c}</span>`).join('');if(p<1)requestAnimationFrame(f);else chime()})(t0)}
     $('#nx').onclick=go;
   }
@@ -592,8 +615,9 @@ function chooser(){
   $('#back').style.display='none';$('#badge').style.display='none';
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span></div>
   <p class="eyebrow">Pick an occasion</p><h1>What are we <em>celebrating</em>?</h1><p class="sub">Build a gift they can open on any phone 🎀</p>
-  <button class="opt" data-type="friend"><span class="em">🤝</span><span><b>Friendship museum</b><small>A 9-room adventure · no occasion needed</small></span></button>
-  <button class="opt" data-type="bday"><span class="em">🎂</span><span><b>Birthday surprise</b><small>Cake, balloons, memories & a letter</small></span></button>
+  ${ST.friend?'<button class="opt" data-type="friend"><span class="em">🤝</span><span><b>Friendship museum</b><small>A 9-room adventure · no occasion needed</small></span></button>':''}
+  ${ST.bday?'<button class="opt" data-type="bday"><span class="em">🎂</span><span><b>Birthday surprise</b><small>Cake, balloons, memories & a letter</small></span></button>':''}
+  ${!ST.friend&&!ST.bday?'<p class="sub">New gifts are not available right now. Please come back soon.</p>':''}
   <button class="dlink" data-act="dash">📂 My gifts & replies</button></div>`;
 }
 
@@ -601,7 +625,8 @@ function wizB(){
   setEnv(true);
   document.body.dataset.vibe='bday';
   $('#back').style.display='none';$('#badge').style.display='none';
-  const n=S.step,tot=CONFIG.RZP_KEY?7:6;
+  const AS=allowedSongs();if(AS.length&&!AS.some(x=>x[0]==S.song))S.song=AS[0][0];
+  const n=S.step,tot=payOn()?7:6;
   if(n!=2&&MUS.preview){musicStop();MUS.preview=false}
   const dots=Array.from({length:tot},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
   const nav=(label='Continue →',ok=true)=>`<div class="row"><button class="btn ghost" data-act="prev">←</button><button class="btn" data-act="next" ${ok?'':'disabled'}>${label}</button></div>`;
@@ -614,23 +639,23 @@ function wizB(){
   <label>Their birthday <small>— optional. Unlocks the midnight countdown.</small></label>
   <div class="duo"><select id="b-bm"><option value="">Month</option>${MONTHS.map((m,i)=>`<option value="${i+1}" ${S.bm==i+1?'selected':''}>${m}</option>`).join('')}</select><select id="b-bd"><option value="">Day</option>${Array.from({length:31},(_,i)=>`<option ${S.bd==i+1?'selected':''}>${i+1}</option>`).join('')}</select></div>
   <p class="hint">If they open early, a countdown holds the surprise until 12:00 AM 🎈</p>
-  <button class="btn" id="b-go" data-act="next" ${S.name&&S.from?'':'disabled'}>Let’s begin 🎂</button><button class="dlink" data-act="type">🔄 Change occasion</button><button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
+  <button class="btn" id="b-go" data-act="next" ${S.name&&S.from?'':'disabled'}>Let’s begin 🎂</button>${ST.friend&&ST.bday?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
   if(n==2)h=`<p class="eyebrow">Step 2</p><h1>Pick their <em>cake</em> 🎂</h1><p class="sub">They’ll light it, wish on it, and cut it.</p>
   ${CAKES.map(c=>`<button class="opt ${S.cake==c[0]?'on':''}" data-cake="${c[0]}"><span class="em">${c[1]}</span><span><b>${c[2]}</b><small>${c[3]}</small></span></button>`).join('')}
-  <label>Mini game</label><button class="opt ${S.game?'on':''}" data-game="1"><span class="em">🎮</span><span><b>${S.game?'Include a mini game':'No mini game'}</b><small>Uses your photos as the cards · tap to turn ${S.game?'off':'on'}</small></span></button>
-  <label>Birthday song <small>— plays when they open the gift. Tap one to preview 🎧</small></label>
-  ${SONGS.map(x=>`<button class="opt ${(S.song||'bday')==x[0]?'on':''}" data-song="${x[0]}"><span class="em">${x[1]}</span><span><b>${x[2]}</b><small>${x[3]}</small></span></button>`).join('')}${nav()}`;
+  ${ST.b_game=='choose'?`<label>Mini game</label><button class="opt ${S.game?'on':''}" data-game="1"><span class="em">🎮</span><span><b>${S.game?'Include a mini game':'No mini game'}</b><small>Uses your photos as the cards · tap to turn ${S.game?'off':'on'}</small></span></button>`:''}
+  ${AS.length?`<label>Birthday song <small>— plays when they open the gift. Tap one to preview 🎧</small></label>
+  ${AS.map(x=>`<button class="opt ${(S.song||'bday')==x[0]?'on':''}" data-song="${x[0]}"><span class="em">${x[1]}</span><span><b>${x[2]}</b><small>${x[3]}</small></span></button>`).join('')}`:''}${nav()}`;
   if(n==3)h=`<p class="eyebrow">Step 3</p><h1>Fill the <em>balloons</em> 🎈</h1><p class="sub">Each balloon hides one reason they’re loved. They’ll pop them one by one.</p>
   ${S.balloons.map((x,i)=>`<div class="balrow"><span>🎈</span><input type="text" data-bal="${i}" maxlength="50" placeholder="${BALPH[i]}" value="${esc(x)}"><small>${x.length}/50</small></div>`).join('')}
   <label>Need a spark? <small>tap to use</small></label><div>${SPARKS.map((x,i)=>`<button class="pill" data-spark="${i}">${esc(x)}</button>`).join('')}</div>${nav('Continue →',filled>0)}`;
-  if(n==4)h=`<p class="eyebrow">Step 4</p><h1>Hang up some <em>memories</em> 📸</h1><p class="sub">Up to 5 photos, strung on fairy lights. A caption like “Goa, 2023” makes hearts melt.</p>
-  <label class="drop"><input type="file" id="f-ph" accept="image/*" multiple hidden>🖼️ Tap to add photos<br><small>JPG or PNG · up to 5 · we shrink them for you</small></label>
+  if(n==4)h=`<p class="eyebrow">Step 4</p><h1>Hang up some <em>memories</em> 📸</h1><p class="sub">Up to ${ST.b_maxPhotos} photos, strung on fairy lights. A caption like “Goa, 2023” makes hearts melt.</p>
+  <label class="drop"><input type="file" id="f-ph" accept="image/*" multiple hidden>🖼️ Tap to add photos<br><small>JPG or PNG · up to ${ST.b_maxPhotos} · we shrink them for you</small></label>
   <div class="photos">${S.photos.map((p,i)=>`<div class="ph"><img src="${p.src}"><input type="text" data-cap="${i}" maxlength="60" placeholder="Caption" value="${esc(p.cap)}"><button data-rm="${i}">Remove</button></div>`).join('')}</div>${nav(S.photos.length?'Continue →':'Skip photos for now')}`;
   if(n==5)h=`<p class="eyebrow">Step 5</p><h1>Write your birthday <em>letter</em> 💌</h1><p class="sub">This is the part they’ll read twice — and remember forever.</p>
   <textarea id="f-msg" maxlength="500" placeholder="Dear ${esc(S.name)||'you'}, another year of you is the best news of my year…">${esc(S.msg)}</textarea><div class="count"><span id="cnt">${S.msg.length}</span> / 500</div>
   <label>Need a spark? <small>tap to use</small></label>${LETTERS.map((x,i)=>`<button class="pill" data-ltr="${i}">${esc(x.slice(0,70))}…</button>`).join('')}${nav('Bake the magic ✨',S.msg.trim().length>0)}`;
   if(n==6)h=`<p class="eyebrow">Step 6 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
-  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${CONFIG.RZP_KEY&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${CONFIG.RZP_KEY&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==7)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🎂 Birthday Surprise for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
   <ul><li>🎂 Cake to light, wish on & cut</li>${S.game?'<li>🎮 A mini game with your photos</li>':''}<li>🎵 Song: ${esc((SONGS.find(x=>x[0]==(S.song||'bday'))||SONGS[0])[2])}</li><li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li><li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
@@ -661,7 +686,7 @@ shell.addEventListener('click',e=>{
 // ----- what the birthday person sees -----
 function startBday(g,preview){
   setEnv(true);musicStop();MUS.preview=false;
-  V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0,stages:['gift','hello','cake','balloons'].concat(g.game===true?['game']:[],(g.photos&&g.photos.length)?['memories']:[],['letter','finale'])};
+  V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0,stages:['gift','hello','cake'].concat((g.balloons||[]).some(x=>x&&x.trim())?['balloons']:[],g.game===true?['game']:[],(g.photos&&g.photos.length)?['memories']:[],(g.msg&&g.msg.trim())?['letter']:[],['finale'])};
   document.body.dataset.vibe='bday';
   $('#badge').style.display=preview?'block':'none';$('#back').style.display=preview?'block':'none';
   bscreen();
@@ -813,16 +838,34 @@ function bscreen(){
   }
 }
 
+/* ---------- admin bypass: a signed-in admin (from admin.html) can create gifts without paying ---------- */
+async function adminCheck(){
+  try{
+    if(sessionStorage.getItem('om_noadmin'))return;
+    const a=JSON.parse(localStorage.getItem('om_admin_tok')||'null');
+    if(!a||!a.t||Date.now()-a.at>55*60*1000)return;
+    // index/__probe can only be read by the admin account (see the database Rules), so this proves the token is the admin's
+    const r=await fetch(CONFIG.DB.replace(/\/+$/,'')+'/index/__probe.json?auth='+encodeURIComponent(a.t));
+    if(r.ok){CONFIG.ADMIN=true;const b=document.createElement('div');b.className='admbar';
+      b.innerHTML='👑 Admin mode · payment is skipped <button id="adm-off">Test the normal payment flow</button>';document.body.appendChild(b);
+      $('#adm-off').onclick=()=>{try{sessionStorage.setItem('om_noadmin','1')}catch(e){}location.reload()}}
+  }catch(e){}
+}
+
 /* ---------- boot ---------- */
 (async()=>{
   const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([a-z0-9]+)/);
   // Live settings from the admin dashboard (price, pause). Never delays the page by more than ~1.2 seconds.
-  if(CONFIG.DB&&!m){
+  if(CONFIG.DB&&!m&&!mc){
     shell.innerHTML='<div class="card"><h1>Loading… 🎁</h1></div>';
     try{const st=await Promise.race([fb('GET','settings'),new Promise(r=>setTimeout(()=>r(null),1200))]);
-      if(st){if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused}}catch(e){}
+      if(st){
+        if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;
+        if(st.steps&&typeof st.steps=='object'){ST=Object.assign(JSON.parse(JSON.stringify(ST_DEFAULT)),st.steps);ST.songs=Object.assign({},ST_DEFAULT.songs,st.steps.songs||{})}
+      }}catch(e){}
+    await adminCheck();
   }
-  {const lp=$('#lg-price');if(lp&&CONFIG.RZP_KEY)lp.textContent='One gift link: ₹'+CONFIG.PRICE_INR+' · one-time payment · ';}
+  {const lp=$('#lg-price');if(lp)lp.textContent=payOn()?'One gift link: ₹'+CONFIG.PRICE_INR+' · one-time payment · ':'';}
   if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}
   else if(mc&&CONFIG.DB){
     shell.innerHTML='<div class="card"><h1>Opening your gift… 🎁</h1><p class="sub">Just a moment</p></div>';
