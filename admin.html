@@ -65,14 +65,19 @@ let auth=null,gifts={},replies={},settings={},tab='gifts',filt={q:'',type:'',sta
 /* ---------- Firebase REST (with the admin's sign-in token) ---------- */
 const dbUrl=p=>ADMIN.DB.replace(/\/+$/,'')+'/'+p+(p.includes('?')?'&':'?')+'auth='+encodeURIComponent(auth.idToken);
 async function refresh(){
-  const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(auth.refreshToken)});
+  let r;
+  try{r=await fetch('https://securetoken.googleapis.com/v1/token?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(auth.refreshToken)})}
+  catch(e){throw new Error('Could not reach Google (securetoken.googleapis.com) to renew your session: '+e.message)}
   if(!r.ok)throw new Error('Session expired. Please sign in again.');
-  const j=await r.json();auth.idToken=j.id_token;auth.refreshToken=j.refresh_token;save();
+  const j=await r.json();auth.idToken=j.id_token;auth.refreshToken=j.refresh_token;auth.at=Date.now();save();
 }
 async function fb(method,path,body,retry=true){
-  const r=await fetch(dbUrl(path),{method,body:body===undefined?undefined:JSON.stringify(body)});
-  if(r.status==401&&retry){await refresh();return fb(method,path,body,false)}
-  if(r.status==401||r.status==403)throw new Error('Not allowed. Check the Rules tab and that your admin UID is correct.');
+  let r;
+  try{r=await fetch(dbUrl(path),{method,body:body===undefined?undefined:JSON.stringify(body)})}
+  catch(e){throw new Error('Could not reach the database for "'+path.split('?')[0]+'" ('+e.message+'). Check that ADMIN.DB is exactly your database URL, and try a private window with extensions off.')}
+  // A token only needs renewing once it is old. A fresh token that is refused means the Rules do not allow this user.
+  if(r.status==401&&retry&&Date.now()-(auth.at||0)>45*60*1000){await refresh();return fb(method,path,body,false)}
+  if(r.status==401||r.status==403)throw new Error('Signed in as '+auth.email+' (UID '+auth.uid+'), but the database refused it. This UID must be the one written in your published Firebase Rules (replace every admin UID there, then Publish).');
   if(!r.ok)throw new Error('Database error '+r.status);
   return r.json();
 }
@@ -90,7 +95,7 @@ function loginView(msg=''){
     try{
       const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('#em').value.trim(),password:$('#pw').value,returnSecureToken:true})});
       const j=await r.json();if(!r.ok)throw new Error(({EMAIL_NOT_FOUND:'No such admin account.',INVALID_PASSWORD:'Wrong password.',INVALID_LOGIN_CREDENTIALS:'Wrong email or password.',TOO_MANY_ATTEMPTS_TRY_LATER:'Too many attempts. Try later.'})[j.error&&j.error.message]||'Sign-in failed ('+((j.error&&j.error.message)||r.status)+')');
-      auth={idToken:j.idToken,refreshToken:j.refreshToken,email:j.email,uid:j.localId};save();await load();
+      auth={idToken:j.idToken,refreshToken:j.refreshToken,email:j.email,uid:j.localId,at:Date.now()};save();await load();
     }catch(e){$('#er').textContent=/failed to fetch|networkerror|load failed/i.test(e.message)?'Could not reach Google. Tap “Run connection check” below to see what is blocked.':e.message;$('#go').disabled=false}
   };
   $('#go').onclick=go;$('#pw').onkeydown=e=>{if(e.key=='Enter')go()};
@@ -103,6 +108,7 @@ async function diagnose(){
   const tests=[
     ['Settings in this file',async()=>{if(!ADMIN.DB||!ADMIN.API_KEY)throw new Error('DB or API_KEY is empty in admin.html (is the OLD file still uploaded?)');return 'DB and API key are filled in'}],
     ['Google sign-in service',async()=>{const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'check@example.com',password:'x',returnSecureToken:true})});const j=await r.json();const m=(j.error&&j.error.message)||'';if(/API key|API_KEY/i.test(m))throw new Error('Google rejected the API key: '+m);if(m=='OPERATION_NOT_ALLOWED')throw new Error('Email/Password sign-in is not enabled in Firebase Authentication');return 'reachable ('+(m||'ok')+')'}],
+    ['Google session service',async()=>{const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token=check'});await r.json();return 'reachable'}],
     ['Your database',async()=>{const r=await fetch(ADMIN.DB.replace(/\/+$/,'')+'/settings.json');if(!r.ok)throw new Error('database answered '+r.status);return 'reachable'}]
   ];
   let h='';
