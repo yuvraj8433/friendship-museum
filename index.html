@@ -140,6 +140,59 @@ h1 em{-webkit-text-fill-color:var(--acc)}
 .mc{aspect-ratio:1;border:0;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));font-size:30px;cursor:pointer;color:#fff;box-shadow:0 4px 0 #0002;display:flex;align-items:center;justify-content:center;transition:transform .15s}
 .mc:active{transform:scale(.94)}.mc .mb{display:none}.mc.up .mf,.mc.ok .mf{display:none}.mc.up .mb,.mc.ok .mb{display:inline}
 .mc.up{background:#fff7e6;box-shadow:0 0 0 2px var(--acc) inset}.mc.ok{background:#effaf6;box-shadow:0 0 0 2px var(--c) inset;animation:pop .3s}
+
+/* ---- birthday v3: party environment ---- */
+#bdenv{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;display:none}
+body.bd-env #bdenv{display:block}body.bd-env #bg{display:none}
+body.bd-env{background:radial-gradient(circle at 12% 8%,#fff8 0,#0000 38%),radial-gradient(circle at 88% 92%,#ffe08a99 0,#0000 45%),linear-gradient(135deg,#ffd6e8,#fff0d1 55%,#ffe9a8);background-attachment:fixed}
+body.bd-env .shell{padding-top:64px}
+.bunting{position:absolute;top:0;left:0;right:0;height:60px;display:flex;justify-content:space-around;border-top:3px solid #ffffffaa}
+.bunting i{width:0;height:0;border-left:22px solid #0000;border-right:22px solid #0000;border-top:44px solid var(--c);margin-top:-2px;filter:drop-shadow(0 3px 2px #0002);transform-origin:50% 0;animation:swing 3s ease-in-out infinite alternate}
+.bunting i:nth-child(even){animation-delay:-1.2s}@keyframes swing{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.bb{position:absolute;bottom:-16vh;width:46px;height:58px;border-radius:50% 50% 48% 48%;background:radial-gradient(circle at 30% 26%,#fffa 0,#fff0 26%),var(--c);box-shadow:inset -6px -8px 0 #0002;animation:riseb linear infinite;opacity:.85}
+.bb::after{content:"";position:absolute;bottom:-24px;left:50%;width:2px;height:24px;background:#0003}
+@keyframes riseb{50%{transform:translate(20px,-62vh)}to{transform:translate(-8px,-128vh)}}
+.cf{position:absolute;top:-6vh;width:9px;height:14px;border-radius:2px;background:var(--c);opacity:.85;animation:fallc linear infinite}
+@keyframes fallc{to{transform:translateY(112vh) rotate(560deg)}}
+body.bd-env .room,body.bd-env .card{border:2px solid #fff;box-shadow:0 18px 50px #e14b8a33}
+/* ---- new cake + candles ---- */
+.cake2{position:relative;width:260px;height:250px;margin:6px auto 0;--ck1:#5a3321;--ck2:#7b4a30;--ck3:#3a2014;transition:filter .4s}
+.cake2[data-cake=straw]{--ck1:#ff9fb5;--ck2:#ffc2d1;--ck3:#fff}.cake2[data-cake=van]{--ck1:#f3d38a;--ck2:#fae6b1;--ck3:#fffaf0}
+.cake2.glow{filter:drop-shadow(0 0 26px #ffb3478f)}
+.cake2 .plate{position:absolute;bottom:0;left:-10px;right:-10px;height:16px;border-radius:50%;background:linear-gradient(#fff,#d6dbe2);box-shadow:0 8px 14px #0003}
+.cake2 .t1,.cake2 .t2{position:absolute;background:var(--ck1);overflow:hidden;box-shadow:inset 0 -10px 0 #0002}
+.cake2 .t1{bottom:10px;left:6px;right:6px;height:90px;border-radius:16px 16px 12px 12px}
+.cake2 .t2{bottom:94px;left:46px;right:46px;height:68px;border-radius:14px;background:var(--ck2)}
+.cake2 .t1::before,.cake2 .t2::before{content:"";position:absolute;left:0;right:0;top:0;height:30px;background:radial-gradient(circle at 14px 24px,var(--ck3) 12px,#0000 13px) 0 0/28px 30px repeat-x,linear-gradient(var(--ck3),var(--ck3)) 0 0/100% 16px no-repeat}
+.cake2 .t1::after{content:"";position:absolute;inset:36px 0 0;background:radial-gradient(circle,#ff6b57 2px,#0000 3px) 6px 4px/34px 22px,radial-gradient(circle,#ffd166 2px,#0000 3px) 20px 14px/34px 22px,radial-gradient(circle,#4cc9f0 2px,#0000 3px) 30px 6px/34px 22px}
+.cdrow{position:absolute;bottom:158px;left:30px;right:30px;display:flex;justify-content:center;align-items:flex-end;gap:5px;z-index:2}
+.cd{--h:46px;position:relative;width:15px;height:var(--h);border-radius:4px 4px 2px 2px;cursor:pointer;flex:none}
+.cd::before{content:"";position:absolute;inset:-26px -9px 0}
+.cd:not(.num)::after{content:"";position:absolute;left:50%;top:-6px;width:2px;height:7px;margin-left:-1px;background:#3b2f2f;border-radius:1px}
+.cd.s1{background:repeating-linear-gradient(45deg,#fff,#fff 6px,#ff6b57 6px,#ff6b57 12px)}
+.cd.s2{--h:54px;background:repeating-linear-gradient(-35deg,#5b62e8,#5b62e8 5px,#d3d6ff 5px,#d3d6ff 10px)}
+.cd.s3{--h:50px;background:linear-gradient(90deg,#ff9fc8,#e14b8a 60%,#c23b78)}
+.cd.num{--h:62px;width:36px;display:flex;align-items:flex-end;justify-content:center;border-radius:0}
+.cd.num span{font:800 58px/0.82 'Bricolage Grotesque',sans-serif;background:linear-gradient(135deg,#fff3b0,#ffb703 55%,#fb8500);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:2px #fff;filter:drop-shadow(0 3px 0 #b45f0655)}
+.fm{display:none;position:absolute;left:50%;top:-32px;width:18px;height:30px;margin-left:-9px;transform-origin:50% 100%;animation:flk .17s infinite alternate;pointer-events:none}
+.cd.num .fm{top:-26px}
+.fm::before{content:"";position:absolute;inset:0;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(ellipse at 50% 70%,#fff6b0 12%,#ffd23f 45%,#ff8c1a 80%);box-shadow:0 0 24px 10px #ffb34766,0 0 54px 22px #ff8c1a2e}
+.fm::after{content:"";position:absolute;left:50%;bottom:3px;width:6px;height:13px;margin-left:-3px;border-radius:50%;background:radial-gradient(#fff 20%,#8ad8ff 90%);opacity:.9}
+.cd.on .fm{display:block}
+.cd.on{animation:melt 25s linear forwards}.cd.num.on{animation:meltn 25s linear forwards;transform-origin:50% 100%}
+@keyframes melt{to{height:calc(var(--h) - 14px)}}@keyframes meltn{to{transform:scaleY(.86)}}
+@keyframes flk{from{transform:scale(1,1) rotate(-3deg)}to{transform:scale(1.1,.9) rotate(4deg)}}
+.sm{position:absolute;left:50%;top:-22px;width:10px;height:10px;border-radius:50%;background:#8d8d9aaa;filter:blur(3px);animation:smk 1.7s ease-out forwards;pointer-events:none}
+@keyframes smk{to{transform:translate(10px,-54px) scale(2.8);opacity:0}}
+/* ---- scratch cards + the hand that shows how ---- */
+.frame{position:relative}
+.scratch{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;transition:opacity .45s;border-radius:2px}
+.scratch.gone{opacity:0;pointer-events:none}
+.hand{position:absolute;left:20%;top:44%;font-size:48px;line-height:1;pointer-events:none;filter:drop-shadow(0 5px 4px #0005);animation:hscr 1.7s ease-in-out infinite;z-index:3}
+@keyframes hscr{0%{transform:translate(0,0) rotate(-14deg)}50%{transform:translate(120px,22px) rotate(10deg)}100%{transform:translate(0,0) rotate(-14deg)}}
+/* ---- photo cards in the game ---- */
+.mc{overflow:hidden;padding:0}.mc .mb.ph{width:100%;height:100%;background-size:cover;background-position:center}
+.mc.up .mb.ph,.mc.ok .mb.ph{display:block}
 .dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
 </style>
 </head>
@@ -164,7 +217,7 @@ const SEALS=['💛','🤝','⭐','🔥','♾️'],STICKERS=['🤗','🥳','🥹'
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const KIND_LINE={bestie:'best friend',child:'oldest friend',college:'college partner-in-crime',work:'work bestie',sib:'sibling in all but blood',online:'favourite person on the internet'};
 
-let S={type:'',game:true,age:'',bm:'',bd:'',cake:'choc',balloons:['','','','',''],step:1,name:'',from:'',kind:'bestie',sm:'',sy:'',vibe:'chaos',notes:[],photos:[],pz:0,grid:3,msg:'',seal:'💛',sticker:'🤗',rules:[]};
+let S={type:'',game:true,song:'bday',age:'',bm:'',bd:'',cake:'choc',balloons:['','','','',''],step:1,name:'',from:'',kind:'bestie',sm:'',sy:'',vibe:'chaos',notes:[],photos:[],pz:0,grid:3,msg:'',seal:'💛',sticker:'🤗',rules:[]};
 let V=null; // view state
 let muted=false,actx=null;
 
@@ -203,6 +256,7 @@ function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(
 function wiz(){
   if(!S.type)return chooser();
   if(S.type=='bday')return wizB();
+  setEnv(false);
   document.body.dataset.vibe=S.vibe;
   $('#back').style.display='none';$('#badge').style.display='none';
   const n=S.step;
@@ -341,6 +395,7 @@ let url,short=false,err='';
 const ROOMS=['Front Door','Lobby','Hall of Reasons','Gallery','Puzzle Workshop','Letter Room','Rules Chamber','Signing Desk','Grand Finale'];
 function startMuseum(g,preview){
   if(g.type=='bday')return startBday(g,preview);
+  setEnv(false);
   V={g,preview,i:0,knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
   document.body.dataset.vibe=g.vibe;
   $('#badge').style.display=preview?'block':'none';
@@ -445,28 +500,62 @@ function mnote(f,at,dur,type,vol){
 const HB=[[392,.75],[392,.25],[440,1],[392,1],[523.25,1],[493.88,2],[392,.75],[392,.25],[440,1],[392,1],[587.33,1],[523.25,2],[392,.75],[392,.25],[783.99,1],[659.25,1],[523.25,1],[493.88,1],[440,1],[698.46,.75],[698.46,.25],[659.25,1],[523.25,1],[587.33,1],[523.25,2]];
 const HB_BASS=[[130.81,196],[130.81,98],[130.81,164.81],[174.61,130.81]];
 const CALM=[[261.63,329.63,392,523.25],[220,261.63,329.63,440],[174.61,261.63,349.23,440],[196,246.94,293.66,392]];
+const SONGS=[['bday','🎂','Happy Birthday','The classic song'],['box','🎶','Music Box','Soft & sweet'],['pop','🎉','Party Pop','Upbeat & fun'],['dance','🪩','Dance Beat','Feel the beat'],['none','🔇','No music','Just the surprise']];
+const BOX=[[523.25,659.25,783.99,1046.5],[440,523.25,659.25,880],[349.23,440,523.25,698.46],[392,493.88,587.33,783.99]];
+const POP_LEAD=[659.25,659.25,783.99,659.25,587.33,587.33,783.99,587.33,523.25,523.25,659.25,523.25,587.33,659.25,587.33,523.25];
+const POP_BASS=[130.81,98,110,87.31],POP_CH=[[261.63,329.63,392],[196,246.94,293.66],[220,261.63,329.63],[174.61,220,261.63]];
+const DANCE_BASS=[110,87.31,130.81,98],DANCE_ARP=[[440,523.25,659.25,523.25],[349.23,440,523.25,440],[523.25,659.25,783.99,659.25],[392,493.88,587.33,493.88]];
+function mkick(at){try{const c=actx,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(150,at);o.frequency.exponentialRampToValueAtTime(42,at+.14);g.gain.setValueAtTime(.45,at);g.gain.exponentialRampToValueAtTime(.001,at+.2);o.connect(g);g.connect(MUS.g);o.start(at);o.stop(at+.22)}catch(e){}}
+function mhat(at,vol){try{mnote(9000,at,.04,'square',vol||.03)}catch(e){}}
+// schedules one loop of a song starting at t0 and returns its length in seconds
+function songLoop(track,t0){
+  if(track=='bday'){
+    const beat=.55;let t=t0;
+    HB.forEach(n=>{mnote(n[0],t,n[1]*beat*.95,'triangle',.11);mnote(n[0]*2,t,n[1]*beat*.6,'sine',.025);t+=n[1]*beat});
+    HB_BASS.forEach((b,i)=>{mnote(b[0],t0+i*6*beat,2.8*beat,'sine',.07);mnote(b[1],t0+(i*6+3)*beat,2.8*beat,'sine',.05)});
+    return 26*beat;
+  }
+  if(track=='box'){ // music box: bright, plucked arpeggios
+    const step=.34;
+    BOX.forEach((ch,i)=>[0,1,2,3,2,1,2,1].forEach((k,j)=>{const at=t0+(i*8+j)*step;mnote(ch[k],at,1.1,'sine',.09);mnote(ch[k]*2,at,.45,'sine',.02)}));
+    return 32*step;
+  }
+  if(track=='pop'){ // upbeat pop loop, 4 bars
+    const beat=.46;
+    for(let bar=0;bar<4;bar++){
+      const b0=t0+bar*4*beat;
+      [0,2].forEach(k=>mnote(POP_BASS[bar],b0+k*beat,beat*.9,'triangle',.12));
+      [1,3].forEach(k=>POP_CH[bar].forEach(f=>mnote(f,b0+k*beat,beat*.5,'triangle',.05)));
+      for(let k=0;k<4;k++){mnote(POP_LEAD[bar*4+k],b0+k*beat,beat*.85,'triangle',.1);mnote(POP_LEAD[bar*4+k],b0+k*beat,beat*.5,'square',.02);mhat(b0+(k+.5)*beat)}
+    }
+    return 16*beat;
+  }
+  if(track=='dance'){ // four-on-the-floor dance beat
+    const beat=.47;
+    for(let bar=0;bar<4;bar++){
+      const b0=t0+bar*4*beat;
+      for(let k=0;k<4;k++){mkick(b0+k*beat);mhat(b0+(k+.5)*beat,.04);if(k%2==1)mhat(b0+k*beat,.05)}
+      for(let k=0;k<8;k++){mnote(DANCE_BASS[bar],b0+k*beat/2,beat*.4,'sawtooth',.05);mnote(DANCE_ARP[bar][k%4],b0+k*beat/2,beat*.42,'square',.03)}
+    }
+    return 16*beat;
+  }
+  // 'calm' (friendship museum)
+  const step=.45;
+  CALM.forEach((ch,i)=>{
+    const base=t0+i*8*step;
+    mnote(ch[0]/2,base,8*step,'sine',.05);
+    [0,1,2,3,2,1,2,3].forEach((k,j)=>mnote(ch[k],base+j*step,step*1.6,'triangle',.06));
+  });
+  return 32*step;
+}
 function musicStart(track){
   musicStop();
-  if(!ctx())return;
+  if(!track||track=='none'||!ctx())return;
   MUS.on=true;MUS.track=track;
   MUS.g=actx.createGain();MUS.g.gain.value=muted?0:MUS_VOL;MUS.g.connect(actx.destination);
   const loop=()=>{
     if(!MUS.on||!MUS.g)return;
-    const t0=actx.currentTime+.1;let len;
-    if(track=='bday'){
-      const beat=.55;let t=t0;
-      HB.forEach(n=>{mnote(n[0],t,n[1]*beat*.95,'triangle',.11);mnote(n[0]*2,t,n[1]*beat*.6,'sine',.025);t+=n[1]*beat});
-      HB_BASS.forEach((b,i)=>{mnote(b[0],t0+i*6*beat,2.8*beat,'sine',.07);mnote(b[1],t0+(i*6+3)*beat,2.8*beat,'sine',.05)});
-      len=26*beat;
-    }else{
-      const step=.45;
-      CALM.forEach((ch,i)=>{
-        const base=t0+i*8*step;
-        mnote(ch[0]/2,base,8*step,'sine',.05);
-        [0,1,2,3,2,1,2,3].forEach((k,j)=>mnote(ch[k],base+j*step,step*1.6,'triangle',.06));
-      });
-      len=32*step;
-    }
+    const len=songLoop(track,actx.currentTime+.1);
     MUS.t=setTimeout(loop,Math.max(500,len*1000-300));
   };
   loop();
@@ -477,6 +566,20 @@ function musicStop(){
 }
 
 /* ---------- BIRTHDAY SURPRISE ---------- */
+// Party scenery (bunting, floating balloons, confetti) shown on every birthday screen
+function setEnv(on){
+  document.body.classList.toggle('bd-env',!!on);
+  let e=$('#bdenv');
+  if(on&&!e){
+    const C=['#FF6B57','#F5A524','#14A38B','#5B62E8','#E14B8A','#93C93C'];
+    e=document.createElement('div');e.id='bdenv';e.setAttribute('aria-hidden','true');
+    e.innerHTML='<div class="bunting">'+Array.from({length:14},(_,i)=>`<i style="--c:${C[i%6]}"></i>`).join('')+'</div>'
+      +Array.from({length:9},(_,i)=>`<b class="bb" style="left:${4+i*11}%;--c:${C[i%6]};animation-duration:${15+(i*3)%9}s;animation-delay:-${(i*4)%14}s"></b>`).join('')
+      +Array.from({length:24},(_,i)=>`<s class="cf" style="left:${(i*37)%100}%;--c:${C[(i+2)%6]};animation-duration:${7+(i*5)%8}s;animation-delay:-${(i*3)%9}s"></s>`).join('');
+    document.body.appendChild(e);
+  }
+}
+
 const CAKES=[['choc','🍫','Midnight Chocolate','Rich, dark & dreamy'],['straw','🍓','Strawberry Blush','Soft, sweet & rosy'],['van','🌼','Vanilla Gold','Classic, warm & glowing']];
 const BALPH=['e.g. Your laugh is my favourite sound','e.g. You make bad days better','e.g. Nobody listens like you do','e.g. You inspire me every single day','e.g. Life with you is a celebration'];
 const SPARKS=['Your laugh is my favourite sound','You make ordinary days feel special','You believed in me when I didn’t','The world is kinder with you in it','You remember the little things I forget','My worst days get shorter when you call'];
@@ -484,6 +587,7 @@ const LETTERS=['I keep thinking about how lucky I got with you. You have seen me
 const BCOL=['#FF6B57','#F5A524','#14A38B','#5B62E8','#E14B8A'];
 
 function chooser(){
+  setEnv(false);
   document.body.dataset.vibe='chaos';
   $('#back').style.display='none';$('#badge').style.display='none';
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span></div>
@@ -494,9 +598,11 @@ function chooser(){
 }
 
 function wizB(){
+  setEnv(true);
   document.body.dataset.vibe='bday';
   $('#back').style.display='none';$('#badge').style.display='none';
   const n=S.step,tot=CONFIG.RZP_KEY?7:6;
+  if(n!=2&&MUS.preview){musicStop();MUS.preview=false}
   const dots=Array.from({length:tot},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
   const nav=(label='Continue →',ok=true)=>`<div class="row"><button class="btn ghost" data-act="prev">←</button><button class="btn" data-act="next" ${ok?'':'disabled'}>${label}</button></div>`;
   const filled=S.balloons.filter(x=>x.trim()).length;
@@ -511,7 +617,9 @@ function wizB(){
   <button class="btn" id="b-go" data-act="next" ${S.name&&S.from?'':'disabled'}>Let’s begin 🎂</button><button class="dlink" data-act="type">🔄 Change occasion</button><button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
   if(n==2)h=`<p class="eyebrow">Step 2</p><h1>Pick their <em>cake</em> 🎂</h1><p class="sub">They’ll light it, wish on it, and cut it.</p>
   ${CAKES.map(c=>`<button class="opt ${S.cake==c[0]?'on':''}" data-cake="${c[0]}"><span class="em">${c[1]}</span><span><b>${c[2]}</b><small>${c[3]}</small></span></button>`).join('')}
-  <label>Mini game</label><button class="opt ${S.game?'on':''}" data-game="1"><span class="em">🎮</span><span><b>${S.game?'Include a mini game':'No mini game'}</b><small>A relaxed memory-match game · tap to turn ${S.game?'off':'on'}</small></span></button>${nav()}`;
+  <label>Mini game</label><button class="opt ${S.game?'on':''}" data-game="1"><span class="em">🎮</span><span><b>${S.game?'Include a mini game':'No mini game'}</b><small>Uses your photos as the cards · tap to turn ${S.game?'off':'on'}</small></span></button>
+  <label>Birthday song <small>— plays when they open the gift. Tap one to preview 🎧</small></label>
+  ${SONGS.map(x=>`<button class="opt ${(S.song||'bday')==x[0]?'on':''}" data-song="${x[0]}"><span class="em">${x[1]}</span><span><b>${x[2]}</b><small>${x[3]}</small></span></button>`).join('')}${nav()}`;
   if(n==3)h=`<p class="eyebrow">Step 3</p><h1>Fill the <em>balloons</em> 🎈</h1><p class="sub">Each balloon hides one reason they’re loved. They’ll pop them one by one.</p>
   ${S.balloons.map((x,i)=>`<div class="balrow"><span>🎈</span><input type="text" data-bal="${i}" maxlength="50" placeholder="${BALPH[i]}" value="${esc(x)}"><small>${x.length}/50</small></div>`).join('')}
   <label>Need a spark? <small>tap to use</small></label><div>${SPARKS.map((x,i)=>`<button class="pill" data-spark="${i}">${esc(x)}</button>`).join('')}</div>${nav('Continue →',filled>0)}`;
@@ -525,7 +633,7 @@ function wizB(){
   <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${CONFIG.RZP_KEY&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${CONFIG.RZP_KEY&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==7)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🎂 Birthday Surprise for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
-  <ul><li>🎂 Cake to light, wish on & cut</li>${S.game?'<li>🎮 A relaxed mini game</li>':''}<li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li><li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
+  <ul><li>🎂 Cake to light, wish on & cut</li>${S.game?'<li>🎮 A mini game with your photos</li>':''}<li>🎵 Song: ${esc((SONGS.find(x=>x[0]==(S.song||'bday'))||SONGS[0])[2])}</li><li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li><li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
   <button class="btn" data-act="pay">🔒 Pay ₹${CONFIG.PRICE_INR} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>
   <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Birthday</span></div><div class="dots">${dots}</div>${h}</div>`;
@@ -545,12 +653,14 @@ shell.addEventListener('click',e=>{
   if(d.type){S.type=d.type;S.step=1;S.vibe=d.type=='bday'?'bday':'chaos';if(d.type=='friend')S.photos=S.photos.slice(0,4);wiz()}
   else if(d.cake){S.cake=d.cake;wiz()}
   else if(d.game!=null){S.game=!S.game;wiz()}
+  else if(d.song){S.song=d.song;MUS.preview=true;musicStart(d.song);clearTimeout(MUS.pt);MUS.pt=setTimeout(()=>{if(MUS.preview){musicStop();MUS.preview=false}},9000);wiz()}
   else if(d.spark!=null){const k=S.balloons.findIndex(x=>!x.trim());if(k>=0&&!S.balloons.includes(SPARKS[+d.spark])){S.balloons[k]=SPARKS[+d.spark];wiz()}}
   else if(d.ltr!=null){S.msg=LETTERS[+d.ltr];wiz()}
 });
 
 // ----- what the birthday person sees -----
 function startBday(g,preview){
+  setEnv(true);musicStop();MUS.preview=false;
   V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0,stages:['gift','hello','cake','balloons'].concat(g.game===true?['game']:[],(g.photos&&g.photos.length)?['memories']:[],['letter','finale'])};
   document.body.dataset.vibe='bday';
   $('#badge').style.display=preview?'block':'none';$('#back').style.display=preview?'block':'none';
@@ -569,7 +679,7 @@ function bscreen(){
   if(st=='gift'){
     if(V.preview||V.peek||bunlocked(g)){
       bframe(`<div class="rico">🎁</div><p class="eyebrow">A surprise for</p><h2>${esc(g.name)}</h2><p>${esc(g.from)} made this just for you.</p><button class="btn" id="nx">Unwrap it ✨</button>`);
-      $('#nx').onclick=()=>{chime();confetti(20);musicStart('bday');bgo()};
+      $('#nx').onclick=()=>{chime();confetti(20);musicStart(g.song||'bday');bgo()};
     }else{
       bframe(`<div class="rico">🎈</div><h2>The surprise unlocks at midnight</h2><p>Some things are worth the wait. This is one of them.</p><div class="odo" id="cd"></div><p>hours · minutes · seconds</p><button class="btn ghost" id="pk">…or peek right now →</button>`);
       const t=bnext(g);
@@ -585,11 +695,25 @@ function bscreen(){
     confetti(50);chime();$('#nx').onclick=bgo;
   }
   if(st=='cake'){
-    bframe(`<h2>First things first 🎂</h2><p id="ct">Tap the candle to light it</p><div class="cake" data-cake="${g.cake||'choc'}" id="ck"><div class="l1"></div><div class="l2"></div><div class="ic"></div><div class="candle" id="cdl"><i class="flame"></i></div></div><button class="btn" id="nx" disabled>Light the candle first</button>`);
-    const ck=$('#ck'),ct=$('#ct'),nx=$('#nx');
-    $('#cdl').onclick=()=>{
-      if(!V.lit){V.lit=1;ck.classList.add('lit');ct.textContent='Make a wish… then tap the candle to blow it out 🌠';beep(700,.15)}
-      else if(!V.blown){V.blown=1;ck.classList.remove('lit');ct.textContent='🎉 Wish made! Now cut the cake';confetti(30);chime();nx.disabled=false;nx.textContent='Cut the cake 🔪'}
+    const age=String(g.age||'').replace(/\D/g,'').slice(0,2);
+    const cds=(age&&+age>0)
+      ?age.split('').map((ch,i)=>`<div class="cd num" data-k="${i}" role="button" aria-label="candle"><span>${ch}</span><i class="fm"></i></div>`)
+      :['s1','s2','s3','s2','s1'].map((c,i)=>`<div class="cd ${c}" data-k="${i}" role="button" aria-label="candle"><i class="fm"></i></div>`);
+    bframe(`<h2>First things first 🎂</h2><p id="ct">Tap the candles to light them 🔥</p><div class="cake2" data-cake="${g.cake||'choc'}" id="ck"><div class="cdrow">${cds.join('')}</div><div class="t2"></div><div class="t1"></div><div class="plate"></div></div><button class="btn" id="nx" disabled>Light the candles first</button>`);
+    const ck=$('#ck'),ct=$('#ct'),nx=$('#nx'),total=cds.length;
+    V.on=V.on||new Set();
+    const smoke=c=>{for(let i=0;i<3;i++){const m=document.createElement('span');m.className='sm';m.style.animationDelay=(i*.18)+'s';m.style.marginLeft=(i*5-5)+'px';c.appendChild(m);setTimeout(()=>m.remove(),2000)}};
+    const upd=()=>{
+      ck.classList.toggle('glow',V.on.size>0);
+      if(V.on.size==total&&!V.wished){V.wished=1;ct.textContent='Make a wish… 🌠 then tap each candle to blow it out';chime()}
+      else if(V.on.size==0&&V.wished&&!V.blown){V.blown=1;ct.textContent='🎉 Wish made! Now cut the cake';confetti(30);chime();nx.disabled=false;nx.textContent='Cut the cake 🔪'}
+      else if(!V.wished)ct.textContent=V.on.size?V.on.size+' of '+total+' candles lit. Light them all 🔥':'Tap the candles to light them 🔥';
+    };
+    ck.onclick=e=>{
+      const c=e.target.closest('.cd');if(!c)return;const k=c.dataset.k;
+      if(V.on.has(k)){V.on.delete(k);c.classList.remove('on');smoke(c);beep(200,.14,'sawtooth',.03)}   // blow out
+      else{V.on.add(k);c.classList.add('on');beep(520+V.on.size*70,.1)}                                    // light (again)
+      upd();
     };
     nx.onclick=()=>{
       if(!V.cut){V.cut=1;ck.outerHTML='<div class="sliced">🍰</div>';ct.textContent='Yum! Happy birthday 💛';confetti(40);beep(520,.2);nx.textContent='Continue →'}
@@ -607,9 +731,11 @@ function bscreen(){
     $('#nx').onclick=bgo;
   }
   if(st=='game'){
-    const EM=['🎂','🎈','🎁','🎉','🍰','🧁'],deck=EM.concat(EM);
+    const P=(g.photos||[]).slice(0,6).map((x,i)=>({k:'p'+i,src:x.src}));
+    const faces=P.concat(['🎂','🎈','🎁','🎉','🍰','🧁','🍭','🎀'].slice(0,6-P.length).map(e=>({k:e,e})));
+    const deck=faces.concat(faces);
     for(let k=deck.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[deck[k],deck[j]]=[deck[j],deck[k]]}
-    bframe(`<h2>Mini game 🎮</h2><p id="gp">Match the pairs. No rush, take your time!</p><div class="mm" id="mm">${deck.map((e,i)=>`<button class="mc" data-e="${e}"><span class="mf">❓</span><span class="mb">${e}</span></button>`).join('')}</div><p id="gm">Moves: 0 · Pairs: 0/6</p><button class="btn" id="nx" disabled>Match all pairs to continue</button><button class="dlink" id="sk">Skip the game →</button>`);
+    bframe(`<h2>Mini game 🎮</h2><p id="gp">${P.length?'Match the pairs. Your own photos are the cards!':'Match the pairs. No rush, take your time!'}</p><div class="mm" id="mm">${deck.map(f=>`<button class="mc" data-e="${esc(f.k)}"><span class="mf">✨</span>${f.src?`<span class="mb ph" style="background-image:url('${f.src}')"></span>`:`<span class="mb">${f.e}</span>`}</button>`).join('')}</div><p id="gm">Moves: 0 · Pairs: 0/6</p><button class="btn" id="nx" disabled>Match all pairs to continue</button><button class="dlink" id="sk">Skip the game →</button>`);
     let open=[],moves=0,found=0,lock=false;
     $('#mm').onclick=e=>{
       const c=e.target.closest('.mc');if(!c||lock||c.classList.contains('up')||c.classList.contains('ok'))return;
@@ -625,13 +751,48 @@ function bscreen(){
   }
   if(st=='memories'){
     const N=g.photos.length,room0=()=>$('#room');
-    V.seen=V.seen||new Set();
-    const draw=()=>{const p=g.photos[V.ex];V.seen.add(V.ex);const all=V.seen.size>=N;
-      room0().innerHTML=`<div class="lights">${'<i></i>'.repeat(10)}</div><h2>A walk down memory lane 📸</h2><div class="frame"><img src="${p.src}"></div><div class="cap">${esc(p.cap)}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${N}</span><button id="nt">›</button></div><p>${all?'You’ve seen every memory 💛':'👀 Seen '+V.seen.size+' of '+N+' — look at all of them to continue'}</p><button class="btn" id="nx" ${all?'':'disabled'}>${all?'Keep going ✨':'🔒 See all photos first'}</button>`;
-      $('#pv').onclick=()=>{V.ex=(V.ex+N-1)%N;beep(500,.06);draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%N;beep(560,.06);draw()};$('#nx').onclick=bgo;if(all&&N>1&&!V.sdone){V.sdone=1;chime()}};
+    V.rev=V.rev||new Set();
+    const draw=()=>{
+      const p=g.photos[V.ex],done=V.rev.has(V.ex),all=V.rev.size>=N;
+      room0().innerHTML=`<div class="lights">${'<i></i>'.repeat(10)}</div><h2>A walk down memory lane 📸</h2><p id="sh">${done?'✨ Revealed!':'Scratch the card to reveal the memory ✨'}</p><div class="frame"><img src="${p.src}">${done?'':'<canvas class="scratch" id="sc"></canvas><div class="hand" id="hd">👆</div>'}</div><div class="cap">${done?esc(p.cap):'&nbsp;'}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${N}</span><button id="nt">›</button></div><p>${all?'You’ve revealed every memory 💛':'👀 Revealed '+V.rev.size+' of '+N+(N>1?'. Scratch each photo to continue':'')}</p><button class="btn" id="nx" ${all?'':'disabled'}>${all?'Keep going ✨':'🔒 Scratch all photos first'}</button>`;
+      $('#pv').onclick=()=>{V.ex=(V.ex+N-1)%N;beep(500,.06);draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%N;beep(560,.06);draw()};$('#nx').onclick=bgo;
+      if(all&&!V.sdone){V.sdone=1;chime();confetti(30)}
+      if(!done)setup();
+    };
+    const setup=()=>{
+      const cv=$('#sc'),r=cv.parentElement.getBoundingClientRect(),W=Math.round(r.width)||280,H=Math.round(r.height)||280;
+      cv.width=W;cv.height=H;
+      const x=cv.getContext&&cv.getContext('2d');
+      if(x){ // silver scratch card
+        const gr=x.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#c3c9d2');gr.addColorStop(.5,'#f1f3f6');gr.addColorStop(1,'#aab1bd');
+        x.fillStyle=gr;x.fillRect(0,0,W,H);
+        for(let i=0;i<320;i++){x.fillStyle='rgba('+(i%2?'255,255,255':'110,118,134')+','+(Math.random()*.4)+')';x.fillRect(Math.random()*W,Math.random()*H,2,2)}
+        x.fillStyle='#6f7788';x.font='700 22px Outfit,sans-serif';x.textAlign='center';x.fillText('✨ SCRATCH HERE ✨',W/2,H/2+8);
+        x.globalCompositeOperation='destination-out';
+      }
+      const G=12,R=26,cells=new Set();let down=false,started=false;
+      const at=e=>{const b=cv.getBoundingClientRect();return[(e.clientX-b.left)*(b.width?W/b.width:1),(e.clientY-b.top)*(b.height?H/b.height:1)]};
+      let lx=null,ly=null;
+      const stamp=(px,py)=>{
+        if(x){x.beginPath();x.arc(px,py,R,0,Math.PI*2);x.fill()}
+        for(let dx=-R;dx<=R;dx+=13)for(let dy=-R;dy<=R;dy+=13){const cx=Math.floor((px+dx)/W*G),cy=Math.floor((py+dy)/H*G);if(cx>=0&&cy>=0&&cx<G&&cy<G)cells.add(cx*G+cy)}
+      };
+      const scratch=(px,py)=>{
+        // fill the gap since the last point, so a fast swipe leaves no unscratched strips
+        const n=lx==null?1:Math.max(1,Math.ceil(Math.hypot(px-lx,py-ly)/10));
+        for(let i=1;i<=n;i++)stamp(lx==null?px:lx+(px-lx)*i/n,ly==null?py:ly+(py-ly)*i/n);
+        lx=px;ly=py;
+        if(!started){started=true;const h=$('#hd');if(h)h.remove()}
+        if(cells.size>=G*G*.5&&!V.rev.has(V.ex)){
+          V.rev.add(V.ex);cv.classList.add('gone');chime();beep(900,.12);
+          setTimeout(()=>{if(V&&V.stages&&V.stages[V.s]=='memories')draw()},450);
+        }
+      };
+      cv.addEventListener('pointerdown',e=>{down=true;lx=null;ly=null;try{cv.setPointerCapture(e.pointerId)}catch(_){}scratch(...at(e));e.preventDefault()});
+      cv.addEventListener('pointermove',e=>{if(down){scratch(...at(e));if(Math.random()<.15)beep(300+Math.random()*200,.03,'sawtooth',.02)}});
+      ['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,()=>{down=false;lx=null;ly=null}));
+    };
     bframe('');draw();
-    let x0=null;const r=room0();r.ontouchstart=e=>{x0=e.touches[0].clientX};
-    r.ontouchend=e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>45){V.ex=(V.ex+(dx<0?1:N-1))%N;beep(540,.06);draw()}};
   }
   if(st=='letter'){
     bframe(`<h2>One last thing…</h2><p>${esc(g.from)} wrote you a letter.</p><div class="env" id="env"><div class="seal">🎂</div></div><p>👆 Tap to open your letter</p>`);
@@ -648,7 +809,7 @@ function bscreen(){
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
       if(CONFIG.DB&&V.rec.gid)fb('PUT','replies/'+encodeURIComponent(V.rec.gid)+'/'+V.rid,{...V.slim,reply:t}).then(()=>{$('#sr').textContent='Sent ✓ 💛';chime()}).catch(()=>{$('#sr').textContent='Could not send — try again'});
       else{$('#sr').textContent='Saved on this device ✓';chime()}};
-    $('#nx').onclick=()=>{V.s=1;V.popped=new Set();V.lit=V.blown=V.cut=0;V.ex=0;V.seen=null;V.sdone=0;bscreen()};
+    $('#nx').onclick=()=>{V.s=1;V.popped=new Set();V.on=null;V.wished=V.blown=V.cut=0;V.ex=0;V.rev=null;V.sdone=0;bscreen()};
   }
 }
 
