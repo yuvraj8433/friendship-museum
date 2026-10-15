@@ -63,7 +63,9 @@ const SITE_INDEX=location.href.split('#')[0].replace(/admin\.html.*$/,'')+'index
 let LAST_TOKEN='',auth=null,gifts={},replies={},settings={},tab='gifts',filt={q:'',type:'',status:''},note='';
 
 /* ---------- Firebase REST (with the admin's sign-in token) ---------- */
-const dbBase=p=>ADMIN.DB.replace(/\/+$/,'')+'/'+p;
+// Firebase REST needs ".json" after the path, e.g. https://db/gifts.json?shallow=true
+const dbUrl=path=>{const i=path.indexOf('?'),pp=i<0?path:path.slice(0,i),qs=i<0?'':path.slice(i+1);
+  return ADMIN.DB.replace(/\/+$/,'')+'/'+pp+'.json?'+(qs?qs+'&':'')+'auth='+encodeURIComponent(auth.idToken)};
 async function refresh(){
   let r;
   try{r=await fetch('https://securetoken.googleapis.com/v1/token?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(auth.refreshToken)})}
@@ -72,16 +74,9 @@ async function refresh(){
   const j=await r.json();auth.idToken=j.id_token;auth.refreshToken=j.refresh_token;auth.at=Date.now();save();
 }
 async function fb(method,path,body,retry=true){
-  const opts=h=>({method,headers:h,body:body===undefined?undefined:JSON.stringify(body)});
   let r;
-  try{
-    // Preferred: send the sign-in token in a header, so it never appears in the web address.
-    r=await fetch(dbBase(path),opts({Authorization:'Bearer '+auth.idToken}));
-  }catch(e1){
-    try{ // Fallback for networks / extensions that block the header: token in the address.
-      r=await fetch(dbBase(path)+(path.includes('?')?'&':'?')+'auth='+encodeURIComponent(auth.idToken),opts());
-    }catch(e2){throw new Error('Could not reach the database for "'+path.split('?')[0]+'" ('+e2.message+'). Check that ADMIN.DB is exactly your database URL, and try a private window with extensions off.')}
-  }
+  try{r=await fetch(dbUrl(path),{method,body:body===undefined?undefined:JSON.stringify(body)})}
+  catch(e){throw new Error('Could not reach the database for "'+path.split('?')[0]+'" ('+e.message+'). Check that ADMIN.DB is exactly your database URL, and try a private window with extensions off.')}
   // A token only needs renewing once it is old. A fresh token that is refused means the Rules do not allow this user.
   if(r.status==401&&retry&&Date.now()-(auth.at||0)>45*60*1000){await refresh();return fb(method,path,body,false)}
   if(r.status==401||r.status==403)throw new Error('Signed in as '+auth.email+' (UID '+auth.uid+'), but the database refused it. This UID must be the one written in your published Firebase Rules (replace every admin UID there, then Publish).');
