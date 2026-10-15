@@ -83,16 +83,35 @@ function loginView(msg=''){
   app.innerHTML=`<div class="card login"><h1>🔐 Admin</h1><p class="who">Sign in to manage gifts, replies and settings.</p>
   ${!ADMIN.DB||!ADMIN.API_KEY?'<div class="msg bad">Set <b>DB</b> and <b>API_KEY</b> at the top of admin.html first.</div>':''}
   <label>Email</label><input type="email" id="em" autocomplete="username"><label>Password</label><input type="password" id="pw" autocomplete="current-password">
-  <button class="btn" id="go" style="width:100%;margin-top:16px">Sign in</button><div class="err" id="er">${esc(msg)}</div></div>`;
+  <button class="btn" id="go" style="width:100%;margin-top:16px">Sign in</button><div class="err" id="er">${esc(msg)}</div>
+  <button class="btn g s" id="dg" style="margin-top:12px">🩺 Run connection check</button><div id="dgo" style="font-size:13px;margin-top:8px;line-height:1.6"></div></div>`;
   const go=async()=>{
     $('#er').textContent='';$('#go').disabled=true;
     try{
       const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('#em').value.trim(),password:$('#pw').value,returnSecureToken:true})});
       const j=await r.json();if(!r.ok)throw new Error(({EMAIL_NOT_FOUND:'No such admin account.',INVALID_PASSWORD:'Wrong password.',INVALID_LOGIN_CREDENTIALS:'Wrong email or password.',TOO_MANY_ATTEMPTS_TRY_LATER:'Too many attempts. Try later.'})[j.error&&j.error.message]||'Sign-in failed ('+((j.error&&j.error.message)||r.status)+')');
       auth={idToken:j.idToken,refreshToken:j.refreshToken,email:j.email,uid:j.localId};save();await load();
-    }catch(e){$('#er').textContent=e.message;$('#go').disabled=false}
+    }catch(e){$('#er').textContent=/failed to fetch|networkerror|load failed/i.test(e.message)?'Could not reach Google. Tap “Run connection check” below to see what is blocked.':e.message;$('#go').disabled=false}
   };
   $('#go').onclick=go;$('#pw').onkeydown=e=>{if(e.key=='Enter')go()};
+  $('#dg').onclick=diagnose;
+}
+
+/* ---------- connection check (shows which connection is blocked) ---------- */
+async function diagnose(){
+  const out=$('#dgo');out.innerHTML='Checking…';
+  const tests=[
+    ['Settings in this file',async()=>{if(!ADMIN.DB||!ADMIN.API_KEY)throw new Error('DB or API_KEY is empty in admin.html (is the OLD file still uploaded?)');return 'DB and API key are filled in'}],
+    ['Google sign-in service',async()=>{const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+ADMIN.API_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'check@example.com',password:'x',returnSecureToken:true})});const j=await r.json();const m=(j.error&&j.error.message)||'';if(/API key|API_KEY/i.test(m))throw new Error('Google rejected the API key: '+m);if(m=='OPERATION_NOT_ALLOWED')throw new Error('Email/Password sign-in is not enabled in Firebase Authentication');return 'reachable ('+(m||'ok')+')'}],
+    ['Your database',async()=>{const r=await fetch(ADMIN.DB.replace(/\/+$/,'')+'/settings.json');if(!r.ok)throw new Error('database answered '+r.status);return 'reachable'}]
+  ];
+  let h='';
+  for(const [name,fn] of tests){
+    try{h+='✅ '+esc(name)+': '+esc(await fn())+'<br>'}
+    catch(e){const net=/failed to fetch|networkerror|load failed/i.test(e.message);h+='❌ '+esc(name)+': '+esc(net?'blocked or no connection. Try: another browser or a private window with extensions off, mobile data instead of Wi-Fi, and turn off VPN / ad blocker / Brave Shields for this site.':e.message)+'<br>'}
+    out.innerHTML=h+'Checking…';
+  }
+  out.innerHTML=h;
 }
 
 /* ---------- load everything ---------- */
