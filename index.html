@@ -190,9 +190,9 @@ async function loadGift(code){try{const g=await fb('GET','gifts/'+encodeURICompo
 const uid=()=>Math.random().toString(36).slice(2,9);
 
 /* ---------- sound ---------- */
-function beep(f=520,d=.12,t='sine',v=.08){if(muted)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+function beep(f=520,d=.12,t='sine',v=.08){if(muted)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state=='suspended')actx.resume();const o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+d)}catch(e){}}
 const chime=()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.25),i*110));
-$('#mute').onclick=()=>{muted=!muted;$('#mute').textContent=muted?'🔇':'🔊'};
+$('#mute').onclick=()=>{muted=!muted;$('#mute').textContent=muted?'🔇':'🔊';if(MUS.g)MUS.g.gain.value=muted?0:MUS_VOL};
 function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(let i=0;i<n;i++){const e=document.createElement('span');e.className='confetti';e.textContent=em[i%em.length];e.style.left=Math.random()*100+'vw';e.style.animationDuration=2+Math.random()*2.5+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),5000)}}
 
 /* ---------- WIZARD ---------- */
@@ -265,7 +265,8 @@ shell.addEventListener('click',e=>{
   else if(d.act=='addnote'){const v=$('#f-cn').value.trim();if(v){if(!S.notes.includes(v)&&S.notes.length<5)S.notes.push(v);wiz()}}
   else if(d.act=='addrule'){const v=$('#f-cr').value.trim();if(v){if(!S.rules.includes(v)&&S.rules.length<5)S.rules.push(v);wiz()}}
   else if(d.act=='preview')startMuseum(S,true);
-  else if(d.act=='link'){if(CONFIG.RZP_KEY&&!S.payId){S.step=S.type=='bday'?7:8;wiz()}else makeLink()}
+  else if(d.act=='link'){if(CONFIG.PAUSED&&!S.payId){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
+    if(CONFIG.RZP_KEY&&!S.payId){S.step=S.type=='bday'?7:8;wiz()}else makeLink()}
   else if(d.act=='type'){S.type='';wiz()}
   else if(d.act=='pay')pay();
   else if(d.act=='dash')dashboard();
@@ -312,6 +313,7 @@ function pay(){
 }
 async function makeLink(){
   if(!S.id)S.id=uid();
+  if(!S.created)S.created=new Date().toISOString();
   const out=$('#out'),base=location.href.split('#')[0];
   if(!S.recorded){S.recorded=1;const rec={id:S.id,type:S.type,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,pay:S.payId||'',created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
 let url,short=false,err='';
@@ -320,7 +322,7 @@ let url,short=false,err='';
     // The link is shown only after the database confirms it saved. A code that is already taken is refused by the Rules, so we retry.
     for(let t=0;t<4&&!short;t++){
       const code=Math.random().toString(36).slice(2,8);
-      try{await fb('PUT','gifts/'+code,S);url=base+'#c='+code;short=true;S.code=code}
+      try{await fb('PUT','gifts/'+code,S);url=base+'#c='+code;short=true;S.code=code;fb('PUT','index/'+code,{id:S.id,type:S.type||'friend',name:S.name,from:S.from,created:S.created,pay:S.payId||''}).catch(()=>{})}
       catch(e){err=String(e.message||e)}
     }
   }
@@ -341,7 +343,7 @@ function startMuseum(g,preview){
   $('#back').style.display=preview?'block':'none';
   room();
 }
-$('#back').onclick=()=>{if(V&&V.tk)clearInterval(V.tk);V=null;wiz()};
+$('#back').onclick=()=>{if(V&&V.tk)clearInterval(V.tk);musicStop();V=null;wiz()};
 function days(g){if(!g.sy)return null;const d=new Date(+g.sy,(+g.sm||1)-1,1);return Math.max(1,Math.floor((Date.now()-d)/864e5))}
 function frame(inner){
   const pr=ROOMS.map((_,i)=>`<s class="${i<=V.i?'on':''}"></s>`).join('');
@@ -354,7 +356,7 @@ function room(){
   const g=V.g,i=V.i;
   if(i==0){
     frame(`<p class="eyebrow">A museum for</p><h2>${esc(g.name)}</h2><p>${esc(g.from)} built this for their ${KIND_LINE[g.kind]}.<br>Knock 3 times to enter.</p><div class="door" id="door"></div><p id="kc">Knocks: 0 / 3</p>`);
-    $('#door').onclick=()=>{V.knocks++;beep(180,.12,'square',.1);const d=$('#door');d.classList.remove('k');void d.offsetWidth;d.classList.add('k');$('#kc').textContent=`Knocks: ${V.knocks} / 3`;
+    $('#door').onclick=()=>{V.knocks++;if(V.knocks==1)musicStart('calm');beep(180,.12,'square',.1);const d=$('#door');d.classList.remove('k');void d.offsetWidth;d.classList.add('k');$('#kc').textContent=`Knocks: ${V.knocks} / 3`;
       if(V.knocks>=3){d.classList.add('open');chime();setTimeout(go,900)}};
   }
   if(i==1){
@@ -423,6 +425,51 @@ function puzzle(p,n){
     if(sel!==k){[order[sel],order[k]]=[order[k],order[sel]];V.moves++;$('#mv').textContent='Moves: '+V.moves;beep(440,.07)}
     sel=null;draw();
     if(order.every((v,j)=>v==j)){chime();confetti(25);setTimeout(()=>{$('#room').insertAdjacentHTML('beforeend',next());$('#nx').onclick=go},300)}};
+}
+
+/* ---------- background music (generated with the Web Audio API, so there are no audio files) ---------- */
+const MUS={g:null,t:null,on:false,track:''};
+const MUS_VOL=.55;
+function ctx(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state=='suspended')actx.resume();return actx}catch(e){return null}}
+function mnote(f,at,dur,type,vol){
+  const c=actx,o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(vol,at+.03);g.gain.exponentialRampToValueAtTime(.0001,at+dur);
+  o.connect(g);g.connect(MUS.g);o.start(at);o.stop(at+dur+.05);
+}
+// Happy Birthday (traditional melody), [frequency Hz, beats]; 24 beats in 4 lines
+const HB=[[392,.75],[392,.25],[440,1],[392,1],[523.25,1],[493.88,2],[392,.75],[392,.25],[440,1],[392,1],[587.33,1],[523.25,2],[392,.75],[392,.25],[783.99,1],[659.25,1],[523.25,1],[493.88,1],[440,1],[698.46,.75],[698.46,.25],[659.25,1],[523.25,1],[587.33,1],[523.25,2]];
+const HB_BASS=[[130.81,196],[130.81,98],[130.81,164.81],[174.61,130.81]];
+const CALM=[[261.63,329.63,392,523.25],[220,261.63,329.63,440],[174.61,261.63,349.23,440],[196,246.94,293.66,392]];
+function musicStart(track){
+  musicStop();
+  if(!ctx())return;
+  MUS.on=true;MUS.track=track;
+  MUS.g=actx.createGain();MUS.g.gain.value=muted?0:MUS_VOL;MUS.g.connect(actx.destination);
+  const loop=()=>{
+    if(!MUS.on||!MUS.g)return;
+    const t0=actx.currentTime+.1;let len;
+    if(track=='bday'){
+      const beat=.55;let t=t0;
+      HB.forEach(n=>{mnote(n[0],t,n[1]*beat*.95,'triangle',.11);mnote(n[0]*2,t,n[1]*beat*.6,'sine',.025);t+=n[1]*beat});
+      HB_BASS.forEach((b,i)=>{mnote(b[0],t0+i*6*beat,2.8*beat,'sine',.07);mnote(b[1],t0+(i*6+3)*beat,2.8*beat,'sine',.05)});
+      len=26*beat;
+    }else{
+      const step=.45;
+      CALM.forEach((ch,i)=>{
+        const base=t0+i*8*step;
+        mnote(ch[0]/2,base,8*step,'sine',.05);
+        [0,1,2,3,2,1,2,3].forEach((k,j)=>mnote(ch[k],base+j*step,step*1.6,'triangle',.06));
+      });
+      len=32*step;
+    }
+    MUS.t=setTimeout(loop,Math.max(500,len*1000-300));
+  };
+  loop();
+}
+function musicStop(){
+  MUS.on=false;clearTimeout(MUS.t);
+  if(MUS.g){try{MUS.g.gain.setTargetAtTime(0,actx.currentTime,.12)}catch(e){}MUS.g=null}
 }
 
 /* ---------- BIRTHDAY SURPRISE ---------- */
@@ -516,7 +563,7 @@ function bscreen(){
   if(s==0){
     if(V.preview||V.peek||bunlocked(g)){
       bframe(`<div class="rico">🎁</div><p class="eyebrow">A surprise for</p><h2>${esc(g.name)}</h2><p>${esc(g.from)} made this just for you.</p><button class="btn" id="nx">Unwrap it ✨</button>`);
-      $('#nx').onclick=()=>{chime();confetti(20);bgo()};
+      $('#nx').onclick=()=>{chime();confetti(20);musicStart('bday');bgo()};
     }else{
       bframe(`<div class="rico">🎈</div><h2>The surprise unlocks at midnight</h2><p>Some things are worth the wait. This is one of them.</p><div class="odo" id="cd"></div><p>hours · minutes · seconds</p><button class="btn ghost" id="pk">…or peek right now →</button>`);
       const t=bnext(g);
@@ -555,9 +602,10 @@ function bscreen(){
   }
   if(s==4){
     const N=g.photos.length,room0=()=>$('#room');
-    const draw=()=>{const p=g.photos[V.ex];
-      room0().innerHTML=`<div class="lights">${'<i></i>'.repeat(10)}</div><h2>A walk down memory lane 📸</h2><div class="frame"><img src="${p.src}"></div><div class="cap">${esc(p.cap)}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${N}</span><button id="nt">›</button></div><button class="btn" id="nx">Keep going ✨</button>`;
-      $('#pv').onclick=()=>{V.ex=(V.ex+N-1)%N;beep(500,.06);draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%N;beep(560,.06);draw()};$('#nx').onclick=bgo};
+    V.seen=V.seen||new Set();
+    const draw=()=>{const p=g.photos[V.ex];V.seen.add(V.ex);const all=V.seen.size>=N;
+      room0().innerHTML=`<div class="lights">${'<i></i>'.repeat(10)}</div><h2>A walk down memory lane 📸</h2><div class="frame"><img src="${p.src}"></div><div class="cap">${esc(p.cap)}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${N}</span><button id="nt">›</button></div><p>${all?'You’ve seen every memory 💛':'👀 Seen '+V.seen.size+' of '+N+' — look at all of them to continue'}</p><button class="btn" id="nx" ${all?'':'disabled'}>${all?'Keep going ✨':'🔒 See all photos first'}</button>`;
+      $('#pv').onclick=()=>{V.ex=(V.ex+N-1)%N;beep(500,.06);draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%N;beep(560,.06);draw()};$('#nx').onclick=bgo;if(all&&N>1&&!V.sdone){V.sdone=1;chime()}};
     bframe('');draw();
     let x0=null;const r=room0();r.ontouchstart=e=>{x0=e.touches[0].clientX};
     r.ontouchend=e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>45){V.ex=(V.ex+(dx<0?1:N-1))%N;beep(540,.06);draw()}};
@@ -577,19 +625,29 @@ function bscreen(){
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
       if(CONFIG.DB&&V.rec.gid)fb('PUT','replies/'+encodeURIComponent(V.rec.gid)+'/'+V.rid,{...V.slim,reply:t}).then(()=>{$('#sr').textContent='Sent ✓ 💛';chime()}).catch(()=>{$('#sr').textContent='Could not send — try again'});
       else{$('#sr').textContent='Saved on this device ✓';chime()}};
-    $('#nx').onclick=()=>{V.s=1;V.popped=new Set();V.lit=V.blown=V.cut=0;V.ex=0;bscreen()};
+    $('#nx').onclick=()=>{V.s=1;V.popped=new Set();V.lit=V.blown=V.cut=0;V.ex=0;V.seen=null;V.sdone=0;bscreen()};
   }
 }
 
 /* ---------- boot ---------- */
-{const lp=$('#lg-price');if(lp&&CONFIG.RZP_KEY)lp.textContent='One gift link: ₹'+CONFIG.PRICE_INR+' · one-time payment · ';}
-const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([a-z0-9]+)/);
-if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}
-else if(mc&&CONFIG.DB){
-  shell.innerHTML='<div class="card"><h1>Opening your gift… 🎁</h1><p class="sub">Just a moment</p></div>';
-  (async()=>{let g=null;for(let t=0;t<4&&!g;t++){g=await loadGift(mc[1]);if(!g)await new Promise(r=>setTimeout(r,1500))}
-    if(g)startMuseum(g,false);else shell.innerHTML='<div class="card"><h1>Gift not found 😢</h1><p class="sub">Ask your friend to send the link again.</p></div>'})();
-}else wiz();
+(async()=>{
+  const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([a-z0-9]+)/);
+  // Live settings from the admin dashboard (price, pause). Never delays the page by more than ~1.2 seconds.
+  if(CONFIG.DB&&!m){
+    shell.innerHTML='<div class="card"><h1>Loading… 🎁</h1></div>';
+    try{const st=await Promise.race([fb('GET','settings'),new Promise(r=>setTimeout(()=>r(null),1200))]);
+      if(st){if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused}}catch(e){}
+  }
+  {const lp=$('#lg-price');if(lp&&CONFIG.RZP_KEY)lp.textContent='One gift link: ₹'+CONFIG.PRICE_INR+' · one-time payment · ';}
+  if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}
+  else if(mc&&CONFIG.DB){
+    shell.innerHTML='<div class="card"><h1>Opening your gift… 🎁</h1><p class="sub">Just a moment</p></div>';
+    let g=null;for(let t=0;t<4&&!g;t++){g=await loadGift(mc[1]);if(!g)await new Promise(r=>setTimeout(r,1500))}
+    if(g&&g.disabled)shell.innerHTML='<div class="card"><h1>This gift is unavailable 🔒</h1><p class="sub">This link has been turned off.</p></div>';
+    else if(g)startMuseum(g,false);
+    else shell.innerHTML='<div class="card"><h1>Gift not found 😢</h1><p class="sub">Ask your friend to send the link again.</p></div>';
+  }else wiz();
+})();
 })();
 </script>
 </body>
