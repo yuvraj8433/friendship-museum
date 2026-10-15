@@ -60,7 +60,7 @@ const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app=$('#app');
 const SITE_INDEX=location.href.split('#')[0].replace(/admin\.html.*$/,'')+'index.html';
-let auth=null,gifts={},replies={},settings={},tab='gifts',filt={q:'',type:'',status:''},note='';
+let LAST_TOKEN='',auth=null,gifts={},replies={},settings={},tab='gifts',filt={q:'',type:'',status:''},note='';
 
 /* ---------- Firebase REST (with the admin's sign-in token) ---------- */
 const dbBase=p=>ADMIN.DB.replace(/\/+$/,'')+'/'+p;
@@ -96,7 +96,7 @@ function loginView(msg=''){
   ${!ADMIN.DB||!ADMIN.API_KEY?'<div class="msg bad">Set <b>DB</b> and <b>API_KEY</b> at the top of admin.html first.</div>':''}
   <label>Email</label><input type="email" id="em" autocomplete="username"><label>Password</label><input type="password" id="pw" autocomplete="current-password">
   <button class="btn" id="go" style="width:100%;margin-top:16px">Sign in</button><div class="err" id="er">${esc(msg)}</div>
-  <button class="btn g s" id="dg" style="margin-top:12px">🩺 Run connection check</button><div id="dgo" style="font-size:13px;margin-top:8px;line-height:1.6"></div></div>`;
+  <button class="btn g s" id="dg" style="margin-top:12px">🩺 Run connection check</button>${LAST_TOKEN?'<button class="btn g s" id="dd" style="margin:12px 0 0 6px">🔬 Deep check (uses your sign-in)</button>':''}<div id="dgo" style="font-size:13px;margin-top:8px;line-height:1.6"></div></div>`;
   const go=async()=>{
     $('#er').textContent='';$('#go').disabled=true;
     try{
@@ -106,7 +106,7 @@ function loginView(msg=''){
     }catch(e){$('#er').textContent=/failed to fetch|networkerror|load failed/i.test(e.message)?'Could not reach Google. Tap “Run connection check” below to see what is blocked.':e.message;$('#go').disabled=false}
   };
   $('#go').onclick=go;$('#pw').onkeydown=e=>{if(e.key=='Enter')go()};
-  $('#dg').onclick=diagnose;
+  $('#dg').onclick=diagnose;if($('#dd'))$('#dd').onclick=deepCheck;
 }
 
 /* ---------- connection check (shows which connection is blocked) ---------- */
@@ -127,6 +127,26 @@ async function diagnose(){
   out.innerHTML=h;
 }
 
+/* ---------- deep check: which kind of database request is blocked? ---------- */
+async function deepCheck(){
+  const out=$('#dgo'),base=ADMIN.DB.replace(/\/+$/,'')+'/settings.json',T=LAST_TOKEN;
+  const tries=[
+    ['Plain request (no token)',()=>fetch(base)],
+    ['Header, dummy short token',()=>fetch(base,{headers:{Authorization:'Bearer abc'}})],
+    ['Address, dummy short token',()=>fetch(base+'?auth=abc')],
+    ['Header, your real token ('+T.length+' chars)',()=>fetch(base,{headers:{Authorization:'Bearer '+T}})],
+    ['Address, your real token',()=>fetch(base+'?auth='+encodeURIComponent(T))],
+    ['Address, first 300 chars of your token',()=>fetch(base+'?auth='+encodeURIComponent(T.slice(0,300)))]
+  ];
+  let h='';out.innerHTML='Testing…';
+  for(const [name,fn] of tries){
+    try{const r=await fn();h+=(r.status<500?'✅ ':'⚠️ ')+esc(name)+': answered (HTTP '+r.status+')<br>'}
+    catch(e){h+='❌ '+esc(name)+': blocked ('+esc(e.message)+')<br>'}
+    out.innerHTML=h+'Testing…';
+  }
+  out.innerHTML=h+'<br><b>Copy these lines and send them to your developer.</b>';
+}
+
 /* ---------- load everything ---------- */
 async function load(){
   app.innerHTML='<div class="card login"><h1>Loading… ⏳</h1></div>';
@@ -134,7 +154,7 @@ async function load(){
     const [ix,rp,st]=await Promise.all([fb('GET','index'),fb('GET','replies'),fb('GET','settings')]);
     gifts=ix||{};replies=rp||{};settings=st||{};
     render();
-  }catch(e){auth=null;try{sessionStorage.removeItem('om_admin')}catch(_){}loginView(e.message)}
+  }catch(e){LAST_TOKEN=(auth&&auth.idToken)||'';auth=null;try{sessionStorage.removeItem('om_admin')}catch(_){}loginView(e.message)}
 }
 
 /* ---------- helpers ---------- */
