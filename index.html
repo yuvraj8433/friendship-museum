@@ -195,6 +195,65 @@ body.bd-env .room,body.bd-env .card{border:2px solid #fff;box-shadow:0 18px 50px
 .mc.up .mb.ph,.mc.ok .mb.ph{display:block}
 .admbar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:30;background:#17332d;color:#fff;padding:8px 14px;border-radius:99px;font-size:12px;font-weight:600;display:flex;gap:10px;align-items:center;box-shadow:0 6px 20px #0004;white-space:nowrap;max-width:96vw}
 .admbar button{border:0;border-radius:99px;padding:5px 10px;font:inherit;font-size:11px;cursor:pointer;background:#ffffff26;color:#fff}
+
+/* ---- friendship v2: vibe backdrops ---- */
+#fenv{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;display:none}
+body.fr-env #fenv{display:block}body.fr-env #bg{display:none}
+#fenv::before{content:"";position:absolute;left:50%;top:-12%;width:95vmin;height:95vmin;transform:translateX(-50%);background:radial-gradient(circle,#ffffffaa 0,#fff0 62%)}
+body.fr-chaos{background:linear-gradient(135deg,#ffd6e8,#fff0d1 50%,#d3f1ff) fixed}
+body.fr-calm{background:linear-gradient(160deg,#1c2a52,#3b4f86 55%,#6f86b8) fixed}
+body.fr-roast{background:linear-gradient(180deg,#3a1022,#7a1f2b 55%,#ff7a45) fixed}
+body.fr-ride{background:linear-gradient(135deg,#1f2a5a,#3b2f8f 55%,#13a38b) fixed}
+body.fr-calm .pill-room,body.fr-roast .pill-room,body.fr-ride .pill-room,body.fr-calm .lg,body.fr-calm .lg a,body.fr-roast .lg,body.fr-roast .lg a,body.fr-ride .lg,body.fr-ride .lg a{color:#eef1ff}
+body.fr-calm .pill-room i s,body.fr-roast .pill-room i s,body.fr-ride .pill-room i s{background:#ffffff33}
+body.fr-calm .pill-room i s.on,body.fr-roast .pill-room i s.on,body.fr-ride .pill-room i s.on{background:var(--acc2)}
+body.fr-env .room,body.fr-env .card{border:2px solid #ffffffcc;box-shadow:0 24px 70px #0003}
+.fe-e{position:absolute;bottom:-10vh;font-size:28px;font-weight:400;animation:riseb linear infinite;opacity:.9;filter:drop-shadow(0 3px 4px #0003)}
+.fe-c{position:absolute;top:-6vh;width:9px;height:14px;border-radius:2px;background:var(--c);opacity:.85;animation:fallc linear infinite}
+.fe-s{position:absolute;width:calc(var(--z)*2px);height:calc(var(--z)*2px);border-radius:50%;background:#fff;animation:twk 3s ease-in-out infinite alternate}
+@keyframes twk{from{opacity:.15;transform:scale(.7)}to{opacity:1;transform:scale(1.3)}}
+.fe-f{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffe9a3;box-shadow:0 0 12px 5px #ffe08a99;animation:drift ease-in-out infinite alternate}
+@keyframes drift{0%{transform:translate(0,0);opacity:.2}50%{opacity:1}100%{transform:translate(60px,-90px);opacity:.3}}
+.fe-m{position:absolute;bottom:-4vh;width:calc(var(--z)*3px);height:calc(var(--z)*3px);border-radius:50%;background:radial-gradient(#fff3b0,#ff8a3d);box-shadow:0 0 10px 3px #ff8a3d99;animation:ember linear infinite}
+@keyframes ember{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(30px,-112vh);opacity:0}}
+.fe-l{position:absolute;top:-30vh;width:3px;height:30vh;background:linear-gradient(#fff0,#9fd8ffcc,#fff0);transform:rotate(18deg);animation:streak linear infinite}
+@keyframes streak{to{transform:translate(45vw,150vh) rotate(18deg)}}
+/* ---- friendship v2: new rooms ---- */
+.who{color:var(--mut);font-size:13px;margin:2px 0 8px}
+.btn.s{padding:7px 12px;font-size:13px;margin-top:6px;width:auto}
+.meter{width:100%;max-width:300px}.mbar{height:14px;border-radius:99px;background:#e3ece8;overflow:hidden}
+.mbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--a),var(--b),var(--e));border-radius:99px;box-shadow:0 0 12px var(--a)}
+.meter small{display:block;margin-top:6px;font-weight:700;color:var(--ink)}
+.tl{position:relative;width:100%;text-align:left;padding-left:24px;max-height:320px;overflow:auto}
+.tl::before{content:"";position:absolute;left:8px;top:4px;bottom:4px;width:3px;background:linear-gradient(var(--a),var(--e));border-radius:3px}
+.tli{position:relative;margin:0 0 12px;padding:10px 12px;background:#fff7e6;border-radius:12px;animation:pop .4s;display:flex;flex-direction:column}
+.tli::before{content:"";position:absolute;left:-23px;top:14px;width:13px;height:13px;border-radius:50%;background:var(--acc2);border:3px solid #fff;box-shadow:0 0 0 2px var(--acc2)}
+.tli b{font-family:'Bricolage Grotesque';font-size:15px;color:var(--acc2)}.tli span{font-family:'Shantell Sans';font-size:15px}
+.wall{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:340px;margin:6px auto}
+.pol{border:0;background:#fff;padding:8px 8px 6px;border-radius:4px;box-shadow:0 8px 18px #0003,0 0 0 1px #0001;transform:rotate(var(--r));cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:transform .25s;font:inherit}
+.pol:hover{transform:rotate(0) scale(1.03)}
+.pimg{position:relative;display:block;aspect-ratio:1;overflow:hidden;background:#222}
+.pimg img{width:100%;height:100%;object-fit:cover;filter:blur(14px) grayscale(1) brightness(1.25);transform:scale(1.15);transition:filter 1.4s ease,transform 1.4s ease}
+.pol:not(.dev) .pimg::after{content:"✨ tap to develop";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font:700 13px Outfit,sans-serif;text-shadow:0 2px 6px #000a}
+.pol.dev .pimg img{filter:none;transform:none}
+.pcap{font-family:'Shantell Sans',cursive;font-size:13px;min-height:18px;color:var(--ink);opacity:0;transition:opacity .8s .6s}.pol.dev .pcap{opacity:1}
+.qno{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--c);font-weight:700}
+.qq{font-family:'Bricolage Grotesque',sans-serif;font-size:21px;margin:6px 0 12px}
+.qopts{display:grid;gap:8px}
+.qo{font:inherit;font-weight:600;padding:13px;border:2px solid #dbe7e2;background:#fff;border-radius:14px;cursor:pointer;transition:.15s;color:var(--ink)}
+.qo:hover{transform:translateY(-2px)}.qo.good{background:#dff6ef;border-color:#14a38b}.qo.bad{background:#fde8e8;border-color:#d64545;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.qf{min-height:22px;font-weight:700;margin-top:10px;color:var(--ink)}.qres{padding:8px 0}.qres b{font-family:'Bricolage Grotesque',sans-serif;font-size:56px}
+.awl{display:grid;gap:10px;width:100%}
+.award{position:relative;padding:14px;border-radius:16px;background:linear-gradient(135deg,#fff7d6,#ffe9a8);border:2px solid #f5c542;display:flex;flex-direction:column;align-items:center;animation:pop .45s;overflow:hidden}
+.award::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,#fff0,#fff9,#fff0);transform:skewX(-20deg);animation:shine 2.4s infinite}
+.trophy{font-size:40px;filter:drop-shadow(0 4px 4px #0003)}.award small{color:#a86a00;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:11px}.award b{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;color:var(--ink)}
+/* builder: bonus rooms */
+.bx2{border:1.5px dashed var(--acc);border-radius:16px;padding:12px 14px;margin:10px 0;background:#fffdf7}.bx2 h3{font-family:'Bricolage Grotesque',sans-serif;font-size:18px}
+.qb{border:1.5px solid #e3ece8;border-radius:12px;padding:10px;margin:8px 0;display:grid;gap:6px;background:#fff}
+.qrow{display:flex;gap:8px;align-items:center;margin:0;font-weight:400}.qrow input[type=radio]{width:20px;height:20px;flex:none;accent-color:#14A38B;margin:0}.qrow input[type=text]{flex:1}
+.srow{display:flex;gap:6px;margin:6px 0;align-items:center;min-width:0}.srow input{min-width:0}.srow input:first-child{flex:0 0 34%;width:auto}.srow input:nth-child(2){flex:1;width:auto}.srow .btn{margin:0;flex:none}
+.card,.room,.bx2,.qb{min-width:0;max-width:100%}.duo input{min-width:0}.qrow input[type=text]{min-width:0;width:auto}
 .dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
 </style>
 </head>
@@ -219,7 +278,7 @@ const SEALS=['💛','🤝','⭐','🔥','♾️'],STICKERS=['🤗','🥳','🥹'
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const KIND_LINE={bestie:'best friend',child:'oldest friend',college:'college partner-in-crime',work:'work bestie',sib:'sibling in all but blood',online:'favourite person on the internet'};
 
-let S={type:'',game:true,song:'bday',age:'',bm:'',bd:'',cake:'choc',balloons:['','','','',''],step:1,name:'',from:'',kind:'bestie',sm:'',sy:'',vibe:'chaos',notes:[],photos:[],pz:0,grid:3,msg:'',seal:'💛',sticker:'🤗',rules:[]};
+let S={type:'',game:true,song:'bday',quiz:[],story:[],awards:[],fsong:'calm',age:'',bm:'',bd:'',cake:'choc',balloons:['','','','',''],step:1,name:'',from:'',kind:'bestie',sm:'',sy:'',vibe:'chaos',notes:[],photos:[],pz:0,grid:3,msg:'',seal:'💛',sticker:'🤗',rules:[]};
 let V=null; // view state
 let muted=false,actx=null;
 
@@ -237,12 +296,12 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
    PRICE_INR is the price in rupees. Leave RZP_KEY '' to skip payment (links are free). */
 const CONFIG={RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 /* Admin-controlled switches for each builder step (loaded from the database; these are the defaults). */
-const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true}};
+const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,f_quiz:true,f_story:true,f_awards:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true},fsongs:{calm:true,pop:true,lofi:true,box:true,none:true}};
 let ST=JSON.parse(JSON.stringify(ST_DEFAULT));
 // Is payment required right now? Not in free mode, and not for a signed-in admin.
 const payOn=()=>!!CONFIG.RZP_KEY&&!CONFIG.FREE&&!CONFIG.ADMIN;
-const stepOff=(type,n)=>type=='bday'?((n==3&&!ST.b_balloons)||(n==4&&!ST.b_photos)||(n==5&&!ST.b_letter)):((n==2&&!ST.f_kind)||(n==3&&!ST.f_vibe)||(n==4&&!ST.f_photos)||(n==5&&!ST.f_msg)||(n==6&&!ST.f_rules));
-const stepMove=(n,dir)=>{const last=S.type=='bday'?6:7;let k=n+dir;while(k>1&&k<last&&stepOff(S.type,k))k+=dir;return Math.min(Math.max(k,1),last+1)};
+const stepOff=(type,n)=>type=='bday'?((n==3&&!ST.b_balloons)||(n==4&&!ST.b_photos)||(n==5&&!ST.b_letter)):((n==2&&!ST.f_kind)||(n==3&&!ST.f_vibe)||(n==4&&!ST.f_photos)||(n==5&&!ST.f_msg)||(n==6&&!ST.f_rules)||(n==7&&!(ST.f_quiz||ST.f_story||ST.f_awards)));
+const stepMove=(n,dir)=>{const last=S.type=='bday'?6:8;let k=n+dir;while(k>1&&k<last&&stepOff(S.type,k))k+=dir;return Math.min(Math.max(k,1),last+1)};
 const allowedSongs=()=>SONGS.filter(x=>ST.songs[x[0]]!==false);
 const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
 const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
@@ -266,14 +325,16 @@ function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(
 function wiz(){
   if(!S.type){const on=[ST.friend&&'friend',ST.bday&&'bday'].filter(Boolean);if(on.length==1){S.type=on[0];S.step=1;S.vibe=on[0]=='bday'?'bday':'chaos'}else return chooser()}
   if(S.type=='bday')return wizB();
-  setEnv(false);
+  setEnv(false);setFEnv(S.vibe||'chaos');
   document.body.dataset.vibe=S.vibe;
   $('#back').style.display='none';$('#badge').style.display='none';
   const n=S.step;
-  const dots=Array.from({length:payOn()?8:7},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
+  if(MUS.preview&&n!=3){musicStop();MUS.preview=false}
+  const FS=allowedFSongs();if(FS.length&&!FS.some(x=>x[0]==S.fsong))S.fsong=FS[0][0];
+  const dots=Array.from({length:payOn()?9:8},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
   const nav=(next,label='Next →',ok=true)=>`<div class="row"><button class="btn ghost" data-act="prev">←</button><button class="btn" data-act="${next}" ${ok?'':'disabled'}>${label}</button></div>`;
   let h='';
-  if(n==1)h=`<span class="chip">🚪 No occasion needed · send it any day</span><p class="eyebrow">Not a card · a 9-room adventure</p><h1>Build your best friend a <em>museum</em>.</h1><p class="sub">You’re about to make someone’s day unforgettable 🎀</p>
+  if(n==1)h=`<span class="chip">🚪 No occasion needed · send it any day</span><p class="eyebrow">Not a card · an interactive museum</p><h1>Build your best friend a <em>museum</em>.</h1><p class="sub">You’re about to make someone’s day unforgettable 🎀</p>
   <label>Who is this for?</label><input type="text" id="f-name" maxlength="40" placeholder="Your friend’s name" value="${esc(S.name)}">
   <label>And what’s your name?</label><input type="text" id="f-from" maxlength="40" placeholder="Your name" value="${esc(S.from)}">
   <button class="btn" id="go1" data-act="next" ${S.name&&S.from?'':'disabled'}>Start building →</button><p class="hint">Takes about 4 minutes · works on any phone</p>${ST.friend&&ST.bday?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
@@ -283,6 +344,7 @@ function wiz(){
   <div class="duo"><select id="f-sm"><option value="">Month</option>${MONTHS.map((m,i)=>`<option value="${i+1}" ${S.sm==i+1?'selected':''}>${m}</option>`).join('')}</select><select id="f-sy"><option value="">Year</option>${yrs.map(y=>`<option ${S.sy==y?'selected':''}>${y}</option>`).join('')}</select></div>${nav('next')}`}
   if(n==3)h=`<p class="eyebrow">Step 3 · Your vibe & little notes</p><h1>How are you two <em>together</em>?</h1><p class="sub">This sets the colours and the mood of the whole gift.</p>
   ${VIBES.map(v=>`<button class="opt ${S.vibe==v[0]?'on':''}" data-vibe="${v[0]}"><span class="em">${v[1]}</span><span><b>${v[2]}</b><small>${v[3]}</small></span></button>`).join('')}
+  ${FS.length?`<label>Background music <small>— tap one to preview 🎧</small></label>${FS.map(x=>`<button class="opt ${(S.fsong||'calm')==x[0]?'on':''}" data-fsong="${x[0]}"><span class="em">${x[1]}</span><span><b>${x[2]}</b><small>${x[3]}</small></span></button>`).join('')}`:''}
   <label>Now, why they matter to you — tap up to 5. <small>They open each note one by one.</small></label>
   <div id="notes">${[...NOTES,...S.notes.filter(x=>!NOTES.includes(x))].map(x=>`<button class="pill ${S.notes.includes(x)?'on':''}" data-note="${esc(x)}">${esc(x)}</button>`).join('')}</div>
   <div class="duo"><input type="text" id="f-cn" maxlength="80" placeholder="Write your own…"><button class="btn ghost" style="width:80px;margin:0" data-act="addnote">Add</button></div>${nav('next','Next →',S.notes.length>0)}`;
@@ -296,12 +358,23 @@ function wiz(){
   <label>Pick a sticker to go with it</label><div class="stamps">${STICKERS.map(x=>`<button class="pill ${S.sticker==x?'on':''}" data-stk="${x}">${x}</button>`).join('')}</div>${nav('next')}`;
   if(n==6)h=`<p class="eyebrow">Step 6 · Your friendship rules</p><h1>Set your friendship <em>rules</em>.</h1><p class="sub">The promises you two already live by. At the end they tick each one and sign it with their finger.</p>
   <label>Your rules — pick up to 5</label><div id="rules">${[...RULES,...S.rules.filter(x=>!RULES.includes(x))].map(x=>`<button class="pill ${S.rules.includes(x)?'on':''}" data-rule="${esc(x)}">${esc(x)}</button>`).join('')}</div>
-  <div class="duo"><input type="text" id="f-cr" maxlength="80" placeholder="Write your own rule…"><button class="btn ghost" style="width:80px;margin:0" data-act="addrule">Add</button></div>${nav('next','See how it looks →',S.rules.length>0)}`;
-  if(n==7)h=`<p class="eyebrow">Step 7 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
+  <div class="duo"><input type="text" id="f-cr" maxlength="80" placeholder="Write your own rule…"><button class="btn ghost" style="width:80px;margin:0" data-act="addrule">Add</button></div>${nav('next','Next →',S.rules.length>0)}`;
+  if(n==7){const qOn=ST.f_quiz,sOn=ST.f_story,aOn=ST.f_awards;h=`<p class="eyebrow">Step 7 · Bonus rooms</p><h1>Make it <em>amazing</em> ✨</h1><p class="sub">All optional. Each one adds a brand-new room to the museum.</p>
+  ${qOn?`<div class="bx2"><h3>🧠 Friendship quiz</h3><p class="who">Ask up to 3 questions about you. They get a score at the end!</p>
+   ${S.quiz.map((q,i)=>`<div class="qb"><input type="text" data-q="${i}" maxlength="80" placeholder="e.g. Where did we first meet?" value="${esc(q.q)}">${[0,1,2].map(k=>`<label class="qrow"><input type="radio" name="qa${i}" data-qa="${i}" value="${k}" ${q.a==k?'checked':''}><input type="text" data-qo="${i}:${k}" maxlength="40" placeholder="Answer ${k+1}${k==0?' (tick the correct one)':''}" value="${esc(q.o[k])}"></label>`).join('')}<button class="btn ghost s" data-qdel="${i}">Remove question</button></div>`).join('')}
+   ${S.quiz.length<3?'<button class="btn ghost s" data-qadd="1">+ Add a question</button>':''}</div>`:''}
+  ${sOn?`<div class="bx2"><h3>📖 Our story</h3><p class="who">Up to 5 moments, in order. They appear one by one like a timeline.</p>
+   ${S.story.map((m,i)=>`<div class="srow"><input type="text" data-sw="${i}" maxlength="20" placeholder="When? e.g. Jun 2019" value="${esc(m.w)}"><input type="text" data-st="${i}" maxlength="90" placeholder="What happened?" value="${esc(m.t)}"><button class="btn ghost s" data-sdel="${i}" aria-label="Remove">✕</button></div>`).join('')}
+   ${S.story.length<5?'<button class="btn ghost s" data-sadd="1">+ Add a moment</button>':''}</div>`:''}
+  ${aOn?`<div class="bx2"><h3>🏆 Friendship awards</h3><p class="who">Give them up to 5 awards. They open an envelope for each one.</p>
+   <div id="awards">${[...AWARDS,...S.awards.filter(x=>!AWARDS.includes(x))].map(x=>`<button class="pill ${S.awards.includes(x)?'on':''}" data-award="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+   <div class="duo"><input type="text" id="f-ca" maxlength="60" placeholder="Write your own award…"><button class="btn ghost" style="width:80px;margin:0" data-act="addaward">Add</button></div></div>`:''}
+  ${nav('next',(cleanQuiz(S.quiz).length||cleanStory(S.story).length||S.awards.length)?'Next →':'Skip for now')}`}
+  if(n==8)h=`<p class="eyebrow">Step 8 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
   <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
-  if(n==8)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
+  if(n==9)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🏛️ Friendship Museum for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
-  <ul><li>✅ 9-room museum adventure</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} + a puzzle</li><li>💌 Sealed message & ${S.rules.length} friendship rule${S.rules.length==1?'':'s'}</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
+  <ul><li>🏛️ ${fStages(fDraft()).length}-room interactive museum</li>${S.photos.length?`<li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on a polaroid wall${ST.f_puzzle?' + a puzzle':''}</li>`:''}${fDraft().quiz.length?`<li>🧠 ${fDraft().quiz.length}-question friendship quiz</li>`:''}${fDraft().story.length?`<li>📖 Your story as a timeline</li>`:''}${fDraft().awards.length?`<li>🏆 ${fDraft().awards.length} award${fDraft().awards.length==1?'':'s'} to open</li>`:''}${S.msg.trim()?'<li>💌 A sealed letter</li>':''}${S.rules.length?`<li>📜 ${S.rules.length} friendship rule${S.rules.length==1?'':'s'} to sign</li>`:''}<li>🎵 Background music</li><li>🎓 A certificate they can save</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
   <button class="btn" data-act="pay">🔒 Pay ₹${CONFIG.PRICE_INR} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>
   <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Friendship</span></div><div class="dots">${dots}</div>${h}</div>`;
@@ -334,7 +407,7 @@ shell.addEventListener('click',e=>{
   else if(d.act=='addrule'){const v=$('#f-cr').value.trim();if(v){if(!S.rules.includes(v)&&S.rules.length<5)S.rules.push(v);wiz()}}
   else if(d.act=='preview')startMuseum(S,true);
   else if(d.act=='link'){if(CONFIG.PAUSED&&!S.payId&&!CONFIG.ADMIN){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
-    if(payOn()&&!S.payId){S.step=S.type=='bday'?7:8;wiz()}else makeLink()}
+    if(payOn()&&!S.payId){S.step=S.type=='bday'?7:9;wiz()}else makeLink()}
   else if(d.act=='type'){S.type='';wiz()}
   else if(d.act=='pay')pay();
   else if(d.act=='dash')dashboard();
@@ -372,7 +445,7 @@ function pay(){
     const rz=new Razorpay({
       key:CONFIG.RZP_KEY,amount:Math.round(CONFIG.PRICE_INR*100),currency:'INR',
       name:'OurMoments',description:(S.type=='bday'?'Birthday Surprise for ':'Friendship Museum for ')+S.name,theme:{color:'#F5A524'},
-      handler:r=>{S.payId=r.razorpay_payment_id;S.step=S.type=='bday'?6:7;wiz();makeLink()}, // paid: go back and create the link
+      handler:r=>{S.payId=r.razorpay_payment_id;S.step=S.type=='bday'?6:8;wiz();makeLink()}, // paid: go back and create the link
       modal:{ondismiss:()=>{st.textContent='Payment cancelled. You can try again.'}}
     });
     rz.on('payment.failed',e=>{st.textContent='Payment failed: '+((e.error&&e.error.description)||'please try again')});
@@ -384,7 +457,7 @@ async function makeLink(){
   if(!S.created)S.created=new Date().toISOString();
   if(!S.payId&&!payOn())S.payId=CONFIG.ADMIN?'ADMIN':'FREE';   // no payment taken: mark why
   if(S.type=='bday'){if(ST.b_game=='on')S.game=true;if(ST.b_game=='off')S.game=false;const al=allowedSongs();if(al.length&&!al.some(x=>x[0]==S.song))S.song=al[0][0]}
-  else S.puzzle=ST.f_puzzle!==false;
+  else{S.puzzle=ST.f_puzzle!==false;S.quiz=ST.f_quiz?cleanQuiz(S.quiz):[];S.story=ST.f_story?cleanStory(S.story):[];S.awards=ST.f_awards?(S.awards||[]):[];const af=allowedFSongs();if(af.length&&!af.some(x=>x[0]==S.fsong))S.fsong=af[0][0]}
   const out=$('#out'),base=location.href.split('#')[0];
   if(!S.recorded){S.recorded=1;const rec={id:S.id,type:S.type,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,pay:S.payId||'',created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
 let url,short=false,err='';
@@ -404,12 +477,28 @@ let url,short=false,err='';
   $('#sh').onclick=()=>{if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt)};
 }
 
-/* ---------- MUSEUM ---------- */
-const ROOMS=['Front Door','Lobby','Hall of Reasons','Gallery','Puzzle Workshop','Letter Room','Rules Chamber','Signing Desk','Grand Finale'];
+/* ---------- MUSEUM (friendship) ---------- */
+const FNAME={door:'Front Door',lobby:'Lobby',reasons:'Hall of Reasons',story:'Our Story',gallery:'Polaroid Wall',puzzle:'Puzzle Workshop',quiz:'Friendship Quiz',awards:'Awards Night',letter:'Letter Room',rules:'Rules Chamber',sign:'Signing Desk',finale:'Grand Finale'};
+const FICON={door:'🚪',lobby:'🏛️',reasons:'💌',story:'📖',gallery:'📸',puzzle:'🧩',quiz:'🧠',awards:'🏆',letter:'✉️',rules:'📜',sign:'✍️',finale:'🎉'};
+const cleanQuiz=a=>(a||[]).map(q=>({q:String(q.q||'').trim(),o:(q.o||[]).map(x=>String(x||'').trim()),a:+q.a||0})).filter(q=>q.q&&q.o.filter(Boolean).length>=2&&q.o[q.a]);
+const cleanStory=a=>(a||[]).map(m=>({w:String(m.w||'').trim(),t:String(m.t||'').trim()})).filter(m=>m.t);
+// which rooms a gift has: only rooms that have content are shown
+function fStages(g){
+  const L=['door','lobby'],has=a=>a&&a.length;
+  if(has(g.notes))L.push('reasons');
+  if(has(g.story))L.push('story');
+  if(has(g.photos)){L.push('gallery');if(g.puzzle!==false)L.push('puzzle')}
+  if(has(g.quiz))L.push('quiz');
+  if(has(g.awards))L.push('awards');
+  if(g.msg&&g.msg.trim())L.push('letter');
+  if(has(g.rules))L.push('rules','sign');
+  L.push('finale');
+  return L;
+}
 function startMuseum(g,preview){
   if(g.type=='bday')return startBday(g,preview);
-  setEnv(false);
-  V={g,preview,i:0,knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
+  setEnv(false);setFEnv(g.vibe||'chaos');
+  V={g,preview,i:0,stages:fStages(g),knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
   document.body.dataset.vibe=g.vibe;
   $('#badge').style.display=preview?'block':'none';
   $('#back').style.display=preview?'block':'none';
@@ -418,81 +507,132 @@ function startMuseum(g,preview){
 $('#back').onclick=()=>{if(V&&V.tk)clearInterval(V.tk);musicStop();V=null;wiz()};
 function days(g){if(!g.sy)return null;const d=new Date(+g.sy,(+g.sm||1)-1,1);return Math.max(1,Math.floor((Date.now()-d)/864e5))}
 function frame(inner){
-  const pr=ROOMS.map((_,i)=>`<s class="${i<=V.i?'on':''}"></s>`).join('');
-  const ic=['🚪','🏛️','💌','🖼️','🧩','✉️','📜','✍️','🏆'][V.i];
-  shell.innerHTML=`<div class="museum"><div class="pill-room">Room ${V.i+1} of 9 · ${ROOMS[V.i]}<i>${pr}</i></div><div class="room" id="room"><div class="rico">${ic}</div>${inner}</div></div>`;
+  const pr=V.stages.map((_,i)=>`<s class="${i<=V.i?'on':''}"></s>`).join(''),st=V.stages[V.i];
+  shell.innerHTML=`<div class="museum"><div class="pill-room">Room ${V.i+1} of ${V.stages.length} · ${FNAME[st]}<i>${pr}</i></div><div class="room" id="room"><div class="rico">${FICON[st]}</div>${inner}</div></div>`;
 }
 const next=(label='Next room →')=>`<button class="btn" id="nx">${label}</button>`;
 function lobbyLine(g){
-  const parts=[];
-  if(g.notes&&g.notes.length)parts.push(g.notes.length+' reason'+(g.notes.length==1?'':'s'));
-  if(g.photos&&g.photos.length)parts.push(g.photos.length+' photo'+(g.photos.length==1?'':'s'));
-  if(g.photos&&g.photos.length&&g.puzzle!==false)parts.push('a puzzle');
+  const parts=[],has=a=>a&&a.length;
+  if(has(g.notes))parts.push(g.notes.length+' reason'+(g.notes.length==1?'':'s'));
+  if(has(g.story))parts.push('your story');
+  if(has(g.photos))parts.push(g.photos.length+' photo'+(g.photos.length==1?'':'s'));
+  if(has(g.photos)&&g.puzzle!==false)parts.push('a puzzle');
+  if(has(g.quiz))parts.push('a quiz');
+  if(has(g.awards))parts.push(g.awards.length+' award'+(g.awards.length==1?'':'s'));
   if(g.msg&&g.msg.trim())parts.push('a letter');
-  if(g.rules&&g.rules.length)parts.push(g.rules.length+' rule'+(g.rules.length==1?'':'s'));
+  if(has(g.rules))parts.push(g.rules.length+' rule'+(g.rules.length==1?'':'s'));
   return parts.length?'The next rooms hold '+parts.join(', ').replace(/, ([^,]*)$/,' and $1')+'.':'Let’s have a look around.';
 }
-const roomOk=(i,g)=>i==2?!!(g.notes&&g.notes.length):(i==3||i==4)?!!(g.photos&&g.photos.length)&&(i==3||g.puzzle!==false):i==5?!!(g.msg&&g.msg.trim()):(i==6||i==7)?!!(g.rules&&g.rules.length):true;
-function go(){V.i++;while(V.i<8&&!roomOk(V.i,V.g))V.i++;room()}
+function go(){V.i++;room()}
+// draws the downloadable friendship certificate and saves it as a PNG
+async function saveCert(g){
+  const c=document.createElement('canvas');c.width=1200;c.height=800;
+  const x=c.getContext&&c.getContext('2d');if(!x)return false;
+  const gr=x.createLinearGradient(0,0,1200,800);gr.addColorStop(0,'#fff7e6');gr.addColorStop(1,'#ffe3ee');x.fillStyle=gr;x.fillRect(0,0,1200,800);
+  x.strokeStyle='#F5A524';x.lineWidth=10;x.strokeRect(30,30,1140,740);x.strokeStyle='#FF6B57';x.lineWidth=3;x.strokeRect(50,50,1100,700);
+  x.textAlign='center';x.fillStyle='#17332d';
+  x.font='700 30px Outfit, sans-serif';x.fillText('✨ CERTIFICATE OF FRIENDSHIP ✨',600,150);
+  x.font='800 78px "Bricolage Grotesque", Outfit, sans-serif';x.fillText(g.name+' & '+g.from,600,285);
+  x.font='500 36px Outfit, sans-serif';x.fillStyle='#4a655d';x.fillText('Officially best-in-class '+(KIND_LINE[g.kind]||'friend')+'s',600,350);
+  const n=days(g),bits=[];if(n)bits.push(n+' days of friendship');if(V.quiz)bits.push('Quiz score '+V.quiz.score+'/'+V.quiz.total);if(g.awards&&g.awards.length)bits.push(g.awards.length+' award'+(g.awards.length==1?'':'s'));
+  if(bits.length){x.font='600 32px Outfit, sans-serif';x.fillStyle='#17332d';x.fillText(bits.join('  ·  '),600,425)}
+  if(V.sig){await new Promise(r=>{const im=new Image();im.onload=()=>{try{x.drawImage(im,400,470,400,150)}catch(e){}r()};im.onerror=r;im.src=V.sig})}
+  x.strokeStyle='#17332d55';x.lineWidth=2;x.beginPath();x.moveTo(380,640);x.lineTo(820,640);x.stroke();
+  x.font='500 26px Outfit, sans-serif';x.fillStyle='#6b8079';x.fillText('Signed with love',600,680);
+  x.font='700 28px Outfit, sans-serif';x.fillStyle='#F5A524';x.fillText('Made by '+g.from+' on OurMoments',600,735);
+  await new Promise(r=>c.toBlob(b=>{if(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='friendship-certificate.png';a.click()}r()},'image/png'));
+  return true;
+}
 function room(){
-  const g=V.g,i=V.i;
-  if(i==0){
+  const g=V.g,st=V.stages[V.i];
+  if(st=='door'){
     frame(`<p class="eyebrow">A museum for</p><h2>${esc(g.name)}</h2><p>${esc(g.from)} built this for their ${KIND_LINE[g.kind]}.<br>Knock 3 times to enter.</p><div class="door" id="door"></div><p id="kc">Knocks: 0 / 3</p>`);
-    $('#door').onclick=()=>{V.knocks++;if(V.knocks==1)musicStart('calm');beep(180,.12,'square',.1);const d=$('#door');d.classList.remove('k');void d.offsetWidth;d.classList.add('k');$('#kc').textContent=`Knocks: ${V.knocks} / 3`;
+    $('#door').onclick=()=>{V.knocks++;if(V.knocks==1)musicStart(g.fsong||'calm');beep(180,.12,'square',.1);const d=$('#door');d.classList.remove('k');void d.offsetWidth;d.classList.add('k');$('#kc').textContent=`Knocks: ${V.knocks} / 3`;
       if(V.knocks>=3){d.classList.add('open');chime();setTimeout(go,900)}};
   }
-  if(i==1){
+  if(st=='lobby'){
     const n=days(g);
-    frame(`<h2>Welcome, ${esc(g.name)} ${g.sticker||'💛'}</h2><p>${n?'You two have been friends for':'This is a museum of everything'+(g.from?` ${esc(g.from)} loves about you`:'')+'.'}</p>${n?`<div class="odo" id="odo"></div><p>days · and counting</p>`:''}<p>${lobbyLine(g)}</p>${next()}`);
+    frame(`<h2>Welcome, ${esc(g.name)} ${g.sticker||'💛'}</h2><p>${n?'You two have been friends for':'This is a museum of everything'+(g.from?` ${esc(g.from)} loves about you`:'')+'.'}</p>${n?`<div class="odo" id="odo"></div><p>days · and counting</p>`:''}<div class="meter"><div class="mbar"><i id="mfill"></i></div><small id="mtxt">Friendship level: 0%</small></div><p>${lobbyLine(g)}</p>${next()}`);
     if(n){const o=$('#odo'),t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/1500),v=Math.round(n*(1-Math.pow(1-p,3)));o.innerHTML=String(v).split('').map(c=>`<span>${c}</span>`).join('');if(p<1)requestAnimationFrame(f);else chime()})(t0)}
+    {const fill=$('#mfill'),tx=$('#mtxt'),t1=performance.now();(function f(t){const p=Math.min(1,(t-t1)/1800),v=Math.round(100*(1-Math.pow(1-p,3)));if(!fill)return;fill.style.width=v+'%';tx.textContent=p<1?'Friendship level: '+v+'%':'Friendship level: 100% · unbreakable 💛';if(p<1)requestAnimationFrame(f)})(t1)}
     $('#nx').onclick=go;
   }
-  if(i==2){
+  if(st=='reasons'){
     frame(`<h2>Hall of Reasons</h2><p>Why ${esc(g.name)} matters. Tap to open each note.</p><div class="notes" id="nl"></div><button class="btn" id="nx">Open note 1 of ${g.notes.length}</button>`);
     $('#nx').onclick=()=>{if(V.notes<g.notes.length){const d=document.createElement('div');d.className='note';d.textContent=g.notes[V.notes];$('#nl').appendChild(d);V.notes++;beep(660+V.notes*60,.15);
       $('#nx').textContent=V.notes<g.notes.length?`Open note ${V.notes+1} of ${g.notes.length}`:'Next room →'}else go()};
   }
-  if(i==3){
-    if(!g.photos.length){V.i++;return room()}
-    V.seen=V.seen||new Set();
-    const draw=()=>{const p=g.photos[V.ex],N=g.photos.length;V.seen.add(V.ex);const all=V.seen.size>=N;
-      $('#room').innerHTML=`<h2>The Gallery</h2><div class="frame"><img src="${p.src}"></div><div class="cap">${esc(p.cap)}</div><div class="nav"><button id="pv">‹</button><span>${V.ex+1} / ${N}</span><button id="nt">›</button></div><p>${all?'You have seen every photo 🎉':'👀 Seen '+V.seen.size+' of '+N+' — look at all of them to continue'}</p><button class="btn" id="nx" ${all?'':'disabled'}>${all?'Next room →':'🔒 See all photos first'}</button>`;
-      $('#pv').onclick=()=>{V.ex=(V.ex+N-1)%N;beep(500,.06);draw()};$('#nt').onclick=()=>{V.ex=(V.ex+1)%N;beep(560,.06);draw()};$('#nx').onclick=go;if(all&&N>1&&V.seen.size==N&&!V.gdone){V.gdone=1;chime()}};
-    frame('');draw();
+  if(st=='story'){
+    const N=g.story.length;V.sc=0;
+    frame(`<h2>Our Story 📖</h2><p>Tap to travel through your moments together.</p><div class="tl" id="tl"></div><button class="btn" id="nx">Reveal the first moment</button>`);
+    $('#nx').onclick=()=>{
+      if(V.sc<N){const m=g.story[V.sc],d=document.createElement('div');d.className='tli';d.innerHTML=`<b>${esc(m.w||'Moment '+(V.sc+1))}</b><span>${esc(m.t)}</span>`;$('#tl').appendChild(d);d.scrollIntoView&&d.scrollIntoView({block:'nearest',behavior:'smooth'});V.sc++;beep(500+V.sc*70,.12);
+        $('#nx').textContent=V.sc<N?'Next moment ›':'Next room →'}
+      else go()};
   }
-  if(i==4){
-    const p=g.photos[g.pz]||g.photos[0];
-    if(!p){V.i++;return room()}
-    puzzle(p,g.grid||3);
+  if(st=='gallery'){
+    V.dev=V.dev||new Set();const N=g.photos.length,tilt=[-4,3,-2,5];
+    frame(`<h2>The Polaroid Wall 📸</h2><p id="gh">Tap each photo to develop it ✨</p><div class="wall" id="wall">${g.photos.map((p,i)=>`<button class="pol ${V.dev.has(i)?'dev':''}" data-i="${i}" style="--r:${tilt[i%4]}deg"><span class="pimg"><img src="${p.src}" alt=""></span><span class="pcap">${esc(p.cap)||'&nbsp;'}</span></button>`).join('')}</div><p id="gc">${V.dev.size>=N?'Every photo developed 🎉':'Developed '+V.dev.size+' of '+N}</p><button class="btn" id="nx" ${V.dev.size>=N?'':'disabled'}>${V.dev.size>=N?'Next room →':'🔒 Develop all photos first'}</button>`);
+    $('#wall').onclick=e=>{const b=e.target.closest('.pol');if(!b||b.classList.contains('dev'))return;
+      b.classList.add('dev');V.dev.add(+b.dataset.i);beep(520+V.dev.size*60,.1);
+      $('#gc').textContent=V.dev.size>=N?'Every photo developed 🎉':'Developed '+V.dev.size+' of '+N;
+      if(V.dev.size>=N){$('#nx').disabled=false;$('#nx').textContent='Next room →';chime();confetti(25)}};
+    $('#nx').onclick=go;
   }
-  if(i==5){
+  if(st=='puzzle'){puzzle(g.photos[g.pz]||g.photos[0],g.grid||3)}
+  if(st=='quiz'){
+    const N=g.quiz.length;let qi=0,score=0,lock=false;
+    frame(`<h2>How well do you know ${esc(g.from)}? 🧠</h2><div id="qz" style="width:100%"></div>`);
+    const showQ=()=>{const q=g.quiz[qi];lock=false;
+      $('#qz').innerHTML=`<p class="qno">Question ${qi+1} of ${N}</p><h3 class="qq">${esc(q.q)}</h3><div class="qopts">${q.o.map((o,k)=>o?`<button class="qo" data-k="${k}">${esc(o)}</button>`:'').join('')}</div><p id="qf" class="qf">&nbsp;</p>`};
+    const done=()=>{V.quiz={score,total:N};const r=score/N;
+      $('#qz').innerHTML=`<div class="qres"><b>${score} / ${N}</b><p>${r==1?'Perfect! You really know me 🏆':r>=.5?'Not bad at all! 💛':'We need to catch up over coffee ☕'}</p></div>${next()}`;
+      if(r>=.5){chime();confetti(r==1?60:25)}$('#nx').onclick=go};
+    $('#qz').onclick=e=>{const b=e.target.closest('.qo');if(!b||lock)return;lock=true;const q=g.quiz[qi],k=+b.dataset.k,ok=k==q.a;
+      b.classList.add(ok?'good':'bad');if(!ok)$('#qz').querySelector('.qo[data-k="'+q.a+'"]').classList.add('good');
+      if(ok){score++;chime()}else beep(200,.18,'sawtooth',.05);
+      $('#qf').textContent=ok?'Correct! 🎉':'Oops! It was “'+q.o[q.a]+'”';
+      setTimeout(()=>{qi++;qi<N?showQ():done()},1100)};
+    showQ();
+  }
+  if(st=='awards'){
+    const N=g.awards.length;V.aw=0;
+    frame(`<h2>Awards Night 🏆</h2><p>${esc(g.from)} has ${N} award${N==1?'':'s'} for you. Open each envelope!</p><div class="awl" id="awl"></div><button class="btn" id="nx">Open the first envelope ✉️</button>`);
+    $('#nx').onclick=()=>{
+      if(V.aw<N){const d=document.createElement('div');d.className='award';d.innerHTML=`<span class="trophy">🏆</span><small>Award ${V.aw+1}</small><b>${esc(g.awards[V.aw])}</b>`;$('#awl').appendChild(d);V.aw++;chime();confetti(14);
+        $('#nx').textContent=V.aw<N?'Open the next envelope ✉️':'Next room →'}
+      else go()};
+  }
+  if(st=='letter'){
     frame(`<h2>The Letter Room</h2><p>A sealed envelope from ${esc(g.from)}. Tap the seal to break it.</p><div class="env" id="env"><div class="seal">${g.seal}</div></div>`);
     $('#env').onclick=()=>{$('#env').classList.add('broken');beep(300,.1,'square');
       setTimeout(()=>{$('#room').innerHTML=`<div class="letter" id="lt"></div><div style="font-size:48px">${g.sticker}</div>${next()}`;const t=g.msg||`${g.name}, you mean the world to me.`;let k=0;const iv=setInterval(()=>{$('#lt').textContent=t.slice(0,++k);if(k>=t.length)clearInterval(iv)},26);$('#nx').onclick=()=>{clearInterval(iv);go()}},600)};
   }
-  if(i==6){
+  if(st=='rules'){
     frame(`<h2>The Friendship Rules</h2><p>Tick every promise to continue.</p>${g.rules.map((r,k)=>`<button class="rule" data-k="${k}"><span class="bx"></span>${esc(r)}</button>`).join('')}<button class="btn" id="nx" disabled>Next room →</button>`);
     document.querySelectorAll('.rule').forEach(b=>b.onclick=()=>{b.classList.toggle('on');b.firstChild.textContent=b.classList.contains('on')?'✓':'';beep(600,.08);V.rules[b.classList.contains('on')?'add':'delete'](b.dataset.k);$('#nx').disabled=V.rules.size<g.rules.length});
     $('#nx').onclick=go;
   }
-  if(i==7){
+  if(st=='sign'){
     frame(`<h2>Sign it</h2><p>Use your finger or mouse to sign below.</p><canvas class="sig" id="sg"></canvas><button class="btn" id="nx" disabled>I solemnly swear →</button>`);
     const c=$('#sg'),r=c.getBoundingClientRect();c.width=r.width*2;c.height=300;const x=c.getContext('2d');x.scale(2,2);x.lineWidth=2.5;x.lineCap='round';x.strokeStyle='#17332d';
     let dr=false,ink=0;const pt=e=>{const b=c.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top]};
-    c.onpointerdown=e=>{dr=true;c.setPointerCapture(e.pointerId);const[a,b]=pt(e);x.beginPath();x.moveTo(a,b)};
+    c.onpointerdown=e=>{dr=true;try{c.setPointerCapture(e.pointerId)}catch(_){}const[a,b]=pt(e);x.beginPath();x.moveTo(a,b)};
     c.onpointermove=e=>{if(!dr)return;const[a,b]=pt(e);x.lineTo(a,b);x.stroke();if(++ink>25)$('#nx').disabled=false};
     c.onpointerup=()=>dr=false;
-    $('#nx').onclick=()=>{V.sig=c.toDataURL();V.elapsed=Math.round((Date.now()-V.t0)/1000);go()};
+    $('#nx').onclick=()=>{V.sig=c.toDataURL();go()};
   }
-  if(i==8){
-    confetti();chime();
-    frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats"><div><b>${g.notes.length}</b>reasons</div><div><b>${V.moves||'—'}</b>puzzle moves</div><div><b>${Math.floor(V.elapsed/60)}:${String(V.elapsed%60).padStart(2,'0')}</b>time</div></div></div><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Walk through again</button>`);
-    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:V.elapsed,moves:V.moves,rules:g.rules.length,sig:V.sig||'',ts:new Date().toISOString()};V.rec=rec;dbAdd(CONFIG.KEY_REPLIES,rec);V.rid=Date.now().toString(36);V.slim=(({sig,...s})=>s)(rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
+  if(st=='finale'){
+    confetti();chime();V.elapsed=Math.round((Date.now()-V.t0)/1000);
+    const stats=[];if(g.notes&&g.notes.length)stats.push([g.notes.length,'reasons']);if(V.quiz)stats.push([V.quiz.score+'/'+V.quiz.total,'quiz']);if(g.awards&&g.awards.length)stats.push([g.awards.length,'awards']);if(V.moves)stats.push([V.moves,'puzzle moves']);stats.push([Math.floor(V.elapsed/60)+':'+String(V.elapsed%60).padStart(2,'0'),'time']);
+    frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats">${stats.map(s=>`<div><b>${esc(s[0])}</b>${s[1]}</div>`).join('')}</div></div><button class="btn" id="dl">⬇ Save your certificate</button><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Walk through again</button>`);
+    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:V.elapsed,moves:V.moves,rules:(g.rules||[]).length,quiz:V.quiz?V.quiz.score+'/'+V.quiz.total:'',sig:V.sig||'',ts:new Date().toISOString()};V.rec=rec;dbAdd(CONFIG.KEY_REPLIES,rec);V.rid=Date.now().toString(36);V.slim=(({sig,...s})=>s)(rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
+    $('#dl').onclick=async()=>{const b=$('#dl');b.disabled=true;b.textContent='Making your certificate…';let ok=false;try{ok=await saveCert(g)}catch(e){}b.disabled=false;b.textContent=ok?'⬇ Saved! Save it again':'Your browser can’t save images here'};
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
       const all=dbGet(CONFIG.KEY_REPLIES),last=all[all.length-1];if(last&&last.ts===V.rec.ts){last.reply=t;localStorage.setItem(CONFIG.KEY_REPLIES,JSON.stringify(all))}
       if(CONFIG.DB&&V.rec.gid)fb('PUT','replies/'+encodeURIComponent(V.rec.gid)+'/'+V.rid,{...V.slim,reply:t}).then(()=>{$('#sr').textContent='Sent ✓ 💛';chime()}).catch(()=>{$('#sr').textContent='Could not send — try again'});
       else{$('#sr').textContent='Saved on this device ✓';chime()}};
-    $('#nx').onclick=()=>{V.i=0;V.knocks=0;V.notes=0;V.ex=0;V.rules=new Set();room()};
+    $('#nx').onclick=()=>{V.i=0;V.knocks=0;V.notes=0;V.ex=0;V.rules=new Set();V.dev=null;V.sc=0;V.aw=0;V.quiz=null;room()};
   }
 }
 function puzzle(p,n){
@@ -528,7 +668,7 @@ const BOX=[[523.25,659.25,783.99,1046.5],[440,523.25,659.25,880],[349.23,440,523
 const POP_LEAD=[659.25,659.25,783.99,659.25,587.33,587.33,783.99,587.33,523.25,523.25,659.25,523.25,587.33,659.25,587.33,523.25];
 const POP_BASS=[130.81,98,110,87.31],POP_CH=[[261.63,329.63,392],[196,246.94,293.66],[220,261.63,329.63],[174.61,220,261.63]];
 const DANCE_BASS=[110,87.31,130.81,98],DANCE_ARP=[[440,523.25,659.25,523.25],[349.23,440,523.25,440],[523.25,659.25,783.99,659.25],[392,493.88,587.33,493.88]];
-function mkick(at){try{const c=actx,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(150,at);o.frequency.exponentialRampToValueAtTime(42,at+.14);g.gain.setValueAtTime(.45,at);g.gain.exponentialRampToValueAtTime(.001,at+.2);o.connect(g);g.connect(MUS.g);o.start(at);o.stop(at+.22)}catch(e){}}
+function mkick(at,v){try{const c=actx,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(150,at);o.frequency.exponentialRampToValueAtTime(42,at+.14);g.gain.setValueAtTime(v||.45,at);g.gain.exponentialRampToValueAtTime(.001,at+.2);o.connect(g);g.connect(MUS.g);o.start(at);o.stop(at+.22)}catch(e){}}
 function mhat(at,vol){try{mnote(9000,at,.04,'square',vol||.03)}catch(e){}}
 // schedules one loop of a song starting at t0 and returns its length in seconds
 function songLoop(track,t0){
@@ -562,6 +702,18 @@ function songLoop(track,t0){
     }
     return 16*beat;
   }
+  if(track=='lofi'){ // lo-fi chill: lazy chords, soft drums, simple melody
+    const beat=.75,CH=[[174.61,220,261.63,329.63],[164.81,196,246.94,293.66],[146.83,174.61,220,261.63],[130.81,164.81,196,246.94]];
+    const MEL=[[392,329.63,392,440],[329.63,293.66,329.63,392],[293.66,261.63,293.66,329.63],[261.63,293.66,329.63,261.63]];
+    for(let bar=0;bar<4;bar++){
+      const b0=t0+bar*4*beat;
+      CH[bar].forEach(f=>mnote(f,b0,3.7*beat,'triangle',.032));
+      [0,2].forEach(k=>mkick(b0+k*beat,.28));[1,3].forEach(k=>mnote(180,b0+k*beat,.09,'square',.03));
+      for(let k=0;k<8;k++)mhat(b0+k*beat/2,.016);
+      MEL[bar].forEach((f,k)=>mnote(f,b0+k*beat+.05,beat*.9,'sine',.07));
+    }
+    return 16*beat;
+  }
   // 'calm' (friendship museum)
   const step=.45;
   CALM.forEach((ch,i)=>{
@@ -588,9 +740,37 @@ function musicStop(){
   if(MUS.g){try{MUS.g.gain.setTargetAtTime(0,actx.currentTime,.12)}catch(e){}MUS.g=null}
 }
 
+// Animated backdrop for each friendship vibe (shown in the builder and on every museum room)
+const FENV={
+  chaos:()=>['🎉','🎈','🤪','💥','🎊','🍕','🎶','😂'].map((e,i)=>`<b class="fe-e" style="left:${6+i*12}%;animation-duration:${14+(i*3)%8}s;animation-delay:-${(i*4)%12}s">${e}</b>`).join('')
+    +Array.from({length:18},(_,i)=>`<s class="fe-c" style="left:${(i*29)%100}%;--c:${['#FF6B57','#F5A524','#14A38B','#5B62E8','#E14B8A','#93C93C'][i%6]};animation-duration:${6+(i*5)%7}s;animation-delay:-${(i*3)%8}s"></s>`).join(''),
+  calm:()=>Array.from({length:46},(_,i)=>`<s class="fe-s" style="left:${(i*53)%100}%;top:${(i*37)%92}%;animation-delay:-${(i*7)%9}s;--z:${(i%3)+1}"></s>`).join('')
+    +Array.from({length:9},(_,i)=>`<i class="fe-f" style="left:${8+i*10}%;top:${55+(i*11)%35}%;animation-duration:${9+(i*3)%7}s;animation-delay:-${(i*5)%9}s"></i>`).join(''),
+  roast:()=>Array.from({length:26},(_,i)=>`<s class="fe-m" style="left:${(i*37)%100}%;animation-duration:${5+(i*3)%6}s;animation-delay:-${(i*2)%7}s;--z:${(i%3)+1}"></s>`).join('')
+    +['🔥','💥','😈','🌶️','⚡'].map((e,i)=>`<b class="fe-e" style="left:${10+i*20}%;animation-duration:${12+(i*3)%6}s;animation-delay:-${(i*4)%10}s">${e}</b>`).join(''),
+  ride:()=>Array.from({length:9},(_,i)=>`<s class="fe-l" style="left:${(i*17)%100}%;animation-duration:${4+(i*3)%5}s;animation-delay:-${(i*2)%6}s"></s>`).join('')
+    +['🛡️','⭐','🤝','💪','🔥','🚀'].map((e,i)=>`<b class="fe-e" style="left:${8+i*16}%;animation-duration:${13+(i*3)%7}s;animation-delay:-${(i*5)%11}s">${e}</b>`).join('')
+};
+function setFEnv(v){
+  document.body.classList.remove('fr-env','fr-chaos','fr-calm','fr-roast','fr-ride');
+  let e=$('#fenv');
+  if(!v){if(e){e.innerHTML='';e.dataset.v=''}return}
+  v=FENV[v]?v:'chaos';
+  document.body.classList.add('fr-env','fr-'+v);
+  if(!e){e=document.createElement('div');e.id='fenv';e.setAttribute('aria-hidden','true');document.body.appendChild(e)}
+  if(e.dataset.v!==v){e.dataset.v=v;e.innerHTML=FENV[v]()}
+}
+// friendship background music choices
+const FSONGS=[['calm','🌿','Calm & dreamy','Soft, warm strings'],['pop','🎉','Upbeat friends','Fun & bouncy'],['lofi','☕','Lo-fi chill','Relaxed beats'],['box','🎶','Music box','Soft & sweet'],['none','🔇','No music','Just the museum']];
+const allowedFSongs=()=>FSONGS.filter(x=>ST.fsongs[x[0]]!==false);
+const AWARDS=['Best listener 👂','Replies in 0.2 seconds ⚡','Official snack thief 🍕','Chief of bad ideas 🤪','Emergency contact of the year 🚨','Meme dealer 😂','Best hugger 🤗','Worst driver 🚗'];
+// what the museum would contain right now, used for the price page
+const fDraft=()=>({notes:S.notes,story:ST.f_story?cleanStory(S.story):[],photos:S.photos,puzzle:ST.f_puzzle,quiz:ST.f_quiz?cleanQuiz(S.quiz):[],awards:ST.f_awards?S.awards:[],msg:S.msg,rules:S.rules});
+
 /* ---------- BIRTHDAY SURPRISE ---------- */
 // Party scenery (bunting, floating balloons, confetti) shown on every birthday screen
 function setEnv(on){
+  if(on)setFEnv(false);
   document.body.classList.toggle('bd-env',!!on);
   let e=$('#bdenv');
   if(on&&!e){
@@ -610,12 +790,12 @@ const LETTERS=['I keep thinking about how lucky I got with you. You have seen me
 const BCOL=['#FF6B57','#F5A524','#14A38B','#5B62E8','#E14B8A'];
 
 function chooser(){
-  setEnv(false);
+  setEnv(false);setFEnv(false);
   document.body.dataset.vibe='chaos';
   $('#back').style.display='none';$('#badge').style.display='none';
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span></div>
   <p class="eyebrow">Pick an occasion</p><h1>What are we <em>celebrating</em>?</h1><p class="sub">Build a gift they can open on any phone 🎀</p>
-  ${ST.friend?'<button class="opt" data-type="friend"><span class="em">🤝</span><span><b>Friendship museum</b><small>A 9-room adventure · no occasion needed</small></span></button>':''}
+  ${ST.friend?'<button class="opt" data-type="friend"><span class="em">🤝</span><span><b>Friendship museum</b><small>Up to 12 rooms of surprises · no occasion needed</small></span></button>':''}
   ${ST.bday?'<button class="opt" data-type="bday"><span class="em">🎂</span><span><b>Birthday surprise</b><small>Cake, balloons, memories & a letter</small></span></button>':''}
   ${!ST.friend&&!ST.bday?'<p class="sub">New gifts are not available right now. Please come back soon.</p>':''}
   <button class="dlink" data-act="dash">📂 My gifts & replies</button></div>`;
@@ -838,6 +1018,30 @@ function bscreen(){
   }
 }
 
+// builder extras for the friendship gift: music preview, quiz, story and awards editing
+shell.addEventListener('input',e=>{
+  const t=e.target;if(S.type!='friend'||V)return;
+  if(t.dataset.q!=null)S.quiz[+t.dataset.q].q=t.value;
+  else if(t.dataset.qo!=null){const p=t.dataset.qo.split(':');S.quiz[+p[0]].o[+p[1]]=t.value}
+  else if(t.dataset.sw!=null)S.story[+t.dataset.sw].w=t.value;
+  else if(t.dataset.st!=null)S.story[+t.dataset.st].t=t.value;
+  else return;
+  // keep the bottom button honest: "Skip for now" until something real has been added
+  const nb=document.querySelector('.card [data-act=next]');
+  if(nb&&S.step==7)nb.textContent=(cleanQuiz(S.quiz).length||cleanStory(S.story).length||S.awards.length)?'Next →':'Skip for now';
+});
+shell.addEventListener('change',e=>{const t=e.target;if(S.type!='friend'||V)return;if(t.dataset.qa!=null)S.quiz[+t.dataset.qa].a=+t.value});
+shell.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||V||S.type!='friend')return;const d=b.dataset;
+  if(d.fsong){S.fsong=d.fsong;MUS.preview=true;musicStart(d.fsong);clearTimeout(MUS.pt);MUS.pt=setTimeout(()=>{if(MUS.preview){musicStop();MUS.preview=false}},9000);wiz()}
+  else if(d.qadd){if(S.quiz.length<3)S.quiz.push({q:'',o:['','',''],a:0});wiz()}
+  else if(d.qdel!=null){S.quiz.splice(+d.qdel,1);wiz()}
+  else if(d.sadd){if(S.story.length<5)S.story.push({w:'',t:''});wiz()}
+  else if(d.sdel!=null){S.story.splice(+d.sdel,1);wiz()}
+  else if(d.award!=null){tog(S.awards,d.award,5);wiz()}
+  else if(d.act=='addaward'){const v=$('#f-ca').value.trim();if(v&&!S.awards.includes(v)&&S.awards.length<5){S.awards.push(v);wiz()}}
+});
+
 /* ---------- admin bypass: a signed-in admin (from admin.html) can create gifts without paying ---------- */
 async function adminCheck(){
   try{
@@ -861,7 +1065,7 @@ async function adminCheck(){
     try{const st=await Promise.race([fb('GET','settings'),new Promise(r=>setTimeout(()=>r(null),1200))]);
       if(st){
         if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;
-        if(st.steps&&typeof st.steps=='object'){ST=Object.assign(JSON.parse(JSON.stringify(ST_DEFAULT)),st.steps);ST.songs=Object.assign({},ST_DEFAULT.songs,st.steps.songs||{})}
+        if(st.steps&&typeof st.steps=='object'){ST=Object.assign(JSON.parse(JSON.stringify(ST_DEFAULT)),st.steps);ST.songs=Object.assign({},ST_DEFAULT.songs,st.steps.songs||{});ST.fsongs=Object.assign({},ST_DEFAULT.fsongs,st.steps.fsongs||{})}
       }}catch(e){}
     await adminCheck();
   }
