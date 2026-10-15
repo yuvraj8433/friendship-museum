@@ -241,7 +241,7 @@ async function viewGift(code){
     m.firstChild.innerHTML=`<h2>${g.type=='bday'?'🎂':'🤝'} ${esc(g.name)} <small style="font-weight:500;color:var(--mut)">from ${esc(g.from)}</small></h2>
     <div class="kv"><b>Code</b><span>${esc(code)}</span><b>Gift ID</b><span>${esc(g.id||'—')}</span><b>Created</b><span>${fmt(g.created)}</span>
     <b>Payment</b><span>${g.payId?esc(g.payId):'<span class="pill bad">none</span>'}</span><b>Status</b><span>${g.disabled?'disabled':'live'}</span>
-    ${g.type=='bday'?`<b>Cake</b><span>${esc(g.cake)}</span><b>Mini game</b><span>${g.game===true?'yes':'no'}</span><b>Age / birthday</b><span>${esc(g.age||'—')} · ${g.bm&&g.bd?esc(g.bd+'/'+g.bm):'—'}</span><b>Balloons</b><span>${bal.map(esc).join('<br>')||'—'}</span>`
+    ${g.type=='bday'?`<b>Cake</b><span>${esc(g.cake)}</span><b>Mini game</b><span>${g.game===true?'yes':'no'}</span><b>Song</b><span>${esc(g.song||'bday')}</span><b>Age / birthday</b><span>${esc(g.age||'—')} · ${g.bm&&g.bd?esc(g.bd+'/'+g.bm):'—'}</span><b>Balloons</b><span>${bal.map(esc).join('<br>')||'—'}</span>`
       :`<b>Kind / vibe</b><span>${esc(g.kind)} · ${esc(g.vibe)}</span><b>Notes</b><span>${notes.map(esc).join('<br>')||'—'}</span><b>Rules</b><span>${rules.map(esc).join('<br>')||'—'}</span>`}
     <b>Message</b><span style="white-space:pre-wrap">${esc(g.msg||'—')}</span></div>
     <b style="color:var(--mut);font-size:13px">Photos (${(g.photos||[]).length})</b><div class="thumbs">${(g.photos||[]).map(p=>`<div><img src="${esc(p.src)}"><div style="font-size:11px;max-width:92px">${esc(p.cap)}</div></div>`).join('')||'—'}</div>
