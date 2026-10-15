@@ -272,22 +272,23 @@ async function viewGift(code){
 /* ---------- replies ---------- */
 function paneReplies(){
   const list=allReplies(),pane=$('#pane');
-  pane.innerHTML=`<div class="bar"><button class="btn g" id="ex">⬇ CSV</button></div><div class="tw"><table><thead><tr><th>When</th><th>Gift for</th><th>Reply from</th><th>Reply</th><th>Time</th><th>Moves</th><th></th></tr></thead>
+  pane.innerHTML=`<div class="bar"><button class="btn g" id="ex">⬇ CSV</button></div><div class="tw"><table><thead><tr><th>When</th><th>Gift for</th><th>Reply from</th><th>Reply</th><th>Time</th><th>Moves</th><th>Quiz</th><th></th></tr></thead>
   <tbody>${list.map(r=>`<tr><td>${fmt(r.ts)}</td><td>${r.gift?esc(r.gift.name)+' <small style="color:var(--mut)">('+esc(r.gift.code)+')</small>':'<small>deleted gift</small>'}</td><td>${esc(r.name)}</td>
-  <td style="max-width:340px;white-space:pre-wrap">${r.reply?esc(r.reply):'<span class="who">(opened, no reply)</span>'}</td><td>${r.elapsed||0}s</td><td>${r.moves||0}</td>
+  <td style="max-width:340px;white-space:pre-wrap">${r.reply?esc(r.reply):'<span class="who">(opened, no reply)</span>'}</td><td>${r.elapsed||0}s</td><td>${r.moves||0}</td><td>${esc(r.quiz||'—')}</td>
   <td><button class="btn s r" data-g="${esc(r.gid)}" data-r="${esc(r.rid)}">Delete</button></td></tr>`).join('')}</tbody></table></div>${list.length?'':'<div class="empty">No replies yet.</div>'}`;
-  $('#ex').onclick=()=>csv('replies.csv',['when','gift_for','reply_from','reply','seconds','moves'],list.map(r=>[r.ts,r.gift?r.gift.name:'',r.name,r.reply||'',r.elapsed||0,r.moves||0]));
+  $('#ex').onclick=()=>csv('replies.csv',['when','gift_for','reply_from','reply','seconds','moves','quiz'],list.map(r=>[r.ts,r.gift?r.gift.name:'',r.name,r.reply||'',r.elapsed||0,r.moves||0,r.quiz||'']));
   pane.onclick=async e=>{const b=e.target.closest('button[data-r]');if(!b||!confirm('Delete this reply?'))return;
     try{await fb('DELETE','replies/'+b.dataset.g+'/'+b.dataset.r);delete replies[b.dataset.g][b.dataset.r];say('Reply deleted');render()}catch(err){say(err.message,true)}};
 }
 
 /* ---------- builder steps ---------- */
-const STD={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true}};
+const STD={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,f_quiz:true,f_story:true,f_awards:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true},fsongs:{calm:true,pop:true,lofi:true,box:true,none:true}};
+const FSONGNAMES=[['calm','🌿 Calm & dreamy'],['pop','🎉 Upbeat friends'],['lofi','☕ Lo-fi chill'],['box','🎶 Music box'],['none','🔇 No music']];
 const SONGNAMES=[['bday','🎂 Happy Birthday'],['box','🎶 Music Box'],['pop','🎉 Party Pop'],['dance','🪩 Dance Beat'],['none','🔇 No music']];
-const stepsNow=()=>{const o=JSON.parse(JSON.stringify(STD));const c=settings.steps||{};Object.keys(c).forEach(k=>{if(k!='songs')o[k]=c[k]});o.songs=Object.assign({},STD.songs,c.songs||{});return o};
+const stepsNow=()=>{const o=JSON.parse(JSON.stringify(STD));const c=settings.steps||{};Object.keys(c).forEach(k=>{if(k!='songs')o[k]=c[k]});o.songs=Object.assign({},STD.songs,c.songs||{});o.fsongs=Object.assign({},STD.fsongs,c.fsongs||{});return o};
 function paneSteps(){
   const c=stepsNow(),pane=$('#pane');
-  const sw=(id,label,sub,locked)=>{const on=id.startsWith('song_')?c.songs[id.slice(5)]!==false:c[id]!==false;return `<label class="sw ${locked?'lock':''}"><input type="checkbox" id="st_${id}" ${locked||on?'checked':''} ${locked?'disabled':''}><span><b>${label}</b><small>${sub}</small></span></label>`};
+  const sw=(id,label,sub,locked)=>{const on=id.startsWith('song_')?c.songs[id.slice(5)]!==false:id.startsWith('fsong_')?c.fsongs[id.slice(6)]!==false:c[id]!==false;return `<label class="sw ${locked?'lock':''}"><input type="checkbox" id="st_${id}" ${locked||on?'checked':''} ${locked?'disabled':''}><span><b>${label}</b><small>${sub}</small></span></label>`};
   const sel=(id,label,opts)=>`<label class="sw"><span style="flex:1"><b>${label}</b></span><select id="st_${id}" style="width:auto">${opts.map(o=>`<option value="${o[0]}" ${String(c[id])==String(o[0])?'selected':''}>${o[1]}</option>`).join('')}</select></label>`;
   pane.innerHTML=`<p class="who" style="margin-bottom:10px">Choose what people can do in the gift builder. Turning a step off removes it from the builder; gifts already made are not changed, and the gift page simply skips anything it does not contain. Changes apply within seconds.</p>
   <div class="grid3">
@@ -306,17 +307,24 @@ function paneSteps(){
      ${sw('f_vibe','Vibe & reasons','Colours and the notes room')}
      ${sw('f_photos','📸 Photos step','Gallery room')}${sel('f_maxPhotos','Max photos',[1,2,3,4].map(n=>[n,n]))}
      ${sw('f_puzzle','🧩 Photo puzzle','The puzzle room')}
+     ${sw('f_quiz','🧠 Friendship quiz','Bonus room: “How well do you know me?”')}
+     ${sw('f_story','📖 Our story timeline','Bonus room: moments revealed one by one')}
+     ${sw('f_awards','🏆 Friendship awards','Bonus room: awards night')}
+     <div class="who" style="margin:10px 0 0;font-weight:700">🎵 Background music the creator can choose from</div>
+     ${FSONGNAMES.map(x=>sw('fsong_'+x[0],x[1],'Shown in the builder')).join('')}
      ${sw('f_msg','💌 Message step','The sealed letter')}
      ${sw('f_rules','📜 Rules step','Tick & sign rooms')}${sw('review2','Preview & link','Always shown',true)}</div>
   </div>
   <div class="row" style="margin-top:14px"><button class="btn" id="sv">Save changes</button><button class="btn g" id="rs">Reset to defaults</button></div>`;
   $('#sv').onclick=async()=>{
     const v=id=>$('#st_'+id),o={songs:{}};
-    ['friend','bday','f_kind','f_vibe','f_photos','f_puzzle','f_msg','f_rules','b_balloons','b_photos','b_letter'].forEach(k=>o[k]=v(k).checked);
+    ['friend','bday','f_kind','f_vibe','f_photos','f_puzzle','f_quiz','f_story','f_awards','f_msg','f_rules','b_balloons','b_photos','b_letter'].forEach(k=>o[k]=v(k).checked);
+    o.fsongs={};FSONGNAMES.forEach(x=>o.fsongs[x[0]]=v('fsong_'+x[0]).checked);
     SONGNAMES.forEach(x=>o.songs[x[0]]=v('song_'+x[0]).checked);
     o.b_game=v('b_game').value;o.b_maxPhotos=+v('b_maxPhotos').value;o.f_maxPhotos=+v('f_maxPhotos').value;
     if(!o.friend&&!o.bday)return say('Keep at least one occasion turned on.',true);
     if(!Object.values(o.songs).some(Boolean))return say('Keep at least one birthday song turned on (or “No music”).',true);
+    if(!Object.values(o.fsongs).some(Boolean))return say('Keep at least one friendship music option turned on (or “No music”).',true);
     try{await fb('PUT','settings/steps',o);settings.steps=o;say('Builder steps saved.');render()}catch(e){say(e.message,true)}
   };
   $('#rs').onclick=async()=>{if(!confirm('Reset every builder step to its default (all on)?'))return;try{await fb('DELETE','settings/steps');delete settings.steps;say('Builder steps reset to defaults.');render()}catch(e){say(e.message,true)}};
