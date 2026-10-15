@@ -136,6 +136,10 @@ h1 em{-webkit-text-fill-color:var(--acc)}
 .lights{display:flex;gap:10px;justify-content:center;width:100%;border-top:2px solid #0003;padding-top:2px;margin-top:-6px}
 .lights i{width:11px;height:15px;border-radius:50%;background:var(--a);animation:glow 1.6s infinite alternate}.lights i:nth-child(3n){background:var(--b);animation-delay:.3s}.lights i:nth-child(3n+1){background:var(--e);animation-delay:.7s}
 @keyframes glow{from{opacity:.35}to{opacity:1;box-shadow:0 0 12px currentColor}}
+.mm{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:320px;margin:4px auto}
+.mc{aspect-ratio:1;border:0;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));font-size:30px;cursor:pointer;color:#fff;box-shadow:0 4px 0 #0002;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.mc:active{transform:scale(.94)}.mc .mb{display:none}.mc.up .mf,.mc.ok .mf{display:none}.mc.up .mb,.mc.ok .mb{display:inline}
+.mc.up{background:#fff7e6;box-shadow:0 0 0 2px var(--acc) inset}.mc.ok{background:#effaf6;box-shadow:0 0 0 2px var(--c) inset;animation:pop .3s}
 .dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
 </style>
 </head>
@@ -160,7 +164,7 @@ const SEALS=['💛','🤝','⭐','🔥','♾️'],STICKERS=['🤗','🥳','🥹'
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const KIND_LINE={bestie:'best friend',child:'oldest friend',college:'college partner-in-crime',work:'work bestie',sib:'sibling in all but blood',online:'favourite person on the internet'};
 
-let S={type:'',age:'',bm:'',bd:'',cake:'choc',balloons:['','','','',''],step:1,name:'',from:'',kind:'bestie',sm:'',sy:'',vibe:'chaos',notes:[],photos:[],pz:0,grid:3,msg:'',seal:'💛',sticker:'🤗',rules:[]};
+let S={type:'',game:true,age:'',bm:'',bd:'',cake:'choc',balloons:['','','','',''],step:1,name:'',from:'',kind:'bestie',sm:'',sy:'',vibe:'chaos',notes:[],photos:[],pz:0,grid:3,msg:'',seal:'💛',sticker:'🤗',rules:[]};
 let V=null; // view state
 let muted=false,actx=null;
 
@@ -506,7 +510,8 @@ function wizB(){
   <p class="hint">If they open early, a countdown holds the surprise until 12:00 AM 🎈</p>
   <button class="btn" id="b-go" data-act="next" ${S.name&&S.from?'':'disabled'}>Let’s begin 🎂</button><button class="dlink" data-act="type">🔄 Change occasion</button><button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
   if(n==2)h=`<p class="eyebrow">Step 2</p><h1>Pick their <em>cake</em> 🎂</h1><p class="sub">They’ll light it, wish on it, and cut it.</p>
-  ${CAKES.map(c=>`<button class="opt ${S.cake==c[0]?'on':''}" data-cake="${c[0]}"><span class="em">${c[1]}</span><span><b>${c[2]}</b><small>${c[3]}</small></span></button>`).join('')}${nav()}`;
+  ${CAKES.map(c=>`<button class="opt ${S.cake==c[0]?'on':''}" data-cake="${c[0]}"><span class="em">${c[1]}</span><span><b>${c[2]}</b><small>${c[3]}</small></span></button>`).join('')}
+  <label>Mini game</label><button class="opt ${S.game?'on':''}" data-game="1"><span class="em">🎮</span><span><b>${S.game?'Include a mini game':'No mini game'}</b><small>A relaxed memory-match game · tap to turn ${S.game?'off':'on'}</small></span></button>${nav()}`;
   if(n==3)h=`<p class="eyebrow">Step 3</p><h1>Fill the <em>balloons</em> 🎈</h1><p class="sub">Each balloon hides one reason they’re loved. They’ll pop them one by one.</p>
   ${S.balloons.map((x,i)=>`<div class="balrow"><span>🎈</span><input type="text" data-bal="${i}" maxlength="50" placeholder="${BALPH[i]}" value="${esc(x)}"><small>${x.length}/50</small></div>`).join('')}
   <label>Need a spark? <small>tap to use</small></label><div>${SPARKS.map((x,i)=>`<button class="pill" data-spark="${i}">${esc(x)}</button>`).join('')}</div>${nav('Continue →',filled>0)}`;
@@ -520,7 +525,7 @@ function wizB(){
   <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${CONFIG.RZP_KEY&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${CONFIG.RZP_KEY&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==7)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🎂 Birthday Surprise for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
-  <ul><li>🎂 Cake to light, wish on & cut</li><li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li><li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
+  <ul><li>🎂 Cake to light, wish on & cut</li>${S.game?'<li>🎮 A relaxed mini game</li>':''}<li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li><li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
   <button class="btn" data-act="pay">🔒 Pay ₹${CONFIG.PRICE_INR} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>
   <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Birthday</span></div><div class="dots">${dots}</div>${h}</div>`;
@@ -539,28 +544,29 @@ shell.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||V)return;const d=b.dataset;
   if(d.type){S.type=d.type;S.step=1;S.vibe=d.type=='bday'?'bday':'chaos';if(d.type=='friend')S.photos=S.photos.slice(0,4);wiz()}
   else if(d.cake){S.cake=d.cake;wiz()}
+  else if(d.game!=null){S.game=!S.game;wiz()}
   else if(d.spark!=null){const k=S.balloons.findIndex(x=>!x.trim());if(k>=0&&!S.balloons.includes(SPARKS[+d.spark])){S.balloons[k]=SPARKS[+d.spark];wiz()}}
   else if(d.ltr!=null){S.msg=LETTERS[+d.ltr];wiz()}
 });
 
 // ----- what the birthday person sees -----
 function startBday(g,preview){
-  V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0};
+  V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0,stages:['gift','hello','cake','balloons'].concat(g.game===true?['game']:[],(g.photos&&g.photos.length)?['memories']:[],['letter','finale'])};
   document.body.dataset.vibe='bday';
   $('#badge').style.display=preview?'block':'none';$('#back').style.display=preview?'block':'none';
   bscreen();
 }
 function bframe(inner){
-  const names=['Gift','Hello','Cake','Balloons','Memories','Letter','Finale'];
+  const NM={gift:'Gift',hello:'Hello',cake:'Cake',balloons:'Balloons',game:'Mini game',memories:'Memories',letter:'Letter',finale:'Finale'},names=V.stages.map(x=>NM[x]);
   const bar=names.map((_,i)=>`<s class="${i<=V.s?'on':''}"></s>`).join('');
   shell.innerHTML=`<div class="museum"><div class="pill-room">${names[V.s]}<i>${bar}</i></div><div class="room" id="room">${inner}</div></div>`;
 }
-function bgo(){clearInterval(V.tk);V.s++;if(V.s==4&&!V.g.photos.length)V.s++;bscreen()}
+function bgo(){clearInterval(V.tk);V.s++;bscreen()}
 function bunlocked(g){if(!g.bm||!g.bd)return true;const n=new Date();return n.getMonth()+1==+g.bm&&n.getDate()==+g.bd}
 function bnext(g){const n=new Date(),t0=new Date(n.getFullYear(),n.getMonth(),n.getDate());let t=new Date(n.getFullYear(),g.bm-1,g.bd);if(t<t0)t=new Date(n.getFullYear()+1,g.bm-1,g.bd);return t}
 function bscreen(){
-  const g=V.g,s=V.s;
-  if(s==0){
+  const g=V.g,st=V.stages[V.s];
+  if(st=='gift'){
     if(V.preview||V.peek||bunlocked(g)){
       bframe(`<div class="rico">🎁</div><p class="eyebrow">A surprise for</p><h2>${esc(g.name)}</h2><p>${esc(g.from)} made this just for you.</p><button class="btn" id="nx">Unwrap it ✨</button>`);
       $('#nx').onclick=()=>{chime();confetti(20);musicStart('bday');bgo()};
@@ -574,11 +580,11 @@ function bscreen(){
       $('#pk').onclick=()=>{clearInterval(V.tk);V.peek=1;bscreen()};
     }
   }
-  if(s==1){
+  if(st=='hello'){
     bframe(`<div class="rico">🎉</div><p class="eyebrow">it’s officially your day</p><h2>Happy Birthday,<br>${esc(g.name)}!</h2><p>${g.age?`Turning <b>${esc(g.age)}</b> — here’s `:'Here’s '}to a year that blooms.</p><button class="btn" id="nx">Continue →</button>`);
     confetti(50);chime();$('#nx').onclick=bgo;
   }
-  if(s==2){
+  if(st=='cake'){
     bframe(`<h2>First things first 🎂</h2><p id="ct">Tap the candle to light it</p><div class="cake" data-cake="${g.cake||'choc'}" id="ck"><div class="l1"></div><div class="l2"></div><div class="ic"></div><div class="candle" id="cdl"><i class="flame"></i></div></div><button class="btn" id="nx" disabled>Light the candle first</button>`);
     const ck=$('#ck'),ct=$('#ct'),nx=$('#nx');
     $('#cdl').onclick=()=>{
@@ -590,7 +596,7 @@ function bscreen(){
       else bgo();
     };
   }
-  if(s==3){
+  if(st=='balloons'){
     const bals=g.balloons.filter(x=>x&&x.trim());
     bframe(`<h2>Pop the balloons 🎈</h2><p>Each one hides a reason you’re loved</p><div class="bals" id="bals">${bals.map((_,i)=>`<div class="bal" data-i="${i}" style="background:${BCOL[i%5]};animation-delay:-${i*.4}s"></div>`).join('')}</div><div class="notes" id="nl"></div><button class="btn" id="nx" disabled>Pop them all to continue</button>`);
     $('#bals').onclick=e=>{const b=e.target.closest('.bal');if(!b||b.classList.contains('pop'))return;
@@ -600,7 +606,24 @@ function bscreen(){
       if(V.popped.size>=bals.length){$('#nx').disabled=false;$('#nx').textContent='…and a thousand more reasons 💛';chime()}};
     $('#nx').onclick=bgo;
   }
-  if(s==4){
+  if(st=='game'){
+    const EM=['🎂','🎈','🎁','🎉','🍰','🧁'],deck=EM.concat(EM);
+    for(let k=deck.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[deck[k],deck[j]]=[deck[j],deck[k]]}
+    bframe(`<h2>Mini game 🎮</h2><p id="gp">Match the pairs. No rush, take your time!</p><div class="mm" id="mm">${deck.map((e,i)=>`<button class="mc" data-e="${e}"><span class="mf">❓</span><span class="mb">${e}</span></button>`).join('')}</div><p id="gm">Moves: 0 · Pairs: 0/6</p><button class="btn" id="nx" disabled>Match all pairs to continue</button><button class="dlink" id="sk">Skip the game →</button>`);
+    let open=[],moves=0,found=0,lock=false;
+    $('#mm').onclick=e=>{
+      const c=e.target.closest('.mc');if(!c||lock||c.classList.contains('up')||c.classList.contains('ok'))return;
+      c.classList.add('up');beep(480+open.length*90,.07);open.push(c);
+      if(open.length<2)return;
+      moves++;lock=true;const a=open[0],b=open[1];
+      if(a.dataset.e==b.dataset.e){a.classList.add('ok');b.classList.add('ok');found++;open=[];lock=false;beep(760,.12)}
+      else setTimeout(()=>{a.classList.remove('up');b.classList.remove('up');open=[];lock=false},700);
+      $('#gm').textContent='Moves: '+moves+' · Pairs: '+found+'/6';
+      if(found==6){V.gmoves=moves;$('#gp').textContent='You did it in '+moves+' moves! 🎉';$('#nx').disabled=false;$('#nx').textContent='Continue →';chime();confetti(40)}
+    };
+    $('#nx').onclick=bgo;$('#sk').onclick=bgo;
+  }
+  if(st=='memories'){
     const N=g.photos.length,room0=()=>$('#room');
     V.seen=V.seen||new Set();
     const draw=()=>{const p=g.photos[V.ex];V.seen.add(V.ex);const all=V.seen.size>=N;
@@ -610,18 +633,18 @@ function bscreen(){
     let x0=null;const r=room0();r.ontouchstart=e=>{x0=e.touches[0].clientX};
     r.ontouchend=e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>45){V.ex=(V.ex+(dx<0?1:N-1))%N;beep(540,.06);draw()}};
   }
-  if(s==5){
+  if(st=='letter'){
     bframe(`<h2>One last thing…</h2><p>${esc(g.from)} wrote you a letter.</p><div class="env" id="env"><div class="seal">🎂</div></div><p>👆 Tap to open your letter</p>`);
     $('#env').onclick=()=>{$('#env').classList.add('broken');beep(300,.1,'square');
       setTimeout(()=>{$('#room').innerHTML=`<div class="letter" id="lt"></div><div style="font-size:48px">🎂</div><button class="btn" id="nx">Continue</button>`;
         const t=g.msg||`Happy birthday, ${g.name}!`;let k=0;const iv=setInterval(()=>{$('#lt').textContent=t.slice(0,++k);if(k>=t.length)clearInterval(iv)},24);
         $('#nx').onclick=()=>{clearInterval(iv);bgo()}},600)};
   }
-  if(s==6){
+  if(st=='finale'){
     confetti(70);chime();
     const el=Math.round((Date.now()-V.t0)/1000);
     bframe(`<div class="cert"><p class="eyebrow">Happy birthday</p><big>${esc(g.name)} 🎂</big><p>With love from ${esc(g.from)} 💛</p></div><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Watch again</button>`);
-    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:el,moves:0,rules:g.balloons.filter(x=>x&&x.trim()).length,sig:'',ts:new Date().toISOString()};V.rec=rec;V.rid=Date.now().toString(36);V.slim=(({sig,...x})=>x)(rec);dbAdd(CONFIG.KEY_REPLIES,rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
+    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:el,moves:V.gmoves||0,rules:g.balloons.filter(x=>x&&x.trim()).length,sig:'',ts:new Date().toISOString()};V.rec=rec;V.rid=Date.now().toString(36);V.slim=(({sig,...x})=>x)(rec);dbAdd(CONFIG.KEY_REPLIES,rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
       if(CONFIG.DB&&V.rec.gid)fb('PUT','replies/'+encodeURIComponent(V.rec.gid)+'/'+V.rid,{...V.slim,reply:t}).then(()=>{$('#sr').textContent='Sent ✓ 💛';chime()}).catch(()=>{$('#sr').textContent='Could not send — try again'});
       else{$('#sr').textContent='Saved on this device ✓';chime()}};
