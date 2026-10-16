@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Opening your gift… 🎁</title>
+<style>body{font-family:system-ui,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffd6e8,#fff0d1);color:#17332d;text-align:center;margin:0}</style>
+</head>
+<body>
+<p>Opening your gift… 🎁<br><small><noscript>Please turn on JavaScript to open it.</noscript></small></p>
+<script>
+/* GitHub Pages shows this file for any address that does not exist, for example
+   https://yourname.github.io/friendship-museum/sam-k3j9x
+   It sends the visitor to the real page:  .../index.html#c=sam-k3j9x
+   SEGMENTS = how many folders come before the page: 1 for yourname.github.io/repo/...  0 on your own domain. */
+(function () {
+  var SEGMENTS = /\.github\.io$/.test(location.hostname) ? 1 : 0;
+  var parts = location.pathname.split('/').filter(Boolean);
+  var base = '/' + parts.slice(0, SEGMENTS).join('/') + (SEGMENTS ? '/' : '');
+  var code = (parts[SEGMENTS] || '').toLowerCase();
+  var ok = parts.length === SEGMENTS + 1 && /^[a-z0-9-]{3,40}$/.test(code);
+  location.replace(base + 'index.html' + (ok ? '#c=' + code : ''));
+})();
+</script>
+</body>
+</html>
