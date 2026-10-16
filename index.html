@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Friendship Museum</title>
+<meta property="og:title" content="A little surprise, made just for you 🎁"><meta property="og:description" content="Open it to see what someone special made for you."><meta property="og:type" content="website"><meta name="twitter:card" content="summary">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Shantell+Sans:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
@@ -270,6 +271,7 @@ body.fr-env .room,body.fr-env .card{border:2px solid #ffffffcc;box-shadow:0 24px
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const shell=$('#shell');
+const BASE_TITLE=document.title;
 const KINDS=[['bestie','💛','Bestie'],['child','🧒','Childhood'],['college','🎓','College crew'],['work','💼','Work bestie'],['sib','🏠','Sibling-coded'],['online','🌐','Online friend']];
 const VIBES=[['chaos','🤪','Chaotic & loud','Screaming, memes, zero volume control'],['calm','🌱','Calm & deep','3am talks and comfortable silences'],['roast','😈','Roast first, love later','Insults are our love language'],['ride','🛡️','Ride or die','One call and I am already there']];
 const NOTES=['You never let me spiral alone','You laugh at my worst jokes','You show up. Every single time.','You know all my stories','You tell me when I am being an idiot','You have seen me at my worst','You are my emergency contact','You make boring days fun'];
@@ -294,7 +296,8 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
    With DB set you get short links and replies from friends' phones. Leave '' to use long links only. */
 /* PAYMENT: paste your Razorpay *Key ID* (starts with rzp_test_ or rzp_live_). Never put the Key Secret in this file.
    PRICE_INR is the price in rupees. Leave RZP_KEY '' to skip payment (links are free). */
-const CONFIG={RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+/* PRETTY: false -> links look like  yoursite/#c=sam-k3j9x   |   true -> yoursite/sam-k3j9x  (needs 404.html uploaded next to index.html) */
+const CONFIG={PRETTY:false,RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 /* Admin-controlled switches for each builder step (loaded from the database; these are the defaults). */
 const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,f_quiz:true,f_story:true,f_awards:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true},fsongs:{calm:true,pop:true,lofi:true,box:true,none:true}};
 let ST=JSON.parse(JSON.stringify(ST_DEFAULT));
@@ -323,6 +326,7 @@ function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(
 
 /* ---------- WIZARD ---------- */
 function wiz(){
+  document.title=BASE_TITLE;
   if(!S.type){const on=[ST.friend&&'friend',ST.bday&&'bday'].filter(Boolean);if(on.length==1){S.type=on[0];S.step=1;S.vibe=on[0]=='bday'?'bday':'chaos'}else return chooser()}
   if(S.type=='bday')return wizB();
   setEnv(false);setFEnv(S.vibe||'chaos');
@@ -371,7 +375,7 @@ function wiz(){
    <div class="duo"><input type="text" id="f-ca" maxlength="60" placeholder="Write your own award…"><button class="btn ghost" style="width:80px;margin:0" data-act="addaward">Add</button></div></div>`:''}
   ${nav('next',(cleanQuiz(S.quiz).length||cleanStory(S.story).length||S.awards.length)?'Next →':'Skip for now')}`}
   if(n==8)h=`<p class="eyebrow">Step 8 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
-  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  <button class="btn" data-act="preview">👀 Take a look inside</button>${linkField()}<button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==9)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🏛️ Friendship Museum for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
   <ul><li>🏛️ ${fStages(fDraft()).length}-room interactive museum</li>${S.photos.length?`<li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on a polaroid wall${ST.f_puzzle?' + a puzzle':''}</li>`:''}${fDraft().quiz.length?`<li>🧠 ${fDraft().quiz.length}-question friendship quiz</li>`:''}${fDraft().story.length?`<li>📖 Your story as a timeline</li>`:''}${fDraft().awards.length?`<li>🏆 ${fDraft().awards.length} award${fDraft().awards.length==1?'':'s'} to open</li>`:''}${S.msg.trim()?'<li>💌 A sealed letter</li>':''}${S.rules.length?`<li>📜 ${S.rules.length} friendship rule${S.rules.length==1?'':'s'} to sign</li>`:''}<li>🎵 Background music</li><li>🎓 A certificate they can save</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
@@ -452,6 +456,14 @@ function pay(){
     rz.open();
   }catch(e){st.textContent='Could not start payment: '+e.message}
 }
+// A link name is the recipient's name made web-safe: "José Ángel" -> "jose-angel". Names with no Latin letters fall back to "gift".
+const slug=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,20).replace(/-+$/,'');
+const linkBase=()=>slug(S.linkName)||slug(S.name)||'gift';
+// 5 random characters are always added, so nobody can guess a link just by knowing a name
+const rand5=()=>{let r='';while(r.length<5)r+=Math.random().toString(36).slice(2);return r.slice(0,5)};
+const linkPreview=()=>(CONFIG.PRETTY?'…/':'…/#c=')+linkBase()+'-xxxxx';
+const linkField=()=>CONFIG.DB?`<label>Link name <small>— the recipient’s name in the web address</small></label><input type="text" id="f-ln" maxlength="20" placeholder="e.g. ${esc(slug(S.name)||'sam')}" value="${esc(S.linkName||'')}"><p class="hint">Your link will look like <b id="lnp">${esc(linkPreview())}</b></p>`:'';
+shell.addEventListener('input',e=>{const t=e.target;if(t.id!='f-ln')return;S.linkName=slug(t.value);const p=$('#lnp');if(p)p.textContent=linkPreview()});
 async function makeLink(){
   if(!S.id)S.id=uid();
   if(!S.created)S.created=new Date().toISOString();
@@ -465,8 +477,8 @@ let url,short=false,err='';
     out.innerHTML='<p class="hint">⏳ Saving your gift online…</p>';
     // The link is shown only after the database confirms it saved. A code that is already taken is refused by the Rules, so we retry.
     for(let t=0;t<4&&!short;t++){
-      const code=Math.random().toString(36).slice(2,8);
-      try{await fb('PUT','gifts/'+code,S);url=base+'#c='+code;short=true;S.code=code;fb('PUT','index/'+code,{id:S.id,type:S.type||'friend',name:S.name,from:S.from,created:S.created,pay:S.payId||''}).catch(()=>{})}
+      const code=linkBase()+'-'+rand5();
+      try{await fb('PUT','gifts/'+code,S);url=CONFIG.PRETTY?base.split('?')[0].replace(/[^/]*$/,'')+code:base+'#c='+code;short=true;S.code=code;fb('PUT','index/'+code,{id:S.id,type:S.type||'friend',name:S.name,from:S.from,created:S.created,pay:S.payId||''}).catch(()=>{})}
       catch(e){err=String(e.message||e)}
     }
   }
@@ -497,7 +509,7 @@ function fStages(g){
 }
 function startMuseum(g,preview){
   if(g.type=='bday')return startBday(g,preview);
-  setEnv(false);setFEnv(g.vibe||'chaos');
+  setEnv(false);setFEnv(g.vibe||'chaos');document.title=g.name+', a museum made for you 💛';
   V={g,preview,i:0,stages:fStages(g),knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
   document.body.dataset.vibe=g.vibe;
   $('#badge').style.display=preview?'block':'none';
@@ -835,7 +847,7 @@ function wizB(){
   <textarea id="f-msg" maxlength="500" placeholder="Dear ${esc(S.name)||'you'}, another year of you is the best news of my year…">${esc(S.msg)}</textarea><div class="count"><span id="cnt">${S.msg.length}</span> / 500</div>
   <label>Need a spark? <small>tap to use</small></label>${LETTERS.map((x,i)=>`<button class="pill" data-ltr="${i}">${esc(x.slice(0,70))}…</button>`).join('')}${nav('Bake the magic ✨',S.msg.trim().length>0)}`;
   if(n==6)h=`<p class="eyebrow">Step 6 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
-  <button class="btn" data-act="preview">👀 Take a look inside</button><button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  <button class="btn" data-act="preview">👀 Take a look inside</button>${linkField()}<button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==7)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🎂 Birthday Surprise for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
   <ul><li>🎂 Cake to light, wish on & cut</li>${S.game?'<li>🎮 A mini game with your photos</li>':''}<li>🎵 Song: ${esc((SONGS.find(x=>x[0]==(S.song||'bday'))||SONGS[0])[2])}</li><li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li><li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
@@ -865,6 +877,7 @@ shell.addEventListener('click',e=>{
 
 // ----- what the birthday person sees -----
 function startBday(g,preview){
+  document.title='Happy Birthday '+g.name+'! 🎂';
   setEnv(true);musicStop();MUS.preview=false;
   V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0,stages:['gift','hello','cake'].concat((g.balloons||[]).some(x=>x&&x.trim())?['balloons']:[],g.game===true?['game']:[],(g.photos&&g.photos.length)?['memories']:[],(g.msg&&g.msg.trim())?['letter']:[],['finale'])};
   document.body.dataset.vibe='bday';
@@ -1058,7 +1071,7 @@ async function adminCheck(){
 
 /* ---------- boot ---------- */
 (async()=>{
-  const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([a-z0-9]+)/);
+  const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([a-z0-9-]+)/);
   // Live settings from the admin dashboard (price, pause). Never delays the page by more than ~1.2 seconds.
   if(CONFIG.DB&&!m&&!mc){
     shell.innerHTML='<div class="card"><h1>Loading… 🎁</h1></div>';
