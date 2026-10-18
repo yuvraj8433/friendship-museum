@@ -194,7 +194,7 @@ const say=(m,bad)=>{note=m?`<div class="msg ${bad?'bad':''}">${esc(m)}</div>`:''
 function render(){
   const list=rows(),paid=list.filter(g=>g.pay&&!isFree(g)),free=list.filter(isFree),unpaid=list.filter(g=>!g.pay),off=list.filter(g=>g.disabled),rp=allReplies();
   const price=+settings.price>0?+settings.price:ADMIN.PRICE_INR;
-  app.innerHTML=`<div class="top"><h1>🎛️ Admin dashboard</h1><span class="sp"></span><span class="who">${esc(auth.email)}</span><button class="btn" id="cg" title="Opens the gift builder with payment skipped for you">➕ Create gift (no payment)</button><button class="btn g" id="mr" title="Referral rewards, UPI withdrawals, history and reports">💰 Referrals &amp; payouts</button><button class="btn g" id="rf">↻ Refresh</button><button class="btn g" id="lo">Sign out</button></div>
+  app.innerHTML=`<div class="top"><h1>🎛️ Admin dashboard</h1><span class="sp"></span><span class="who">${esc(auth.email)}</span><button class="btn" id="cg" title="Opens the gift builder with payment skipped for you">➕ Create gift (no payment)</button><button class="btn g" id="rf">↻ Refresh</button><button class="btn g" id="lo">Sign out</button></div>
   <div class="stats">
    <div class="stat"><b>${list.length}</b><span>Gifts created</span></div>
    <div class="stat"><b>${list.filter(g=>g.type=='bday').length} / ${list.filter(g=>g.type!='bday').length}</b><span>Birthday / Friendship</span></div>
@@ -209,7 +209,7 @@ function render(){
   <div id="note">${note}</div>
   <div class="tabs"><button data-t="gifts" class="${tab=='gifts'?'on':''}">🎁 Gifts (${list.length})</button><button data-t="replies" class="${tab=='replies'?'on':''}">💌 Replies (${rp.length})</button><button data-t="steps" class="${tab=='steps'?'on':''}">🧩 Builder steps</button><button data-t="settings" class="${tab=='settings'?'on':''}">⚙️ Settings</button></div>
   <div class="card" id="pane"></div>`;
-  $('#rf').onclick=load;$('#cg').onclick=createGift;$('#mr').onclick=openReferrals;$('#lo').onclick=()=>{auth=null;clrTok();try{sessionStorage.removeItem('om_admin')}catch(e){}loginView()};
+  $('#rf').onclick=load;$('#cg').onclick=createGift;$('#lo').onclick=()=>{auth=null;clrTok();try{sessionStorage.removeItem('om_admin')}catch(e){}loginView()};
   app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;note='';render()});
   ({gifts:paneGifts,replies:paneReplies,steps:paneSteps,settings:paneSettings})[tab]();
 }
@@ -268,7 +268,7 @@ async function viewGift(code){
     const bal=(g.balloons||[]).filter(x=>x&&x.trim()),notes=g.notes||[],rules=g.rules||[];
     m.firstChild.innerHTML=`<h2>${g.type=='bday'?'🎂':'🤝'} ${esc(g.name)} <small style="font-weight:500;color:var(--mut)">from ${esc(g.from)}</small></h2>
     <div class="kv"><b>Code</b><span>${esc(code)}</span><b>Gift ID</b><span>${esc(g.id||'—')}</span><b>Created</b><span>${fmt(g.created)}</span>
-    <b>Payment</b><span>${g.payId?esc(g.payId):'<span class="pill bad">none</span>'}</span>${g.ref?`<b>Referred by</b><span>${esc(g.ref)}</span>`:''}<b>Status</b><span>${g.disabled?'disabled':'live'}</span>
+    <b>Payment</b><span>${g.payId?esc(g.payId):'<span class="pill bad">none</span>'}</span><b>Status</b><span>${g.disabled?'disabled':'live'}</span>
     ${g.type=='bday'?`<b>Cake</b><span>${esc(g.cake)}</span><b>Mini game</b><span>${g.game===true?'yes':'no'}</span><b>Song</b><span>${esc(g.song||'bday')}</span><b>Age / birthday</b><span>${esc(g.age||'—')} · ${g.bm&&g.bd?esc(g.bd+'/'+g.bm):'—'}</span><b>Balloons</b><span>${bal.map(esc).join('<br>')||'—'}</span>`
       :`<b>Kind / vibe</b><span>${esc(g.kind)} · ${esc(g.vibe)}</span><b>Notes</b><span>${notes.map(esc).join('<br>')||'—'}</span><b>Rules</b><span>${rules.map(esc).join('<br>')||'—'}</span>`}
     <b>Message</b><span style="white-space:pre-wrap">${esc(g.msg||'—')}</span></div>

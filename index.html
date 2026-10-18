@@ -1316,19 +1316,21 @@ shell.addEventListener('click',e=>{
 
 /* ---------- referral program: a "Refer & earn" button on the first screen, a referral box at the finale; people sign up on refer.html; admin verifies and pays by UPI ---------- */
 const REF_DAYS=30;
-let REFSET={on:true,reward:20,min:20,every:false};   // replaced by the admin's settings (settings/refer)
+const REFERRAL_ENABLED=false;   // referral rewards are switched off on the public site
+let REFSET={on:false,reward:20,min:20,every:false};   // replaced by the admin's settings (settings/refer)
 const rKey=n=>{let r='';try{const a=new Uint8Array(n);crypto.getRandomValues(a);r=Array.from(a,b=>(b%36).toString(36)).join('')}catch(e){while(r.length<n)r+=Math.random().toString(36).slice(2);r=r.slice(0,n)}return r};
 // the account of the person using this browser (made on refer.html; shared with wallet.html through localStorage)
 const acct=()=>{try{const a=JSON.parse(localStorage.getItem('om_acct')||'null');return a&&a.uid&&a.rcode?a:null}catch(e){return null}};
 const refRec=()=>{try{const r=JSON.parse(localStorage.getItem('om_sref')||'null');return r&&r.c&&Date.now()-r.t<REF_DAYS*864e5?r:null}catch(e){return null}};
 // the referral that should be credited for a gift made in this browser ('' = none). You can't refer yourself.
-const refCode=()=>{const r=refRec();if(!r||REFSET.on===false)return '';const a=acct();if(a&&a.rcode===r.c)return '';if(r.used&&!REFSET.every)return '';return r.c};
+const refCode=()=>{if(!REFERRAL_ENABLED)return '';const r=refRec();if(!r||REFSET.on===false)return '';const a=acct();if(a&&a.rcode===r.c)return '';if(r.used&&!REFSET.every)return '';return r.c};
 const siteDir=()=>location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
 const refLinkOf=rc=>siteDir()+'index.html#ref='+rc;
 const referUrl=()=>siteDir()+'refer.html';
 const walletUrl=()=>siteDir()+'wallet.html';
 // someone opened a referral link: remember who invited them (the first referrer wins, for 30 days)
 async function captureRef(code){
+  if(!REFERRAL_ENABLED)return;
   try{
     if(!CONFIG.DB||refRec())return;
     const rr=await fb('GET','referrers/'+code);if(!rr||!rr.name)return;
@@ -1336,13 +1338,14 @@ async function captureRef(code){
   }catch(e){}
 }
 function refChip(){
+  if(!REFERRAL_ENABLED)return;
   const r=refRec();if(!r||!r.n||REFSET.on===false||document.querySelector('.refbar'))return;
   const b=document.createElement('div');b.className='refbar';b.textContent='🎁 Invited by '+r.n;document.body.appendChild(b);
 }
 // the small "Refer & earn" button, shown only while someone is building a gift (not while a gift is being opened)
 function refreshRefPill(){
   let p=$('#refpill');
-  if(!CONFIG.DB||REFSET.on===false||V){if(p)p.style.display='none';return}
+  if(!REFERRAL_ENABLED||!CONFIG.DB||REFSET.on===false||V){if(p)p.style.display='none';return}
   if(!p){p=document.createElement('a');p.id='refpill';p.className='fix';p.textContent='💰 Refer & earn';document.body.appendChild(p)}
   p.href=referUrl();p.style.display='block';
 }
@@ -1350,7 +1353,7 @@ const hideRefPill=()=>{const p=$('#refpill');if(p)p.style.display='none'};
 // called right after a gift link is saved: counts as one referral for whoever invited this person
 async function recordReferral(giftCode){
   try{
-    if(!CONFIG.DB||S.refDone||!/^pay_[A-Za-z0-9]+$/.test(S.payId||''))return;
+    if(!REFERRAL_ENABLED||!CONFIG.DB||S.refDone||!/^pay_[A-Za-z0-9]+$/.test(S.payId||''))return;
     const rc=refCode();if(!rc)return;
     if(!(await fb('GET','referrers/'+rc)))return;                                // the referrer must still exist
     S.refDone=1;
@@ -1362,10 +1365,10 @@ async function recordReferral(giftCode){
   }catch(e){}
 }
 function referBoxHtml(){
-  return CONFIG.DB?`<div class="refer" id="refer" style="display:none"><b>💰 Earn ₹<span class="rw">20</span> for every friend who makes a gift</b><small>Sign up free, share your link, and earn ₹<span class="rw">20</span> each time a friend pays and creates a gift with it. Withdraw to UPI from ₹<span id="rf-min">20</span>.</small><div id="rf-out"></div></div>`:'';
+  return REFERRAL_ENABLED&&CONFIG.DB?`<div class="refer" id="refer" style="display:none"><b>💰 Earn ₹<span class="rw">20</span> for every friend who makes a gift</b><small>Sign up free, share your link, and earn ₹<span class="rw">20</span> each time a friend pays and creates a gift with it. Withdraw to UPI from ₹<span id="rf-min">20</span>.</small><div id="rf-out"></div></div>`:'';
 }
 async function bindRefer(){
-  const box=$('#refer');if(!box)return;
+  const box=$('#refer');if(!REFERRAL_ENABLED||!box)return;
   try{const st=await fb('GET','settings/refer');if(st&&typeof st=='object')Object.assign(REFSET,st)}catch(e){}
   if(REFSET.on===false||!$('#refer'))return;
   box.querySelectorAll('.rw').forEach(e=>e.textContent=REFSET.reward);$('#rf-min').textContent=REFSET.min;box.style.display='';
@@ -1401,7 +1404,7 @@ async function adminCheck(){
     shell.innerHTML='<div class="card"><h1>Loading… 🎁</h1></div>';
     try{const st=await Promise.race([fb('GET','settings'),new Promise(r=>setTimeout(()=>r(null),1200))]);
       if(st){
-        if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;if(st.refer&&typeof st.refer=='object')Object.assign(REFSET,st.refer);
+        if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;if(REFERRAL_ENABLED&&st.refer&&typeof st.refer=='object')Object.assign(REFSET,st.refer);
         if(st.steps&&typeof st.steps=='object'){ST=Object.assign(JSON.parse(JSON.stringify(ST_DEFAULT)),st.steps);ST.songs=Object.assign({},ST_DEFAULT.songs,st.steps.songs||{});ST.fsongs=Object.assign({},ST_DEFAULT.fsongs,st.steps.fsongs||{})}
       }}catch(e){}
     if(!apiOn())await adminCheck();
