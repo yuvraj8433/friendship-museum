@@ -17,7 +17,7 @@ body{font-family:Outfit,system-ui,sans-serif;color:var(--ink);min-height:100vh;b
 #bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .thread{position:absolute;bottom:-12vh;border-radius:4px;opacity:.55;animation:rise linear infinite}
 @keyframes rise{to{transform:translateY(-125vh) rotate(40deg)}}
-.shell{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.shell{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:54px 16px 16px}
 .card{background:var(--card);border-radius:24px;box-shadow:0 20px 60px #17332d22;width:100%;max-width:460px;padding:26px 22px;animation:pop .35s ease}
 @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}}
 .brand{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
@@ -31,7 +31,7 @@ h1{font-family:'Bricolage Grotesque';font-size:28px;line-height:1.1;text-align:c
 h1 em{font-style:normal;color:var(--acc);text-decoration:underline wavy var(--acc);text-underline-offset:5px}
 .sub{text-align:center;color:var(--mut);margin:10px 0 16px;font-size:14px}
 label{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}label small{font-weight:400;color:var(--mut)}
-input[type=text],select,textarea{width:100%;font:inherit;padding:12px 14px;border:1.5px solid #dbe7e2;border-radius:12px;background:#f8fbfa;color:var(--ink)}
+input[type=text],input[type=email],input[type=password],select,textarea{width:100%;font:inherit;padding:12px 14px;border:1.5px solid #dbe7e2;border-radius:12px;background:#f8fbfa;color:var(--ink)}
 textarea{min-height:130px;resize:vertical}input:focus,textarea:focus,select:focus{outline:2px solid var(--acc);border-color:transparent}
 .duo{display:flex;gap:8px}
 .btn{width:100%;font:inherit;font-weight:700;border:0;border-radius:14px;padding:14px;color:#fff;background:linear-gradient(90deg,var(--acc),var(--acc2));cursor:pointer;margin-top:16px;transition:.15s}
@@ -255,6 +255,25 @@ body.fr-env .room,body.fr-env .card{border:2px solid #ffffffcc;box-shadow:0 24px
 .qrow{display:flex;gap:8px;align-items:center;margin:0;font-weight:400}.qrow input[type=radio]{width:20px;height:20px;flex:none;accent-color:#14A38B;margin:0}.qrow input[type=text]{flex:1}
 .srow{display:flex;gap:6px;margin:6px 0;align-items:center;min-width:0}.srow input{min-width:0}.srow input:first-child{flex:0 0 34%;width:auto}.srow input:nth-child(2){flex:1;width:auto}.srow .btn{margin:0;flex:none}
 .card,.room,.bx2,.qb{min-width:0;max-width:100%}.duo input{min-width:0}.qrow input[type=text]{min-width:0;width:auto}
+#acct{left:10px;display:none}
+[hidden]{display:none!important}
+.lnk{background:none;border:0;color:#0f8a74;font:inherit;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
+.aerr{color:#d64545;font-size:13px;min-height:18px;margin:8px 0 0;text-align:center}
+.wbox{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border-radius:18px;padding:16px 18px;margin:8px 0;display:flex;flex-direction:column;gap:2px;text-align:left}
+.wbox b{font-family:'Bricolage Grotesque',sans-serif;font-size:38px;line-height:1.1}.wbox small{opacity:.92;font-weight:600}.wbox span{font-size:13px;opacity:.95}
+.h3{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;margin:18px 0 6px}
+.li{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #eef2f0}.li>span:first-child{font-size:20px}.li>span:nth-child(2){flex:1;min-width:0}
+.li b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis}.li small{display:block;color:var(--mut);font-size:12px;font-weight:400}.li .amt{flex:none;color:var(--c)}.li .amt.neg{color:#d64545}
+.wdm{display:flex;gap:6px;margin-bottom:6px}.wdm .pill{margin:0}
+.sw2{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1.5px dashed var(--acc);border-radius:14px;background:#fffdf7;margin:8px 0;cursor:pointer;text-align:left;font-weight:400}
+.sw2 input{width:20px;height:20px;margin-top:2px;accent-color:#14A38B;flex:none}.sw2 b{display:block}.sw2 small{display:block;color:var(--mut);font-weight:400;font-size:12px}
+.acc .row .btn.ghost{width:auto;flex:1}.acc .bx2{text-align:left}.acc .bx2 .stats{display:flex;gap:8px;margin-top:10px}.acc .bx2 .stats div{flex:1}
+.rcvbar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:40;background:#17332d;color:#fff;border-radius:16px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:94vw}
+.rcvbar input{flex:1;min-width:160px;padding:7px;border-radius:8px;border:0;font:inherit;font-size:12px}.rcvbar button{border:0;border-radius:8px;padding:7px 12px;font:inherit;cursor:pointer}
+.refer{border:2px dashed var(--acc);border-radius:16px;padding:14px;background:#fffdf7;margin:12px 0;width:100%;text-align:left;color:var(--ink)}
+.refer>b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:17px}.refer>small{display:block;color:var(--mut);margin:4px 0 2px;line-height:1.45}
+.refer .row{display:flex;gap:8px}.refer .row .btn{margin-top:10px;width:auto;flex:1 1 auto}.refer .row .btn.ghost{flex:0 0 auto;width:auto;padding:14px 18px}
+.refbar{position:fixed;left:50%;bottom:52px;transform:translateX(-50%);z-index:29;background:#fff;color:#17332d;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;box-shadow:0 6px 18px #0003;white-space:nowrap}
 .dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
 </style>
 </head>
@@ -262,6 +281,7 @@ body.fr-env .room,body.fr-env .card{border:2px solid #ffffffcc;box-shadow:0 24px
 <div id="bg"></div>
 <button class="fix" id="back">← Back</button>
 <button class="fix" id="mute" aria-label="Toggle sound">🔊</button>
+<button class="fix" id="acct" aria-label="Account">👤 Log in</button>
 <div class="badge" id="badge">PREVIEW</div>
 <div class="shell" id="shell"></div>
 <footer class="lg"><span id="lg-price"></span><a href="site/privacy.html">Privacy</a> · <a href="site/terms.html">Terms</a> · <a href="site/refund.html">Refunds</a> · <a href="site/contact.html">Contact</a></footer>
@@ -297,12 +317,14 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
 /* PAYMENT: paste your Razorpay *Key ID* (starts with rzp_test_ or rzp_live_). Never put the Key Secret in this file.
    PRICE_INR is the price in rupees. Leave RZP_KEY '' to skip payment (links are free). */
 /* PRETTY: false -> links look like  yoursite/#c=sam-k3j9x   |   true -> yoursite/sam-k3j9x  (needs 404.html uploaded next to index.html) */
-const CONFIG={PRETTY:false,RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+/* ACCOUNTS + WALLET + REFERRALS: API = your server address (from worker/README.md), FIREBASE_KEY = your Firebase Web API key.
+   Leave both '' to keep the simple version without accounts. */
+const CONFIG={API:'',FIREBASE_KEY:'',PRETTY:false,RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 /* Admin-controlled switches for each builder step (loaded from the database; these are the defaults). */
 const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,f_quiz:true,f_story:true,f_awards:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true},fsongs:{calm:true,pop:true,lofi:true,box:true,none:true}};
 let ST=JSON.parse(JSON.stringify(ST_DEFAULT));
 // Is payment required right now? Not in free mode, and not for a signed-in admin.
-const payOn=()=>!!CONFIG.RZP_KEY&&!CONFIG.FREE&&!CONFIG.ADMIN;
+const payOn=()=>!!((CONFIG.API&&CONFIG.FIREBASE_KEY)||(CONFIG.RZP_KEY&&!CONFIG.FREE&&!CONFIG.ADMIN));
 const stepOff=(type,n)=>type=='bday'?((n==3&&!ST.b_balloons)||(n==4&&!ST.b_photos)||(n==5&&!ST.b_letter)):((n==2&&!ST.f_kind)||(n==3&&!ST.f_vibe)||(n==4&&!ST.f_photos)||(n==5&&!ST.f_msg)||(n==6&&!ST.f_rules)||(n==7&&!(ST.f_quiz||ST.f_story||ST.f_awards)));
 const stepMove=(n,dir)=>{const last=S.type=='bday'?6:8;let k=n+dir;while(k>1&&k<last&&stepOff(S.type,k))k+=dir;return Math.min(Math.max(k,1),last+1)};
 const allowedSongs=()=>SONGS.filter(x=>ST.songs[x[0]]!==false);
@@ -326,7 +348,7 @@ function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(
 
 /* ---------- WIZARD ---------- */
 function wiz(){
-  document.title=BASE_TITLE;
+  document.title=BASE_TITLE;refreshAcctBtn();
   if(!S.type){const on=[ST.friend&&'friend',ST.bday&&'bday'].filter(Boolean);if(on.length==1){S.type=on[0];S.step=1;S.vibe=on[0]=='bday'?'bday':'chaos'}else return chooser()}
   if(S.type=='bday')return wizB();
   setEnv(false);setFEnv(S.vibe||'chaos');
@@ -375,13 +397,14 @@ function wiz(){
    <div class="duo"><input type="text" id="f-ca" maxlength="60" placeholder="Write your own award…"><button class="btn ghost" style="width:80px;margin:0" data-act="addaward">Add</button></div></div>`:''}
   ${nav('next',(cleanQuiz(S.quiz).length||cleanStory(S.story).length||S.awards.length)?'Next →':'Skip for now')}`}
   if(n==8)h=`<p class="eyebrow">Step 8 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
-  <button class="btn" data-act="preview">👀 Take a look inside</button>${linkField()}<button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  <button class="btn" data-act="preview">👀 Take a look inside</button>${linkField()}<button class="btn ghost" data-act="link">${linkLabel()}</button><div id="out"></div><p class="hint">${linkHint()}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==9)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🏛️ Friendship Museum for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
   <ul><li>🏛️ ${fStages(fDraft()).length}-room interactive museum</li>${S.photos.length?`<li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on a polaroid wall${ST.f_puzzle?' + a puzzle':''}</li>`:''}${fDraft().quiz.length?`<li>🧠 ${fDraft().quiz.length}-question friendship quiz</li>`:''}${fDraft().story.length?`<li>📖 Your story as a timeline</li>`:''}${fDraft().awards.length?`<li>🏆 ${fDraft().awards.length} award${fDraft().awards.length==1?'':'s'} to open</li>`:''}${S.msg.trim()?'<li>💌 A sealed letter</li>':''}${S.rules.length?`<li>📜 ${S.rules.length} friendship rule${S.rules.length==1?'':'s'} to sign</li>`:''}<li>🎵 Background music</li><li>🎓 A certificate they can save</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
-  <button class="btn" data-act="pay">🔒 Pay ₹${CONFIG.PRICE_INR} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>
+  ${payBlock()}
   <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Friendship</span></div><div class="dots">${dots}</div>${h}</div>`;
+  if(apiOn()&&n==9)loadQuote();
 }
 shell.addEventListener('input',e=>{
   const t=e.target;
@@ -410,10 +433,11 @@ shell.addEventListener('click',e=>{
   else if(d.act=='addnote'){const v=$('#f-cn').value.trim();if(v){if(!S.notes.includes(v)&&S.notes.length<5)S.notes.push(v);wiz()}}
   else if(d.act=='addrule'){const v=$('#f-cr').value.trim();if(v){if(!S.rules.includes(v)&&S.rules.length<5)S.rules.push(v);wiz()}}
   else if(d.act=='preview')startMuseum(S,true);
-  else if(d.act=='link'){if(CONFIG.PAUSED&&!S.payId&&!CONFIG.ADMIN){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
+  else if(d.act=='link'){if(apiOn()){if(S.code){showLink($('#out'),linkFor(S.code),true,'');return}if(!ME){AUTHRET='checkout';acctView('login');return}S.step=payStep();wiz();return}
+    if(CONFIG.PAUSED&&!S.payId&&!CONFIG.ADMIN){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
     if(payOn()&&!S.payId){S.step=S.type=='bday'?7:9;wiz()}else makeLink()}
   else if(d.act=='type'){S.type='';wiz()}
-  else if(d.act=='pay')pay();
+  else if(d.act=='pay'){apiOn()?payServer():pay()}
   else if(d.act=='dash')dashboard();
 });
 async function dashboard(){
@@ -456,20 +480,236 @@ function pay(){
     rz.open();
   }catch(e){st.textContent='Could not start payment: '+e.message}
 }
+/* ---------- accounts, wallet, referrals, paying through the server (needs worker/ deployed; see worker/README.md) ---------- */
+const apiOn=()=>!!(CONFIG.API&&CONFIG.FIREBASE_KEY);
+const AUTHMSG={EMAIL_EXISTS:'This email already has an account. Try logging in instead.',WEAK_PASSWORD:'That password is too weak. Use at least 8 characters.',INVALID_EMAIL:'That email address does not look right.',INVALID_LOGIN_CREDENTIALS:'Wrong email or password.',INVALID_PASSWORD:'Wrong email or password.',EMAIL_NOT_FOUND:'We could not find an account with that email.',USER_DISABLED:'This account has been disabled.',TOO_MANY_ATTEMPTS_TRY_LATER:'Too many attempts. Please wait a few minutes and try again.',OPERATION_NOT_ALLOWED:'Email sign-in is not switched on yet. Ask the site owner to enable it.',MISSING_PASSWORD:'Please enter your password.'};
+let ME=null;try{ME=JSON.parse(localStorage.getItem('om_user')||'null')}catch(e){}
+const saveMe=()=>{try{ME?localStorage.setItem('om_user',JSON.stringify(ME)):localStorage.removeItem('om_user')}catch(e){}};
+const firstName=()=>String((ME&&(ME.name||ME.email))||'').split(/[\s@]/)[0]||'Me';
+const money=n=>'₹'+(+n||0).toLocaleString('en-IN');
+const whenStr=t=>t?new Date(t).toLocaleDateString([],{day:'numeric',month:'short',year:'numeric'}):'';
+const savedRef=()=>{try{const o=JSON.parse(localStorage.getItem('om_ref')||'null');return o&&Date.now()-o.t<30*864e5?o.c:''}catch(e){return ''}};
+// a friend's invite link (?ref=CODE) is remembered for 30 days, until they sign up
+try{const rq=new URLSearchParams(location.search).get('ref');if(rq&&/^[A-Za-z0-9]{4,10}$/.test(rq)&&!savedRef())localStorage.setItem('om_ref',JSON.stringify({c:rq.toUpperCase(),t:Date.now()}))}catch(e){}
+let AUTHRET='',QUOTE=null;
+const reviewStep=()=>S.type=='bday'?6:8, payStep=()=>S.type=='bday'?7:9;
+const linkFor=code=>{const base=location.href.split('#')[0].split('?')[0];return CONFIG.PRETTY?base.replace(/[^/]*$/,'')+code:base+'#c='+code};
+async function idt(){   // a fresh login token (renewed quietly when it is getting old)
+  if(!ME)throw new Error('Please log in first.');
+  if(Date.now()-(ME.at||0)>50*60*1000){
+    const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+CONFIG.FIREBASE_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(ME.refreshToken)});
+    if(!r.ok){ME=null;saveMe();refreshAcctBtn();throw new Error('Your session expired. Please log in again.')}
+    const j=await r.json();ME.idToken=j.id_token;ME.refreshToken=j.refresh_token;ME.at=Date.now();saveMe();
+  }
+  return ME.idToken;
+}
+async function authCall(ep,body){
+  const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+ep+'?key='+CONFIG.FIREBASE_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const m=(j.error&&j.error.message)||'',k=Object.keys(AUTHMSG).find(x=>m.startsWith(x));throw new Error(AUTHMSG[k]||'Something went wrong ('+(m||r.status)+').')}
+  return j;
+}
+async function api(path,body){
+  const t=await idt();
+  const r=await fetch(CONFIG.API.replace(/\/+$/,'')+path,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body||{})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.error||'Server error ('+r.status+')');
+  return j;
+}
+async function dbMy(path){const t=await idt(),r=await fetch(CONFIG.DB.replace(/\/+$/,'')+'/'+path+'.json?auth='+encodeURIComponent(t));if(!r.ok)throw new Error('Could not load your data ('+r.status+').');return r.json()}
+function refreshAcctBtn(){const b=$('#acct');if(!b)return;b.style.display=apiOn()&&!V?'block':'none';b.textContent=ME?'👤 '+firstName():'👤 Log in'}
+$('#acct').onclick=()=>{AUTHRET='';ME?acctView('home'):acctView('login')};
+
+/* --- login / sign-up / forgot password screens --- */
+let AEM='';
+const authCard=inner=>`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Account</span></div>${inner}<button class="dlink" data-a="back">← Back</button></div>`;
+function acctView(tab,msg){
+  setEnv(false);setFEnv(false);document.title=BASE_TITLE;document.body.dataset.vibe='chaos';$('#back').style.display='none';$('#badge').style.display='none';
+  refreshAcctBtn();
+  if(tab=='home')return acctHome();
+  const err=`<p class="aerr" id="a-err">${esc(msg||'')}</p>`;
+  if(tab=='login')shell.innerHTML=authCard(`<h1>Welcome <em>back</em> 👋</h1><p class="sub">Log in to see your wallet, referrals and gifts.</p>
+    <label>Email</label><input type="email" id="a-email" autocomplete="email" value="${esc(AEM)}"><label>Password</label><input type="password" id="a-pass" autocomplete="current-password">
+    <button class="btn" data-a="login">Log in</button>${err}<p class="hint"><button class="lnk" data-a="toForgot">Forgot password?</button> · <button class="lnk" data-a="toSignup">Create a free account</button></p>`);
+  if(tab=='signup')shell.innerHTML=authCard(`<h1>Create your <em>account</em> 🎁</h1><p class="sub">Free. No OTP needed. Earn ${money(QUOTE?QUOTE.refAmount:20)} for every friend you invite.</p>
+    <label>Your name</label><input type="text" id="a-name" maxlength="40" autocomplete="name" placeholder="e.g. Rahul">
+    <label>Email</label><input type="email" id="a-email" autocomplete="email" value="${esc(AEM)}" placeholder="you@example.com">
+    <label>Password <small>— at least 8 characters</small></label><input type="password" id="a-pass" autocomplete="new-password">
+    <label>Referral code <small>— if a friend invited you (optional)</small></label><input type="text" id="a-ref" maxlength="10" value="${esc(savedRef())}" placeholder="e.g. K7M2QX" style="text-transform:uppercase">
+    <button class="btn" data-a="signup">Create account</button>${err}<p class="hint">By creating an account you agree to our <a href="site/terms.html" target="_blank">Terms</a> and <a href="site/privacy.html" target="_blank">Privacy Policy</a>.</p>
+    <p class="hint">Already have an account? <button class="lnk" data-a="toLogin">Log in</button></p>`);
+  if(tab=='forgot')shell.innerHTML=authCard(`<h1>Forgot your <em>password</em>? 🔑</h1><p class="sub">Enter your email and we will send you a link to choose a new password.</p>
+    <label>Email</label><input type="email" id="a-email" autocomplete="email" value="${esc(AEM)}"><button class="btn" data-a="sendreset">Send reset link</button>${err}
+    <p class="hint"><button class="lnk" data-a="toLogin">← Back to log in</button></p>`);
+}
+function afterAuth(){
+  refreshAcctBtn();recoverCheck();
+  if(AUTHRET=='checkout'&&S.type){AUTHRET='';S.step=payStep();wiz()}else{AUTHRET='';acctView('home')}
+}
+async function recoverCheck(){
+  if(!ME||!apiOn())return;
+  try{
+    let codes=[];
+    try{const p=JSON.parse(localStorage.getItem('om_pending')||'null');if(p){const r=await api('/api/complete',p);codes.push(r.code);localStorage.removeItem('om_pending')}}catch(e){}
+    const r=await api('/api/recover');codes=codes.concat(r.codes||[]);
+    if(codes.length)showRecovered(codes);
+  }catch(e){/* try again next time */}
+}
+function showRecovered(codes){
+  const old=$('.rcvbar');if(old)old.remove();
+  const b=document.createElement('div');b.className='rcvbar';
+  b.innerHTML='✅ Your payment went through. Here is your gift link:<input readonly value="'+esc(linkFor(codes[0]))+'"><button id="rcv-x">OK</button>';
+  document.body.appendChild(b);$('.rcvbar input').onclick=e=>e.target.select();$('#rcv-x').onclick=()=>b.remove();
+}
+
+/* --- the account page --- */
+const REFSTATUS={pending:['⏳','Waiting for their first purchase'],rewarding:['⏳','Processing'],rewarded:['✅','Reward earned'],rejected:['🚫','Not eligible'],capped:['🛑','Reward limit reached'],revoked:['↩️','Reward reversed'],error:['⚠️','Processing']};
+const LEDGERICON={referral:'🤝',spend:'🎁',withdraw:'💸',refund:'↩️',admin:'🛠️',revoke:'↩️'};
+async function acctHome(){
+  if(!ME)return acctView('login');
+  shell.innerHTML='<div class="card"><h1>Loading your account… ⏳</h1></div>';
+  try{
+    const prof=(await api('/api/register',{name:'',ref:savedRef()})).profile;
+    ME.name=prof.name;saveMe();refreshAcctBtn();
+    const uid=ME.uid;
+    const [q,led,refs,wds,gifts]=await Promise.all([api('/api/quote'),dbMy('ledger/'+uid),dbMy('referrals/'+uid),dbMy('withdrawals/'+uid),dbMy('usergifts/'+uid)]);
+    QUOTE=q;
+    const arr=o=>Object.entries(o||{}).map(([id,v])=>({id,...v})),sortT=(a,k='t')=>a.sort((x,y)=>(y[k]||0)-(x[k]||0));
+    const ledger=sortT(arr(led)).slice(0,25),referrals=sortT(arr(refs)),withdrawals=sortT(arr(wds)),mine=arr(gifts).sort((x,y)=>String(y.created).localeCompare(String(x.created)));
+    const rewarded=referrals.filter(r=>r.status=='rewarded'),earned=rewarded.reduce((s,r)=>s+(r.reward||0),0);
+    const refLink=location.href.split('#')[0].split('?')[0]+'?ref='+prof.refCode;
+    const pending=withdrawals.find(w=>w.status=='pending');
+    const share=encodeURIComponent('🎁 Make someone a beautiful online gift (friendship museum or birthday surprise) with OurMoments: '+refLink);
+    const wdForm=!q.wdOn?'<p class="hint">Withdrawals are switched off for now.</p>':pending?`<p class="hint">⏳ Your withdrawal of ${money(pending.amount)} is being processed. We aim to pay within ${q.wdHours} hours.</p>`
+      :q.balance<q.minWd?`<p class="hint">You can withdraw once your wallet has at least ${money(q.minWd)}. Your balance is ${money(q.balance)}.</p>`
+      :`<div class="wdm"><button class="pill on" data-a="wdm" data-m="upi" ${q.wdUpi?'':'hidden'}>UPI</button><button class="pill ${q.wdUpi?'':'on'}" data-a="wdm" data-m="bank" ${q.wdBank?'':'hidden'}>Bank transfer</button></div>
+         <div id="wd-upi" ${q.wdUpi?'':'hidden'}><label>UPI ID</label><input type="text" id="w-upi" maxlength="64" placeholder="name@bank" autocomplete="off"></div>
+         <div id="wd-bank" ${q.wdUpi?'hidden':''}><label>Account holder name</label><input type="text" id="w-holder" maxlength="60"><label>Account number</label><input type="text" inputmode="numeric" id="w-acc" maxlength="20"><label>IFSC code</label><input type="text" id="w-ifsc" maxlength="11" placeholder="HDFC0001234" style="text-transform:uppercase"><label>Bank name <small>(optional)</small></label><input type="text" id="w-bank" maxlength="40"></div>
+         <label>Amount (₹)</label><input type="text" inputmode="numeric" id="w-amt" maxlength="6" value="${Math.max(q.minWd,0)}">
+         <button class="btn" data-a="withdraw" data-m="${q.wdUpi?'upi':'bank'}" id="w-go">Withdraw to my ${q.wdUpi?'UPI':'bank'}</button><p class="aerr" id="a-err"></p>
+         <p class="hint">Minimum ${money(q.minWd)} · we aim to pay within ${q.wdHours} hours</p>`;
+    shell.innerHTML=`<div class="card acc"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Account</span></div>
+      <h1>Hi ${esc(firstName())} 👋</h1><p class="sub">${esc(ME.email)}</p>
+      <div class="wbox"><small>💰 Wallet balance</small><b>${money(q.balance)}</b><span>Use it to pay for gifts${q.wdOn?', or withdraw it':''}.</span></div>
+      <div class="bx2"><h3>🤝 Invite friends, earn ${money(q.refAmount)} each</h3><p class="who">Share your link. When a friend joins and buys their first gift, ${money(q.refAmount)} goes into your wallet.</p>
+        <input class="share" readonly value="${esc(refLink)}" onclick="this.select()"><p class="who">Your code: <b>${esc(prof.refCode)}</b></p>
+        <div class="row"><button class="btn" data-a="copyref" data-v="${esc(refLink)}">📋 Copy link</button><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${share}">💬 WhatsApp</a></div>
+        <div class="stats"><div><b>${referrals.length}</b>friends joined</div><div><b>${rewarded.length}</b>rewarded</div><div><b>${money(earned)}</b>earned</div></div></div>
+      <h3 class="h3">Referral history</h3>${referrals.length?referrals.map(r=>{const s=REFSTATUS[r.status]||['•',r.status];return `<div class="li"><span>${s[0]}</span><span><b>${esc(r.name||'Friend')}</b><small>${esc(s[1])}${r.reason?' · '+esc(r.reason):''} · ${whenStr(r.t)}</small></span><b class="amt">${r.status=='rewarded'?'+'+money(r.reward):''}</b></div>`}).join(''):'<p class="hint">No friends yet. Share your link to get started.</p>'}
+      <h3 class="h3">💸 Withdraw money</h3>${wdForm}
+      ${withdrawals.length?'<h3 class="h3">Your withdrawals</h3>'+withdrawals.map(w=>`<div class="li"><span>${w.status=='paid'?'✅':w.status=='rejected'?'↩️':'⏳'}</span><span><b>${money(w.amount)} · ${w.method=='upi'?'UPI':'Bank'}</b><small>${w.status=='paid'?'Paid'+(w.ref?' · ref '+esc(w.ref):''):w.status=='rejected'?'Rejected, money returned to your wallet':'Processing'} · ${whenStr(w.t)}</small></span></div>`).join(''):''}
+      <h3 class="h3">Wallet history</h3>${ledger.length?ledger.map(l=>`<div class="li"><span>${LEDGERICON[l.type]||'•'}</span><span><b>${esc(l.note||l.type)}</b><small>${whenStr(l.t)}</small></span><b class="amt ${l.amount<0?'neg':''}">${l.amount<0?'−':'+'}${money(Math.abs(l.amount))}</b></div>`).join(''):'<p class="hint">Nothing yet.</p>'}
+      <h3 class="h3">🎁 My gifts</h3>${mine.length?mine.map(g=>`<div class="li"><span>${g.type=='bday'?'🎂':'🤝'}</span><span><b>${esc(g.name)}</b><small>${whenStr(Date.parse(g.created))}</small></span><button class="btn s ghost" data-a="copyref" data-v="${esc(linkFor(g.code||g.id))}">Copy link</button></div>`).join(''):'<p class="hint">Gifts you create will be listed here.</p>'}
+      <div class="row"><button class="btn ghost" data-a="chpw">🔑 Change password</button><button class="btn ghost" data-a="logout">Log out</button></div><p class="aerr" id="a-msg"></p>
+      <button class="dlink" data-a="back">← Back to creating a gift</button></div>`;
+  }catch(e){shell.innerHTML=authCard(`<h1>Hmm… 😕</h1><p class="sub">${esc(e.message)}</p><button class="btn" data-a="toLogin">Log in again</button>`)}
+}
+shell.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-a]');if(!b||V)return;
+  const a=b.dataset.a,val=id=>{const x=$('#'+id);return x?x.value.trim():''},err=m=>{const x=$('#a-err');if(x)x.textContent=m||''};
+  try{
+    if(a=='back'){AUTHRET='';wiz();return}
+    if(a=='toLogin'){AEM=val('a-email');acctView('login');return}
+    if(a=='toSignup'){AEM=val('a-email');acctView('signup');return}
+    if(a=='toForgot'){AEM=val('a-email');acctView('forgot');return}
+    if(a=='login'){
+      const email=val('a-email'),pw=($('#a-pass')||{}).value||'';AEM=email;
+      if(!email||!pw)return err('Please enter your email and password.');
+      b.disabled=true;err('');
+      const j=await authCall('signInWithPassword',{email,password:pw,returnSecureToken:true});
+      ME={idToken:j.idToken,refreshToken:j.refreshToken,email:j.email,uid:j.localId,name:j.displayName||'',at:Date.now()};saveMe();
+      try{ME.name=(await api('/api/register',{name:'',ref:savedRef()})).profile.name;saveMe()}catch(x){ME=null;saveMe();throw x}
+      return afterAuth();
+    }
+    if(a=='signup'){
+      const name=val('a-name'),email=val('a-email'),pw=($('#a-pass')||{}).value||'',ref=val('a-ref');AEM=email;
+      if(name.length<2)return err('Please enter your name.');
+      if(!email)return err('Please enter your email.');
+      if(pw.length<8)return err('Please choose a password with at least 8 characters.');
+      b.disabled=true;err('');
+      const j=await authCall('signUp',{email,password:pw,returnSecureToken:true});
+      ME={idToken:j.idToken,refreshToken:j.refreshToken,email:j.email,uid:j.localId,name,at:Date.now()};saveMe();
+      try{ME.name=(await api('/api/register',{name,ref:ref||savedRef()})).profile.name;saveMe();try{localStorage.removeItem('om_ref')}catch(x){}}
+      catch(x){try{await authCall('delete',{idToken:ME.idToken})}catch(y){}ME=null;saveMe();throw x}
+      return afterAuth();
+    }
+    if(a=='sendreset'){
+      const email=val('a-email');AEM=email;if(!email)return err('Please enter your email.');
+      b.disabled=true;await authCall('sendOobCode',{requestType:'PASSWORD_RESET',email});
+      shell.innerHTML=authCard(`<h1>Check your <em>inbox</em> 📬</h1><p class="sub">We sent a link to <b>${esc(email)}</b>. Open it to choose a new password, then come back and log in. If you do not see it, look in your spam folder.</p><button class="btn" data-a="toLogin">Back to log in</button>`);return;
+    }
+    if(a=='logout'){ME=null;saveMe();QUOTE=null;refreshAcctBtn();wiz();return}
+    if(a=='chpw'){const m=$('#a-msg');b.disabled=true;await authCall('sendOobCode',{requestType:'PASSWORD_RESET',email:ME.email});if(m)m.textContent='✅ We emailed you a link to change your password.';return}
+    if(a=='copyref'){try{await navigator.clipboard.writeText(b.dataset.v)}catch(x){}b.textContent='Copied ✓';return}
+    if(a=='wdm'){const upi=b.dataset.m=='upi';$('#wd-upi').hidden=!upi;$('#wd-bank').hidden=upi;document.querySelectorAll('.wdm .pill').forEach(x=>x.classList.toggle('on',x===b));const g=$('#w-go');g.dataset.m=b.dataset.m;g.textContent='Withdraw to my '+(upi?'UPI':'bank');return}
+    if(a=='withdraw'){
+      const method=b.dataset.m,amount=Math.floor(+val('w-amt'));
+      const details=method=='upi'?{upi:val('w-upi')}:{holder:val('w-holder'),account:val('w-acc'),ifsc:val('w-ifsc'),bank:val('w-bank')};
+      b.disabled=true;err('');
+      const r=await api('/api/withdraw',{amount,method,details});
+      await acctHome();const m=$('#a-msg');if(m)m.textContent='✅ Request sent. We aim to pay within '+r.hours+' hours.';return;
+    }
+  }catch(x){err(x.message);const m=$('#a-msg');if(m)m.textContent=x.message;b.disabled=false}
+});
+
+/* --- paying for the link through the server --- */
+function linkLabel(){return apiOn()?(S.code?'✅ Your link is ready':ME?'Continue · '+money(CONFIG.PRICE_INR)+' to get the link →':'Log in to continue →'):payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}
+function linkHint(){return apiOn()?(S.code?'':ME?'Your link is created right after payment':'Free account · no OTP · takes a minute'):payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}
+function payBlock(){return apiOn()?`<div id="walletbox"></div><button class="btn" data-act="pay" id="paybtn">🔒 Pay ${money(CONFIG.PRICE_INR)} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>`
+  :`<button class="btn" data-act="pay">🔒 Pay ₹${CONFIG.PRICE_INR} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>`}
+async function loadQuote(){
+  const box=$('#walletbox'),btn=$('#paybtn'),st=$('#payst');if(!box||!btn)return;
+  if(!ME){btn.textContent='Log in to continue';return}
+  try{
+    const q=await api('/api/quote');QUOTE=q;
+    if(q.paused){box.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';btn.disabled=true;return}
+    if(q.admin||q.free){box.innerHTML=`<div class="bx2">${q.admin?'👑 Admin: no payment needed':'🎁 Free right now: no payment needed'}</div>`;btn.textContent='✨ Create my link';st.textContent='';return}
+    const use=q.walletPay&&q.balance>0;
+    box.innerHTML=use?`<label class="sw2"><input type="checkbox" id="usew" checked><span><b>Use my wallet</b><small>Balance ${money(q.balance)} · covers ${money(Math.min(q.balance,q.price))} of ${money(q.price)}</small></span></label>`:'';
+    const upd=()=>{const w=use&&$('#usew').checked?Math.min(q.balance,q.price):0,rem=q.price-w;btn.textContent=rem>0?`🔒 Pay ${money(rem)} securely`:'✨ Pay with my wallet';st.textContent=rem>0?'Secured by Razorpay · UPI, cards, netbanking & wallets':'Paid from your wallet balance'};
+    if(use)$('#usew').onchange=upd;upd();
+  }catch(e){st.textContent=e.message}
+}
+async function payServer(){
+  const st=$('#payst'),btn=$('#paybtn');
+  if(!ME){AUTHRET='checkout';return acctView('login')}
+  btn.disabled=true;st.textContent='Please wait…';
+  try{
+    const r=await api('/api/checkout',{draft:prepDraft(),walletUse:!!($('#usew')&&$('#usew').checked)});
+    if(r.code)return finishDone(r.code);
+    if(typeof Razorpay==='undefined')throw new Error('Payment could not load. Check your internet and try again.');
+    const rz=new Razorpay({key:r.key,order_id:r.orderId,amount:r.amount,currency:'INR',name:'OurMoments',description:(S.type=='bday'?'Birthday Surprise for ':'Friendship Museum for ')+S.name,theme:{color:'#F5A524'},prefill:{name:ME.name,email:ME.email},
+      handler:resp=>completeOrder({orderId:resp.razorpay_order_id,paymentId:resp.razorpay_payment_id,signature:resp.razorpay_signature}),
+      modal:{ondismiss:()=>{btn.disabled=false;st.textContent='Payment cancelled. You can try again.'}}});
+    rz.on('payment.failed',e=>{btn.disabled=false;st.textContent='Payment failed: '+((e.error&&e.error.description)||'please try again')});
+    rz.open();
+  }catch(e){btn.disabled=false;st.textContent=e.message}
+}
+async function completeOrder(p){
+  try{localStorage.setItem('om_pending',JSON.stringify(p))}catch(e){}
+  S.step=reviewStep();wiz();const out=$('#out');out.innerHTML='<p class="hint">⏳ Payment received. Creating your link…</p>';
+  try{finishDone((await api('/api/complete',p)).code)}
+  catch(e){out.innerHTML=`<p class="hint">We received your payment but could not finish just yet: ${esc(e.message)}</p><button class="btn" id="retry">Try again</button><p class="hint">Please do not pay again. Your link is safe, and it will also appear under your account.</p>`;$('#retry').onclick=()=>completeOrder(p)}
+}
+function finishDone(code){
+  try{localStorage.removeItem('om_pending')}catch(e){}
+  S.code=code;S.step=reviewStep();wiz();showLink($('#out'),linkFor(code),true,'');
+}
+
 // A link name is the recipient's name made web-safe: "José Ángel" -> "jose-angel". Names with no Latin letters fall back to "gift".
 const slug=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,20).replace(/-+$/,'');
 const linkBase=()=>slug(S.linkName)||slug(S.name)||'gift';
 // 5 random characters are always added, so nobody can guess a link just by knowing a name
 const rand5=()=>{let r='';while(r.length<5)r+=Math.random().toString(36).slice(2);return r.slice(0,5)};
 const linkPreview=()=>(CONFIG.PRETTY?'…/':'…/#c=')+linkBase()+'-xxxxx';
-const linkField=()=>CONFIG.DB?`<label>Link name <small>— the recipient’s name in the web address</small></label><input type="text" id="f-ln" maxlength="20" placeholder="e.g. ${esc(slug(S.name)||'sam')}" value="${esc(S.linkName||'')}"><p class="hint">Your link will look like <b id="lnp">${esc(linkPreview())}</b></p>`:'';
+const linkField=()=>CONFIG.DB&&!S.code?`<label>Link name <small>— the recipient’s name in the web address</small></label><input type="text" id="f-ln" maxlength="20" placeholder="e.g. ${esc(slug(S.name)||'sam')}" value="${esc(S.linkName||'')}"><p class="hint">Your link will look like <b id="lnp">${esc(linkPreview())}</b></p>`:'';
 shell.addEventListener('input',e=>{const t=e.target;if(t.id!='f-ln')return;S.linkName=slug(t.value);const p=$('#lnp');if(p)p.textContent=linkPreview()});
 async function makeLink(){
   if(!S.id)S.id=uid();
   if(!S.created)S.created=new Date().toISOString();
   if(!S.payId&&!payOn())S.payId=CONFIG.ADMIN?'ADMIN':'FREE';   // no payment taken: mark why
-  if(S.type=='bday'){if(ST.b_game=='on')S.game=true;if(ST.b_game=='off')S.game=false;const al=allowedSongs();if(al.length&&!al.some(x=>x[0]==S.song))S.song=al[0][0]}
-  else{S.puzzle=ST.f_puzzle!==false;S.quiz=ST.f_quiz?cleanQuiz(S.quiz):[];S.story=ST.f_story?cleanStory(S.story):[];S.awards=ST.f_awards?(S.awards||[]):[];const af=allowedFSongs();if(af.length&&!af.some(x=>x[0]==S.fsong))S.fsong=af[0][0]}
+  applyForced();
+  {const rc0=refCode();if(rc0&&/^pay_/.test(S.payId||''))S.ref=rc0}
   const out=$('#out'),base=location.href.split('#')[0];
   if(!S.recorded){S.recorded=1;const rec={id:S.id,type:S.type,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,pay:S.payId||'',created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
 let url,short=false,err='';
@@ -478,15 +718,31 @@ let url,short=false,err='';
     // The link is shown only after the database confirms it saved. A code that is already taken is refused by the Rules, so we retry.
     for(let t=0;t<4&&!short;t++){
       const code=linkBase()+'-'+rand5();
-      try{await fb('PUT','gifts/'+code,S);url=CONFIG.PRETTY?base.split('?')[0].replace(/[^/]*$/,'')+code:base+'#c='+code;short=true;S.code=code;fb('PUT','index/'+code,{id:S.id,type:S.type||'friend',name:S.name,from:S.from,created:S.created,pay:S.payId||''}).catch(()=>{})}
+      try{await fb('PUT','gifts/'+code,S);url=CONFIG.PRETTY?base.split('?')[0].replace(/[^/]*$/,'')+code:base+'#c='+code;short=true;S.code=code;recordReferral(code);fb('PUT','index/'+code,{id:S.id,type:S.type||'friend',name:S.name,from:S.from,created:S.created,pay:S.payId||''}).catch(()=>{})}
       catch(e){err=String(e.message||e)}
     }
   }
   if(!short)url=base+'#g='+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  showLink(out,url,short,err);
+}
+function applyForced(){
+  if(S.type=='bday'){if(ST.b_game=='on')S.game=true;if(ST.b_game=='off')S.game=false;const al=allowedSongs();if(al.length&&!al.some(x=>x[0]==S.song))S.song=al[0][0]}
+  else{S.puzzle=ST.f_puzzle!==false;S.quiz=ST.f_quiz?cleanQuiz(S.quiz):[];S.story=ST.f_story?cleanStory(S.story):[];S.awards=ST.f_awards?(S.awards||[]):[];const af=allowedFSongs();if(af.length&&!af.some(x=>x[0]==S.fsong))S.fsong=af[0][0]}
+}
+// the gift exactly as it will be saved (without the builder's own bookkeeping)
+function prepDraft(){
+  if(!S.id)S.id=uid();
+  applyForced();
+  const d=JSON.parse(JSON.stringify(S));
+  ['step','recorded','code','payId','created','id'].forEach(k=>delete d[k]);
+  return d;
+}
+function showLink(out,url,short,err){
   const txt=S.type=='bday'?`🎂 ${S.from} made a birthday surprise just for you, ${S.name}: ${url}`:`💛 ${S.from} made a little museum just for you, ${S.name}: ${url}`;
   out.innerHTML=`<label>Your gift link ${short?"(short ✓ saved online)":""}</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">📋 Copy link</button><div class="row"><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Send on WhatsApp</a><button class="btn ghost" id="sh" style="width:56px">📤</button></div><p class="hint">${short?"Short link · saved online and verified ✓":(CONFIG.DB?"⚠️ Could not save online ("+esc(err)+"), so this is the long link. It still works.":"Long link (CONFIG.DB not set)")+" · "+(url.length/1024).toFixed(0)+" KB"}</p>`;
   $('#cp').onclick=()=>{navigator.clipboard.writeText(url).then(()=>{$('#cp').textContent='Copied ✓'})};
   $('#sh').onclick=()=>{if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt)};
+  if(short){out.insertAdjacentHTML('beforeend',referBoxHtml());bindRefer(S.from||S.name,false)}
 }
 
 /* ---------- MUSEUM (friendship) ---------- */
@@ -509,7 +765,7 @@ function fStages(g){
 }
 function startMuseum(g,preview){
   if(g.type=='bday')return startBday(g,preview);
-  setEnv(false);setFEnv(g.vibe||'chaos');document.title=g.name+', a museum made for you 💛';
+  setEnv(false);setFEnv(g.vibe||'chaos');document.title=g.name+', a museum made for you 💛';$('#acct').style.display='none';
   V={g,preview,i:0,stages:fStages(g),knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
   document.body.dataset.vibe=g.vibe;
   $('#badge').style.display=preview?'block':'none';
@@ -637,7 +893,7 @@ function room(){
   if(st=='finale'){
     confetti();chime();V.elapsed=Math.round((Date.now()-V.t0)/1000);
     const stats=[];if(g.notes&&g.notes.length)stats.push([g.notes.length,'reasons']);if(V.quiz)stats.push([V.quiz.score+'/'+V.quiz.total,'quiz']);if(g.awards&&g.awards.length)stats.push([g.awards.length,'awards']);if(V.moves)stats.push([V.moves,'puzzle moves']);stats.push([Math.floor(V.elapsed/60)+':'+String(V.elapsed%60).padStart(2,'0'),'time']);
-    frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats">${stats.map(s=>`<div><b>${esc(s[0])}</b>${s[1]}</div>`).join('')}</div></div><button class="btn" id="dl">⬇ Save your certificate</button><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Walk through again</button>`);
+    frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats">${stats.map(s=>`<div><b>${esc(s[0])}</b>${s[1]}</div>`).join('')}</div></div><button class="btn" id="dl">⬇ Save your certificate</button><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div>${referBoxHtml()}<button class="btn ghost" id="nx">Walk through again</button>`);bindRefer(g.name,V.preview);
     if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:V.elapsed,moves:V.moves,rules:(g.rules||[]).length,quiz:V.quiz?V.quiz.score+'/'+V.quiz.total:'',sig:V.sig||'',ts:new Date().toISOString()};V.rec=rec;dbAdd(CONFIG.KEY_REPLIES,rec);V.rid=Date.now().toString(36);V.slim=(({sig,...s})=>s)(rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
     $('#dl').onclick=async()=>{const b=$('#dl');b.disabled=true;b.textContent='Making your certificate…';let ok=false;try{ok=await saveCert(g)}catch(e){}b.disabled=false;b.textContent=ok?'⬇ Saved! Save it again':'Your browser can’t save images here'};
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
@@ -802,7 +1058,7 @@ const LETTERS=['I keep thinking about how lucky I got with you. You have seen me
 const BCOL=['#FF6B57','#F5A524','#14A38B','#5B62E8','#E14B8A'];
 
 function chooser(){
-  setEnv(false);setFEnv(false);
+  setEnv(false);setFEnv(false);refreshAcctBtn();
   document.body.dataset.vibe='chaos';
   $('#back').style.display='none';$('#badge').style.display='none';
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span></div>
@@ -814,7 +1070,7 @@ function chooser(){
 }
 
 function wizB(){
-  setEnv(true);
+  setEnv(true);refreshAcctBtn();
   document.body.dataset.vibe='bday';
   $('#back').style.display='none';$('#badge').style.display='none';
   const AS=allowedSongs();if(AS.length&&!AS.some(x=>x[0]==S.song))S.song=AS[0][0];
@@ -847,13 +1103,14 @@ function wizB(){
   <textarea id="f-msg" maxlength="500" placeholder="Dear ${esc(S.name)||'you'}, another year of you is the best news of my year…">${esc(S.msg)}</textarea><div class="count"><span id="cnt">${S.msg.length}</span> / 500</div>
   <label>Need a spark? <small>tap to use</small></label>${LETTERS.map((x,i)=>`<button class="pill" data-ltr="${i}">${esc(x.slice(0,70))}…</button>`).join('')}${nav('Bake the magic ✨',S.msg.trim().length>0)}`;
   if(n==6)h=`<p class="eyebrow">Step 6 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">For ${esc(S.name)} · from ${esc(S.from)}</p>
-  <button class="btn" data-act="preview">👀 Take a look inside</button>${linkField()}<button class="btn ghost" data-act="link">${payOn()&&!S.payId?`Continue · ₹${CONFIG.PRICE_INR} to get the link →`:'Create the link →'}</button><div id="out"></div><p class="hint">${payOn()&&!S.payId?'One-time payment · no account needed':'No account needed'}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  <button class="btn" data-act="preview">👀 Take a look inside</button>${linkField()}<button class="btn ghost" data-act="link">${linkLabel()}</button><div id="out"></div><p class="hint">${linkHint()}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
   if(n==7)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🎁</h1><p class="sub">One-time payment · no account needed</p>
   <div class="bill"><div class="bill-h"><span>🎂 Birthday Surprise for <b>${esc(S.name)}</b></span><b>₹${CONFIG.PRICE_INR}</b></div>
-  <ul><li>🎂 Cake to light, wish on & cut</li>${S.game?'<li>🎮 A mini game with your photos</li>':''}<li>🎵 Song: ${esc((SONGS.find(x=>x[0]==(S.song||'bday'))||SONGS[0])[2])}</li><li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li><li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li><li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
-  <button class="btn" data-act="pay">🔒 Pay ₹${CONFIG.PRICE_INR} securely</button><p class="hint" id="payst">Secured by Razorpay · UPI, cards, netbanking & wallets</p>
+  <ul><li>🎂 Cake to light, wish on & cut</li>${S.game?'<li>🎮 A mini game with your photos</li>':''}<li>🎵 Song: ${esc((SONGS.find(x=>x[0]==(S.song||'bday'))||SONGS[0])[2])}</li><li>🎈 ${S.balloons.filter(x=>x.trim()).length} balloon${S.balloons.filter(x=>x.trim()).length==1?'':'s'} to pop</li>${S.photos.length?`<li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} on fairy lights</li>`:''}<li>💌 Your birthday letter</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
+  ${payBlock()}
   <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Birthday</span></div><div class="dots">${dots}</div>${h}</div>`;
+  if(apiOn()&&n==7)loadQuote();
 }
 
 // extra listeners for the birthday builder (the friendship builder keeps its own)
@@ -877,7 +1134,7 @@ shell.addEventListener('click',e=>{
 
 // ----- what the birthday person sees -----
 function startBday(g,preview){
-  document.title='Happy Birthday '+g.name+'! 🎂';
+  document.title='Happy Birthday '+g.name+'! 🎂';$('#acct').style.display='none';
   setEnv(true);musicStop();MUS.preview=false;
   V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0,stages:['gift','hello','cake'].concat((g.balloons||[]).some(x=>x&&x.trim())?['balloons']:[],g.game===true?['game']:[],(g.photos&&g.photos.length)?['memories']:[],(g.msg&&g.msg.trim())?['letter']:[],['finale'])};
   document.body.dataset.vibe='bday';
@@ -1022,7 +1279,7 @@ function bscreen(){
   if(st=='finale'){
     confetti(70);chime();
     const el=Math.round((Date.now()-V.t0)/1000);
-    bframe(`<div class="cert"><p class="eyebrow">Happy birthday</p><big>${esc(g.name)} 🎂</big><p>With love from ${esc(g.from)} 💛</p></div><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Watch again</button>`);
+    bframe(`<div class="cert"><p class="eyebrow">Happy birthday</p><big>${esc(g.name)} 🎂</big><p>With love from ${esc(g.from)} 💛</p></div><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div>${referBoxHtml()}<button class="btn ghost" id="nx">Watch again</button>`);bindRefer(g.name,V.preview);
     if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:el,moves:V.gmoves||0,rules:g.balloons.filter(x=>x&&x.trim()).length,sig:'',ts:new Date().toISOString()};V.rec=rec;V.rid=Date.now().toString(36);V.slim=(({sig,...x})=>x)(rec);dbAdd(CONFIG.KEY_REPLIES,rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
       if(CONFIG.DB&&V.rec.gid)fb('PUT','replies/'+encodeURIComponent(V.rec.gid)+'/'+V.rid,{...V.slim,reply:t}).then(()=>{$('#sr').textContent='Sent ✓ 💛';chime()}).catch(()=>{$('#sr').textContent='Could not send — try again'});
@@ -1055,6 +1312,78 @@ shell.addEventListener('click',e=>{
   else if(d.act=='addaward'){const v=$('#f-ca').value.trim();if(v&&!S.awards.includes(v)&&S.awards.length<5){S.awards.push(v);wiz()}}
 });
 
+/* ---------- referral program (no server): referral link at the finale, a wallet page, admin verifies and pays by UPI ---------- */
+const REF_DAYS=30;
+let REFSET={on:true,reward:20,min:20,every:false};   // replaced by the admin's settings (settings/refer)
+const rKey=n=>{let r='';try{const a=new Uint8Array(n);crypto.getRandomValues(a);r=Array.from(a,b=>(b%36).toString(36)).join('')}catch(e){while(r.length<n)r+=Math.random().toString(36).slice(2);r=r.slice(0,n)}return r};
+const myWallet=()=>{try{return JSON.parse(localStorage.getItem('om_swallet')||'null')}catch(e){return null}};
+const refRec=()=>{try{const r=JSON.parse(localStorage.getItem('om_sref')||'null');return r&&r.c&&Date.now()-r.t<REF_DAYS*864e5?r:null}catch(e){return null}};
+// the referral that should be credited for a gift made in this browser ('' = none). You can't refer yourself.
+const refCode=()=>{const r=refRec();if(!r||REFSET.on===false)return '';const w=myWallet();if(w&&w.rcode===r.c)return '';if(r.used&&!REFSET.every)return '';return r.c};
+const siteDir=()=>location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
+const refLinkOf=rc=>siteDir()+'index.html#ref='+rc;
+const walletUrlOf=k=>siteDir()+'wallet.html#k='+k;
+// someone opened a referral link: remember who invited them (the first referrer wins, for 30 days)
+async function captureRef(code){
+  try{
+    if(!CONFIG.DB||refRec())return;
+    const rr=await fb('GET','referrers/'+code);if(!rr||!rr.name)return;
+    localStorage.setItem('om_sref',JSON.stringify({c:code,t:Date.now(),n:rr.name}));
+  }catch(e){}
+}
+function refChip(){
+  const r=refRec();if(!r||!r.n||REFSET.on===false||document.querySelector('.refbar'))return;
+  const b=document.createElement('div');b.className='refbar';b.textContent='🎁 Invited by '+r.n;document.body.appendChild(b);
+}
+// called right after a gift link is saved: counts as one referral for whoever invited this person
+async function recordReferral(giftCode){
+  try{
+    if(!CONFIG.DB||S.refDone||!/^pay_[A-Za-z0-9]+$/.test(S.payId||''))return;
+    const rc=refCode();if(!rc)return;
+    if(!(await fb('GET','referrers/'+rc)))return;                                // the referrer must still exist
+    S.refDone=1;
+    const rid=rKey(10),t=Date.now();
+    await fb('PUT','refpay/'+S.payId,{r:rid,t});                                  // one payment can only ever count once
+    await fb('PUT','referrals/'+rc+'/'+rid,{t,st:'pending'});                      // waits for the admin to verify the payment
+    await fb('PUT','refaudit/'+rid,{rcode:rc,pay:S.payId,gift:giftCode,name:S.name,from:S.from,type:S.type||'friend',t});
+    const r=refRec();if(r){r.used=true;localStorage.setItem('om_sref',JSON.stringify(r))}
+  }catch(e){}
+}
+async function ensureWallet(name){
+  let w=myWallet();if(w)return w;
+  const first=String(name||'Friend').trim().split(/\s+/)[0].slice(0,20)||'Friend';
+  for(let t=0;t<4;t++){
+    const rcode=(slug(first)||'friend')+'-'+rand5(),key=rKey(24),now=Date.now();
+    try{
+      await fb('PUT','referrers/'+rcode,{name:first,t:now});
+      await fb('PUT','wallets/'+key,{rcode,name:first,t:now});
+      w={rcode,key,name:first};localStorage.setItem('om_swallet',JSON.stringify(w));return w;
+    }catch(e){}
+  }
+  throw new Error('Could not create your referral link right now. Please try again.');
+}
+function referBoxHtml(){
+  return CONFIG.DB?`<div class="refer" id="refer" style="display:none"><b>💰 Earn ₹<span class="rw">20</span> for every friend who makes a gift</b><small>Share your own link. When a friend pays and creates a gift with it, you earn ₹<span class="rw">20</span>. Withdraw to UPI from ₹<span id="rf-min">20</span>.</small><button class="btn" id="rf-go">🔗 Get my referral link</button><div id="rf-out"></div></div>`:'';
+}
+async function bindRefer(name,preview){
+  const box=$('#refer');if(!box)return;
+  try{const st=await fb('GET','settings/refer');if(st&&typeof st=='object')Object.assign(REFSET,st)}catch(e){}
+  if(REFSET.on===false||!$('#refer'))return;
+  box.querySelectorAll('.rw').forEach(e=>e.textContent=REFSET.reward);$('#rf-min').textContent=REFSET.min;box.style.display='';
+  const show=w=>{
+    const rl=refLinkOf(w.rcode),wl=walletUrlOf(w.key),txt='🎁 Make a personalised gift for someone you love with my link: '+rl;
+    $('#rf-out').innerHTML=`<label>Your referral link</label><input class="share" readonly value="${rl}" onclick="this.select()"><div class="row"><button class="btn ghost" id="rf-cp">📋 Copy</button><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Share on WhatsApp</a></div><p class="hint"><b>Save your wallet link</b> to see your earnings and withdraw to UPI: <a href="${wl}" target="_blank" rel="noopener">Open my wallet</a></p>`;
+    $('#rf-cp').onclick=()=>navigator.clipboard.writeText(rl).then(()=>{$('#rf-cp').textContent='Copied ✓'}).catch(()=>{});
+    $('#rf-go').style.display='none';
+  };
+  const have=myWallet();if(have&&!preview)show(have);
+  $('#rf-go').onclick=async()=>{
+    if(preview){$('#rf-out').innerHTML='<p class="hint">Preview only. Real visitors get their own link here.</p>';return}
+    const b=$('#rf-go');b.disabled=true;b.textContent='Creating your link…';
+    try{show(await ensureWallet(name))}catch(e){b.disabled=false;b.textContent='🔗 Get my referral link';$('#rf-out').innerHTML='<p class="hint" style="color:#d64545">'+esc(e.message)+'</p>'}
+  };
+}
+
 /* ---------- admin bypass: a signed-in admin (from admin.html) can create gifts without paying ---------- */
 async function adminCheck(){
   try{
@@ -1077,12 +1406,13 @@ async function adminCheck(){
     shell.innerHTML='<div class="card"><h1>Loading… 🎁</h1></div>';
     try{const st=await Promise.race([fb('GET','settings'),new Promise(r=>setTimeout(()=>r(null),1200))]);
       if(st){
-        if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;
+        if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;if(st.refer&&typeof st.refer=='object')Object.assign(REFSET,st.refer);
         if(st.steps&&typeof st.steps=='object'){ST=Object.assign(JSON.parse(JSON.stringify(ST_DEFAULT)),st.steps);ST.songs=Object.assign({},ST_DEFAULT.songs,st.steps.songs||{});ST.fsongs=Object.assign({},ST_DEFAULT.fsongs,st.steps.fsongs||{})}
       }}catch(e){}
-    await adminCheck();
+    if(!apiOn())await adminCheck();
+    {const mr=location.hash.match(/#ref=([a-z0-9-]{3,40})/);if(mr)await captureRef(mr[1]);refChip()}
   }
-  {const lp=$('#lg-price');if(lp)lp.textContent=payOn()?'One gift link: ₹'+CONFIG.PRICE_INR+' · one-time payment · ':'';}
+  {const lp=$('#lg-price');if(lp)lp.textContent=payOn()&&!CONFIG.FREE?'One gift link: ₹'+CONFIG.PRICE_INR+' · one-time payment · ':'';}
   if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}
   else if(mc&&CONFIG.DB){
     shell.innerHTML='<div class="card"><h1>Opening your gift… 🎁</h1><p class="sub">Just a moment</p></div>';
@@ -1090,7 +1420,7 @@ async function adminCheck(){
     if(g&&g.disabled)shell.innerHTML='<div class="card"><h1>This gift is unavailable 🔒</h1><p class="sub">This link has been turned off.</p></div>';
     else if(g)startMuseum(g,false);
     else shell.innerHTML='<div class="card"><h1>Gift not found 😢</h1><p class="sub">Ask your friend to send the link again.</p></div>';
-  }else wiz();
+  }else{wiz();if(apiOn())recoverCheck()}
 })();
 })();
 </script>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>My wallet · OurMoments</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#17332d;--mut:#6b8079;--acc:#F5A524;--acc2:#FF6B57;--ok:#14A38B;--bad:#d64545;--line:#e3ece8}
+*{box-sizing:border-box;margin:0}
+body{font-family:Outfit,system-ui,sans-serif;color:var(--ink);min-height:100vh;background:linear-gradient(135deg,#e6f6f0,#fff3dc);padding:16px 14px 50px}
+.wrap{max-width:560px;margin:0 auto}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;margin:8px 0 2px}
+h2{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;margin-bottom:8px}
+.sub{color:var(--mut);font-size:14px;margin-bottom:14px}
+.card{background:#fff;border-radius:18px;box-shadow:0 10px 34px #17332d1a;padding:16px;margin-bottom:14px;border-top:5px solid var(--acc)}
+.bal{background:linear-gradient(135deg,#17332d,#1f5a4c);color:#fff;border:0}
+.bal small{color:#cfe6df;font-size:13px}.bal b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:44px;line-height:1.1}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.st{background:#ffffff1f;border-radius:12px;padding:10px 12px}.st b{font-size:22px}.st span{font-size:12px;color:#cfe6df;display:block}
+label{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}
+input{width:100%;font:inherit;padding:12px 14px;border:1.5px solid #d6e3de;border-radius:12px;background:#fafdfc;color:var(--ink)}
+input:focus{outline:2px solid var(--acc);border-color:transparent}
+.btn{width:100%;font:inherit;font-weight:700;border:0;border-radius:14px;padding:14px;color:#fff;background:linear-gradient(90deg,var(--acc),var(--acc2));cursor:pointer;margin-top:14px;box-shadow:0 5px 0 #0002}
+.btn:disabled{opacity:.45;cursor:not-allowed}.btn.g{background:#e9f1ee;color:var(--ink);box-shadow:none}
+.row{display:flex;gap:8px}.row .btn{margin-top:10px}
+.hint{color:var(--mut);font-size:12.5px;margin-top:8px;line-height:1.5}
+.msg{margin:10px 0;padding:11px 13px;border-radius:12px;background:#e9f6f1;font-size:14px}.msg.bad{background:#fde8e8;color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);padding:6px 4px;border-bottom:2px solid var(--line)}
+td{padding:9px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.pill.ok{background:#dff6ef;color:#0b7a64}.pill.wait{background:#fff1cf;color:#a86a00}.pill.bad{background:#fde8e8;color:var(--bad)}
+.empty{color:var(--mut);padding:10px 2px;font-size:14px}
+a{color:#0f8a74;font-weight:600}
+ol{padding-left:20px;font-size:14px;line-height:1.7;color:#2c4a43}
+.share{font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="card">Loading your wallet… ⏳</div></div>
+<script>
+/* Database address of your project (same as in index.html). Filled in for you. */
+const W={DB:'https://friend-museum-default-rtdb.firebaseio.com/'};
+
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const app=$('#app');
+const money=n=>'₹'+(+n||0).toLocaleString('en-IN');
+const when=t=>t?new Date(t).toLocaleDateString([],{day:'numeric',month:'short',year:'numeric'}):'—';
+const UPI_RE=/^[A-Za-z0-9._-]{2,256}@[A-Za-z]{2,64}$/;
+const dir=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
+const keyNow=()=>{const h=(location.hash.match(/k=([a-z0-9]{20,})/)||[])[1];if(h){try{localStorage.setItem('om_swalletkey',h)}catch(e){}return h}try{return localStorage.getItem('om_swalletkey')||(JSON.parse(localStorage.getItem('om_swallet')||'null')||{}).key||''}catch(e){return ''}};
+
+async function db(method,path,body){
+  const r=await fetch(W.DB.replace(/\/+$/,'')+'/'+path+'.json',{method,body:body===undefined?undefined:JSON.stringify(body)});
+  if(!r.ok)throw new Error('The server said '+r.status+'. Please try again in a moment.');
+  return r.json();
+}
+let key='',wallet=null,R={on:true,reward:20,min:20},refs=[],wds=[],flash='';
+
+async function load(){
+  key=keyNow();
+  if(!key)return view(`<div class="card"><h2>No wallet found</h2><p class="sub">Open your wallet from the link you saved. You can get a referral link and wallet at the end of any gift you open.</p></div>`);
+  try{
+    wallet=await db('GET','wallets/'+key);
+    if(!wallet||!wallet.rcode)return view(`<div class="card"><h2>Wallet not found</h2><p class="sub">This wallet link doesn’t look right. Please use the exact link you saved.</p></div>`);
+    const [rf,wd,st]=await Promise.all([db('GET','referrals/'+wallet.rcode),db('GET','withdrawals/'+key),db('GET','settings/refer')]);
+    if(st&&typeof st=='object')R=Object.assign(R,st);
+    refs=Object.entries(rf||{}).map(([id,r])=>({id,...r})).sort((a,b)=>(b.t||0)-(a.t||0));
+    wds=Object.entries(wd||{}).map(([id,w])=>({id,...w})).sort((a,b)=>(b.t||0)-(a.t||0));
+    render();
+  }catch(e){view(`<div class="card"><h2>Couldn’t load</h2><p class="sub">${esc(e.message)}</p><button class="btn" onclick="load()">Try again</button></div>`)}
+}
+const view=h=>{app.innerHTML=h};
+
+function totals(){
+  const approved=refs.filter(r=>r.st=='approved'),pending=refs.filter(r=>r.st=='pending');
+  const earned=approved.reduce((s,r)=>s+(+r.amt||0),0);
+  const used=wds.filter(w=>w.status!='rejected').reduce((s,w)=>s+(+w.amount||0),0);
+  const paid=wds.filter(w=>w.status=='paid').reduce((s,w)=>s+(+w.amount||0),0);
+  return {approved:approved.length,pending:pending.length,earned,used,paid,available:Math.max(0,earned-used)};
+}
+function render(){
+  const T=totals(),rl=dir+'index.html#ref='+wallet.rcode,wtxt='🎁 Make a personalised gift for someone you love with my link: '+rl;
+  let upi='';try{upi=localStorage.getItem('om_upi')||''}catch(e){}
+  const can=T.available>=R.min;
+  view(`
+  <h1>💰 ${esc(wallet.name)}’s wallet</h1><p class="sub">Earn ${money(R.reward)} every time a friend you invite pays and creates a gift.</p>
+  ${flash?`<div class="msg ${flash.bad?'bad':''}">${esc(flash.text)}</div>`:''}
+  ${R.on===false?'<div class="msg bad">The referral program is paused right now. Your balance is safe and you can still withdraw it.</div>':''}
+  <div class="card bal"><small>Available to withdraw</small><b>${money(T.available)}</b>
+   <div class="grid"><div class="st"><b>${T.approved}</b><span>Successful referrals</span></div><div class="st"><b>${T.pending}</b><span>Waiting for verification</span></div>
+   <div class="st"><b>${money(T.earned)}</b><span>Total earned</span></div><div class="st"><b>${money(T.paid)}</b><span>Paid to your UPI</span></div></div></div>
+
+  <div class="card"><h2>Withdraw to UPI</h2>
+   ${can?'':`<p class="hint" style="margin:0 0 6px">You need at least <b>${money(R.min)}</b> to withdraw. Keep sharing your link!</p>`}
+   <label for="upi">Your UPI ID</label><input id="upi" type="text" inputmode="email" autocomplete="off" placeholder="yourname@upi" value="${esc(upi)}">
+   <label for="amt">Amount (₹${R.min} to ${T.available})</label><input id="amt" type="number" min="${R.min}" max="${T.available}" step="1" value="${can?T.available:''}" ${can?'':'disabled'}>
+   <button class="btn" id="wd" ${can?'':'disabled'}>Withdraw ${can?money(T.available):''}</button>
+   <p class="hint">Payouts are sent by UPI after we verify your referrals, usually within 2–3 working days. Check your UPI ID carefully: we can’t recover money sent to a wrong ID.</p></div>
+
+  <div class="card"><h2>Your referral link</h2>
+   <input class="share" readonly value="${esc(rl)}" onclick="this.select()">
+   <div class="row"><button class="btn g" id="cp">📋 Copy</button><button class="btn" id="wa">💬 Share on WhatsApp</button></div>
+   <p class="hint">When someone opens your link, pays and creates a gift, you earn ${money(R.reward)} after we verify it. Using your own link doesn’t count.</p></div>
+
+  <div class="card"><h2>Referral history</h2>
+   ${refs.length?`<table><thead><tr><th>Date</th><th>Status</th><th>Reward</th></tr></thead><tbody>${refs.map(r=>`<tr><td>${when(r.t)}</td><td>${r.st=='approved'?'<span class="pill ok">✅ Successful</span>':r.st=='rejected'?'<span class="pill bad">✖ Not eligible</span>':'<span class="pill wait">⏳ Verifying</span>'}</td><td>${r.st=='approved'?money(r.amt):'—'}</td></tr>`).join('')}</tbody></table>`:'<p class="empty">No referrals yet. Share your link to get started.</p>'}</div>
+
+  <div class="card"><h2>Withdrawal history</h2>
+   ${wds.length?`<table><thead><tr><th>Date</th><th>UPI ID</th><th>Amount</th><th>Status</th></tr></thead><tbody>${wds.map(w=>`<tr><td>${when(w.t)}</td><td>${esc(w.upi)}</td><td>${money(w.amount)}</td><td>${w.status=='paid'?'<span class="pill ok">✅ Paid</span>'+(w.ref?'<br><small>Ref: '+esc(w.ref)+'</small>':''):w.status=='rejected'?'<span class="pill bad">✖ Rejected</span>'+(w.note?'<br><small>'+esc(w.note)+'</small>':''):'<span class="pill wait">⏳ Requested</span>'}</td></tr>`).join('')}</tbody></table>`:'<p class="empty">No withdrawals yet.</p>'}</div>
+
+  <div class="card"><h2>How it works</h2><ol><li>Share your referral link with friends.</li><li>A friend opens it, pays and creates a gift link.</li><li>We verify the payment, then ${money(R.reward)} is added to your wallet.</li><li>Withdraw to your UPI ID from ${money(R.min)}.</li></ol>
+   <p class="hint"><b>Keep this page’s address safe.</b> It is your wallet key: anyone with it can see your wallet.</p></div>`);
+  $('#cp').onclick=()=>navigator.clipboard.writeText(rl).then(()=>{$('#cp').textContent='Copied ✓'}).catch(()=>{});
+  $('#wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wtxt),'_blank','noopener');
+  $('#wd').onclick=withdraw;
+}
+async function withdraw(){
+  const b=$('#wd'),T=totals(),upi=$('#upi').value.trim(),amt=Math.floor(+$('#amt').value);
+  const fail=t=>{flash={text:t,bad:true};render();window.scrollTo(0,0)};
+  if(!UPI_RE.test(upi))return fail('Please enter a valid UPI ID, for example name@okhdfcbank.');
+  if(!(amt>=R.min))return fail('The minimum withdrawal is '+money(R.min)+'.');
+  if(amt>T.available)return fail('You only have '+money(T.available)+' available.');
+  b.disabled=true;b.textContent='Sending request…';
+  try{
+    const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    await db('PUT','withdrawals/'+key+'/'+id,{rcode:wallet.rcode,upi,amount:amt,status:'requested',t:Date.now()});
+    try{localStorage.setItem('om_upi',upi)}catch(e){}
+    flash={text:'Request sent ✅ We’ll pay '+money(amt)+' to '+upi+' after verifying. You can follow it in Withdrawal history.'};
+    await load();window.scrollTo(0,0);
+  }catch(e){fail(e.message)}
+}
+load();
+window.addEventListener('hashchange',load);
+</script>
+</body>
+</html>

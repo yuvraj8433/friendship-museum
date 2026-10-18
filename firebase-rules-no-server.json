@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "gifts": {
+      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+      "$code": {
+        ".read": true,
+        ".write": "!data.exists() || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
+        ".validate": "newData.hasChildren(['name','from'])"
+      }
+    },
+    "index": {
+      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+      "$code": {
+        ".write": "!data.exists() || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')"
+      }
+    },
+    "replies": {
+      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+      "$gid": {
+        ".read": true,
+        "$rid": { ".write": true }
+      }
+    },
+    "settings": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'"
+    }
+  }
+}

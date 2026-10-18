@@ -6,7 +6,7 @@ window.SITE = {
   PHONE:   '+91 8433075079',               // support phone number
   ADDRESS: 'Greater Noida, Uttar Pradesh, India',       // business address (Razorpay may ask for this)
   PRICE:   '99',                            // price in rupees, same as PRICE_INR in the main page
-  SITE_URL:'https://friendshiplove.netlify.app/', // your live site address
+  SITE_URL:'https://yuvraj8433.github.io/friendship-museum/', // your live site address
   UPDATED: '13 October 2026'
 };
 document.querySelectorAll('[data-s]').forEach(function (el) { el.textContent = SITE[el.dataset.s]; });
