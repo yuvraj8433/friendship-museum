@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Refer & earn · OurMoments</title>
+<meta name="description" content="Invite friends to make a personalised gift and earn money for each one.">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#17332d;--mut:#6b8079;--acc:#F5A524;--acc2:#FF6B57;--ok:#14A38B;--bad:#d64545;--line:#e3ece8}
+*{box-sizing:border-box;margin:0}
+body{font-family:Outfit,system-ui,sans-serif;color:var(--ink);min-height:100vh;background:linear-gradient(135deg,#e6f6f0,#fff3dc);padding:16px 14px 50px}
+.wrap{max-width:520px;margin:0 auto}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-size:30px;line-height:1.1;margin:6px 0 6px}
+h1 em{font-style:normal;color:var(--acc2)}
+h2{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;margin-bottom:8px}
+.sub{color:var(--mut);font-size:14.5px;margin-bottom:14px;line-height:1.5}
+.card{background:#fff;border-radius:18px;box-shadow:0 10px 34px #17332d1a;padding:18px;margin-bottom:14px;border-top:5px solid var(--acc)}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:6px}.top .sp{flex:1}
+.back{font-size:13px;font-weight:600;color:var(--mut);text-decoration:none}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;border:0;background:#eef5f2;padding:10px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;color:var(--ink)}.tabs button.on{background:var(--ink);color:#fff}
+label{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}
+input{width:100%;font:inherit;padding:12px 14px;border:1.5px solid #d6e3de;border-radius:12px;background:#fafdfc;color:var(--ink)}
+input:focus{outline:2px solid var(--acc);border-color:transparent}
+.btn{display:block;width:100%;text-align:center;text-decoration:none;font:inherit;font-weight:700;border:0;border-radius:14px;padding:14px;color:#fff;background:linear-gradient(90deg,var(--acc),var(--acc2));cursor:pointer;margin-top:14px;box-shadow:0 5px 0 #0002}
+.btn:disabled{opacity:.5;cursor:not-allowed}.btn.g{background:#e9f1ee;color:var(--ink);box-shadow:none}
+.row{display:flex;gap:8px}.row .btn{margin-top:10px}
+.link{background:none;border:0;color:#0f8a74;font:inherit;font-weight:600;cursor:pointer;padding:0;margin-top:12px;text-decoration:underline}
+.hint{color:var(--mut);font-size:12.5px;margin-top:8px;line-height:1.5}
+.msg{margin:10px 0;padding:11px 13px;border-radius:12px;background:#e9f6f1;font-size:14px}.msg.bad{background:#fde8e8;color:var(--bad)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.st{background:#f3f8f6;border-radius:12px;padding:10px 12px}.st b{font-size:22px;font-family:'Bricolage Grotesque',sans-serif}.st span{font-size:12px;color:var(--mut);display:block}
+.big{background:linear-gradient(135deg,#17332d,#1f5a4c);color:#fff;border:0}.big small{color:#cfe6df}.big b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:42px;line-height:1.1}
+.share{font-size:12.5px}
+ol{padding-left:20px;font-size:14px;line-height:1.75;color:#2c4a43}
+table{width:100%;border-collapse:collapse;font-size:13.5px}th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);padding:6px 4px;border-bottom:2px solid var(--line)}td{padding:8px 4px;border-bottom:1px solid var(--line)}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}.pill.ok{background:#dff6ef;color:#0b7a64}.pill.wait{background:#fff1cf;color:#a86a00}.pill.bad{background:#fde8e8;color:var(--bad)}
+.empty{color:var(--mut);font-size:14px;padding:6px 2px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="card">Loading… ⏳</div></div>
+<script>
+/* Filled in for you from your other pages. */
+const R={DB:'https://friend-museum-default-rtdb.firebaseio.com/',API_KEY:'AIzaSyDowauPOBzS6sZu6HLq7b2Ii8zO-KuC8e0'};
+
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const app=$('#app');
+const money=n=>'₹'+(+n||0).toLocaleString('en-IN');
+const when=t=>t?new Date(t).toLocaleDateString([],{day:'numeric',month:'short',year:'numeric'}):'—';
+const dir=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
+const slug=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,20).replace(/-+$/,'');
+const rand5=()=>{let r='';while(r.length<5)r+=Math.random().toString(36).slice(2);return r.slice(0,5)};
+const MSG={EMAIL_EXISTS:'This email already has an account. Try logging in.',INVALID_EMAIL:'That email address does not look right.',WEAK_PASSWORD:'That password is too weak. Use at least 8 characters.',EMAIL_NOT_FOUND:'No account with this email. Check it, or sign up.',INVALID_PASSWORD:'Wrong password.',INVALID_LOGIN_CREDENTIALS:'Wrong email or password.',USER_DISABLED:'This account has been turned off.',TOO_MANY_ATTEMPTS_TRY_LATER:'Too many attempts. Please wait a few minutes and try again.',OPERATION_NOT_ALLOWED:'Sign-up is not switched on yet. (Site owner: enable Email/Password in Firebase Authentication.)',MISSING_PASSWORD:'Please enter a password.',MISSING_EMAIL:'Please enter your email.'};
+
+let acct=null,flash='',settings={on:true,reward:20,min:20};
+const loadAcct=()=>{try{return JSON.parse(localStorage.getItem('om_acct')||'null')}catch(e){return null}};
+const saveAcct=()=>{try{acct?localStorage.setItem('om_acct',JSON.stringify(acct)):localStorage.removeItem('om_acct')}catch(e){}};
+
+/* ---------- Firebase sign-in (email + password) ---------- */
+async function authCall(ep,body){
+  let r;
+  try{r=await fetch('https://identitytoolkit.googleapis.com/v1/'+ep+'?key='+R.API_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})}
+  catch(e){throw new Error('Could not reach the sign-in service. Check your internet connection and try again.')}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const code=String((j.error&&j.error.message)||'').split(' ')[0];throw new Error(MSG[code]||'Something went wrong ('+(code||r.status)+'). Please try again.')}
+  return j;
+}
+let renewing=null;   // parallel requests share one renewal
+async function token(){
+  if(!acct)throw new Error('Please log in.');
+  if(Date.now()-(acct.at||0)>50*60*1000){
+    renewing=renewing||(async()=>{
+      const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+R.API_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(acct.refreshToken)});
+      if(!r.ok){acct=null;saveAcct();throw new Error('Your session expired. Please log in again.')}
+      const j=await r.json();acct.idToken=j.id_token;acct.refreshToken=j.refresh_token;acct.at=Date.now();saveAcct();
+    })().finally(()=>{renewing=null});
+    await renewing;
+  }
+  return acct.idToken;
+}
+async function db(method,path,body,pub){
+  const t=pub?'':'?auth='+encodeURIComponent(await token());
+  const r=await fetch(R.DB.replace(/\/+$/,'')+'/'+path+'.json'+t,{method,body:body===undefined?undefined:JSON.stringify(body)});
+  if(!r.ok)throw new Error(r.status==401?'Not allowed. Please log in again.':'Server error '+r.status+'. Please try again.');
+  return r.json();
+}
+// every account has a profile (name + referral code). It is created right after sign-up.
+async function ensureProfile(name){
+  const p=await db('GET','users/'+acct.uid);
+  if(p&&p.rcode){acct.name=p.name;acct.rcode=p.rcode;saveAcct();return}
+  const first=String(name||acct.email.split('@')[0]||'Friend').trim().split(/\s+/)[0].slice(0,20)||'Friend';
+  for(let i=0;i<4;i++){
+    const rcode=(slug(first)||'friend')+'-'+rand5(),now=Date.now();
+    try{
+      await db('PUT','referrers/'+rcode,{name:first,t:now});
+      await db('PUT','users/'+acct.uid,{name:first,email:acct.email,rcode,t:now});
+      acct.name=first;acct.rcode=rcode;saveAcct();return;
+    }catch(e){}
+  }
+  throw new Error('Could not set up your referral link. Please try again.');
+}
+
+/* ---------- screens ---------- */
+const view=h=>{app.innerHTML=h};
+const backLink='<a class="back" href="index.html">← Make a gift</a>';
+function landing(tab='signup'){
+  const s=settings;
+  view(`<div class="top">${backLink}</div>
+  <h1>Refer friends, <em>earn ${money(s.reward)}</em> each</h1>
+  <p class="sub">Share your personal link. Every time a friend pays and creates a gift with it, ${money(s.reward)} goes to your wallet. Withdraw to UPI from ${money(s.min)}.</p>
+  ${s.on===false?'<div class="msg bad">The referral program is paused right now. You can still sign up or log in.</div>':''}
+  ${flash?`<div class="msg ${flash.bad?'bad':''}">${esc(flash.text)}</div>`:''}
+  <div class="card">
+   <div class="tabs"><button data-t="signup" class="${tab=='signup'?'on':''}">Sign up</button><button data-t="login" class="${tab=='login'?'on':''}">Log in</button></div>
+   ${tab=='signup'?`<label for="nm">Your name</label><input id="nm" type="text" autocomplete="given-name" maxlength="40" placeholder="e.g. Sam">
+     <label for="em">Email</label><input id="em" type="email" autocomplete="email" placeholder="you@example.com">
+     <label for="pw">Password</label><input id="pw" type="password" autocomplete="new-password" placeholder="At least 8 characters">
+     <button class="btn" id="go">Create my account</button><p class="hint">Free. Your name is shown to friends you invite (“Invited by Sam”). We never show your email.</p>`
+   :tab=='login'?`<label for="em">Email</label><input id="em" type="email" autocomplete="email" placeholder="you@example.com">
+     <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+     <button class="btn" id="go">Log in</button><button class="link" id="fg">Forgot your password?</button>`
+   :`<p class="sub">Enter your email and we’ll send you a link to choose a new password.</p><label for="em">Email</label><input id="em" type="email" autocomplete="email" placeholder="you@example.com">
+     <button class="btn" id="go">Send reset link</button><button class="link" id="bk">← Back to log in</button>`}
+  </div>
+  <div class="card"><h2>How it works</h2><ol><li>Sign up and get your own referral link.</li><li>Share it with friends.</li><li>A friend opens it, pays and creates a gift link.</li><li>We verify the payment, then ${money(s.reward)} is added to your wallet.</li><li>Withdraw to your UPI ID from ${money(s.min)}.</li></ol></div>`);
+  flash='';
+  app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>landing(b.dataset.t));
+  const go=$('#go'),em=$('#em'),pw=$('#pw'),nm=$('#nm');
+  const submit=async()=>{
+    const email=em.value.trim();go.disabled=true;
+    try{
+      if(tab=='forgot'){if(!email)throw new Error(MSG.MISSING_EMAIL);await authCall('accounts:sendOobCode',{requestType:'PASSWORD_RESET',email});flash={text:'If that email has an account, a reset link is on its way. Check your inbox (and spam).'};return landing('login')}
+      if(tab=='signup'){
+        const name=nm.value.trim();if(name.length<2)throw new Error('Please enter your name.');if(!email)throw new Error(MSG.MISSING_EMAIL);if(pw.value.length<8)throw new Error(MSG.WEAK_PASSWORD);
+        const j=await authCall('accounts:signUp',{email,password:pw.value,returnSecureToken:true});
+        acct={uid:j.localId,email:j.email||email,name,rcode:'',idToken:j.idToken,refreshToken:j.refreshToken,at:Date.now()};saveAcct();
+        await ensureProfile(name);
+      }else{
+        if(!email)throw new Error(MSG.MISSING_EMAIL);if(!pw.value)throw new Error(MSG.MISSING_PASSWORD);
+        const j=await authCall('accounts:signInWithPassword',{email,password:pw.value,returnSecureToken:true});
+        acct={uid:j.localId,email:j.email||email,name:'',rcode:'',idToken:j.idToken,refreshToken:j.refreshToken,at:Date.now()};saveAcct();
+        await ensureProfile('');
+      }
+      dash();
+    }catch(e){go.disabled=false;flash={text:e.message,bad:true};const keep=em.value;landing(tab);$('#em').value=keep}
+  };
+  go.onclick=submit;[em,pw,nm].forEach(i=>i&&(i.onkeydown=e=>{if(e.key=='Enter')submit()}));
+  const fg=$('#fg');if(fg)fg.onclick=()=>landing('forgot');const bk=$('#bk');if(bk)bk.onclick=()=>landing('login');
+}
+function totals(refs,wds){
+  const ok=refs.filter(r=>r.st=='approved'),earned=ok.reduce((s,r)=>s+(+r.amt||0),0),used=wds.filter(w=>w.status!='rejected').reduce((s,w)=>s+(+w.amount||0),0);
+  return{ok:ok.length,wait:refs.filter(r=>r.st=='pending').length,earned,paid:wds.filter(w=>w.status=='paid').reduce((s,w)=>s+(+w.amount||0),0),avail:Math.max(0,earned-used)};
+}
+async function dash(){
+  view('<div class="card">Loading your dashboard… ⏳</div>');
+  try{
+    await ensureProfile('');
+    const [rf,wd]=await Promise.all([db('GET','referrals/'+acct.rcode),db('GET','withdrawals/'+acct.uid)]);
+    const refs=Object.entries(rf||{}).map(([id,r])=>({id,...r})).sort((a,b)=>(b.t||0)-(a.t||0)),wds=Object.values(wd||{});
+    const T=totals(refs,wds),rl=dir+'index.html#ref='+acct.rcode,txt='🎁 Make a personalised gift for someone you love with my link: '+rl;
+    view(`<div class="top">${backLink}<span class="sp"></span><button class="link" id="lo" style="margin:0">Log out</button></div>
+    <h1>Hi, ${esc(acct.name)} 👋</h1><p class="sub">Share your link. You earn ${money(settings.reward)} for every friend who pays and creates a gift.</p>
+    ${settings.on===false?'<div class="msg bad">The referral program is paused right now. Your balance is safe.</div>':''}
+    <div class="card"><h2>Your referral link</h2><input class="share" readonly value="${esc(rl)}" onclick="this.select()">
+     <div class="row"><button class="btn g" id="cp">📋 Copy</button><button class="btn" id="wa">💬 Share on WhatsApp</button></div>
+     <p class="hint">Using your own link doesn’t count. Friends see “Invited by ${esc(acct.name)}”.</p></div>
+    <div class="card big"><small>Available to withdraw</small><b>${money(T.avail)}</b>
+     <div class="grid"><div class="st" style="background:#ffffff1f"><b>${T.ok}</b><span style="color:#cfe6df">Successful referrals</span></div><div class="st" style="background:#ffffff1f"><b>${T.wait}</b><span style="color:#cfe6df">Waiting for verification</span></div></div>
+     <a class="btn" href="wallet.html" style="margin-top:14px">Open my wallet${T.avail>=settings.min?' & withdraw':''} →</a></div>
+    <div class="card"><h2>Recent referrals</h2>${refs.length?`<table><thead><tr><th>Date</th><th>Status</th><th>Reward</th></tr></thead><tbody>${refs.slice(0,5).map(r=>`<tr><td>${when(r.t)}</td><td>${r.st=='approved'?'<span class="pill ok">✅ Successful</span>':r.st=='rejected'?'<span class="pill bad">✖ Not eligible</span>':'<span class="pill wait">⏳ Verifying</span>'}</td><td>${r.st=='approved'?money(r.amt):'—'}</td></tr>`).join('')}</tbody></table>`:'<p class="empty">No referrals yet. Share your link to get started.</p>'}</div>`);
+    $('#cp').onclick=()=>navigator.clipboard.writeText(rl).then(()=>{$('#cp').textContent='Copied ✓'}).catch(()=>{});
+    $('#wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank','noopener');
+    $('#lo').onclick=()=>{acct=null;saveAcct();landing('login')};
+  }catch(e){
+    if(!acct){flash={text:e.message,bad:true};return landing('login')}
+    view(`<div class="card"><h2>Couldn’t load</h2><p class="sub">${esc(e.message)}</p><button class="btn" id="rt">Try again</button><button class="link" id="lo2">Log out</button></div>`);
+    $('#rt').onclick=dash;$('#lo2').onclick=()=>{acct=null;saveAcct();landing('login')};
+  }
+}
+(async()=>{
+  try{const s=await db('GET','settings/refer',undefined,true);if(s&&typeof s=='object')Object.assign(settings,s)}catch(e){}
+  acct=loadAcct();
+  if(acct&&acct.uid)dash();else{acct=null;landing('signup')}
+})();
+</script>
+</body>
+</html>

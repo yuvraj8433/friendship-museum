@@ -52,7 +52,7 @@ const app=$('#app');
 const money=n=>'₹'+(+n||0).toLocaleString('en-IN');
 const fmt=t=>t?new Date(t).toLocaleString([], {dateStyle:'medium',timeStyle:'short'}):'—';
 const dir=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
-let auth=null,D={referrals:{},audit:{},wds:{},wallets:{},referrers:{},settings:{}},tab='overview',note='';
+let auth=null,D={referrals:{},audit:{},wds:{},users:{},referrers:{},settings:{}},tab='overview',note='';
 let F={rs:'',rq:'',ws:'',wq:'',hk:'',hq:''},RG={from:'',to:''};
 
 /* ---------- database (signed in as the admin) ---------- */
@@ -92,22 +92,23 @@ async function load(){
   app.innerHTML='<div class="card login"><h1>Loading… ⏳</h1></div>';
   try{
     const g=p=>fb('GET',p).then(v=>v||{});
-    const [referrals,audit,wds,wallets,referrers,settings]=await Promise.all(['referrals','refaudit','withdrawals','wallets','referrers','settings'].map(g));
-    D={referrals,audit,wds,wallets,referrers,settings};
+    const [referrals,audit,wds,users,referrers,settings]=await Promise.all(['referrals','refaudit','withdrawals','users','referrers','settings'].map(g));
+    D={referrals,audit,wds,users,referrers,settings};
     render();
   }catch(e){auth=null;loginView(e.message)}
 }
 
 /* ---------- derived data ---------- */
 const RS=()=>Object.assign({on:true,reward:20,min:20,every:false},D.settings.refer||{});
-const keyOfR=rc=>Object.keys(D.wallets).find(k=>(D.wallets[k]||{}).rcode===rc)||'';
-const refList=()=>{const a=[];Object.entries(D.referrals).forEach(([rc,o])=>Object.entries(o||{}).forEach(([rid,r])=>a.push(Object.assign({rcode:rc,rid,a:D.audit[rid]||{},who:(D.referrers[rc]||{}).name||rc},r))));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
-const wdList=()=>{const a=[];Object.entries(D.wds).forEach(([k,o])=>Object.entries(o||{}).forEach(([id,w])=>a.push(Object.assign({key:k,id,who:(D.wallets[k]||{}).name||w.rcode},w))));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
+const keyOfR=rc=>Object.keys(D.users).find(k=>(D.users[k]||{}).rcode===rc)||'';
+const userOf=rc=>D.users[keyOfR(rc)]||{};
+const refList=()=>{const a=[];Object.entries(D.referrals).forEach(([rc,o])=>Object.entries(o||{}).forEach(([rid,r])=>a.push(Object.assign({rcode:rc,rid,a:D.audit[rid]||{},who:(D.referrers[rc]||{}).name||rc,email:userOf(rc).email||''},r))));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
+const wdList=()=>{const a=[];Object.entries(D.wds).forEach(([k,o])=>Object.entries(o||{}).forEach(([id,w])=>a.push(Object.assign({key:k,id,who:(D.users[k]||{}).name||w.rcode,email:(D.users[k]||{}).email||''},w))));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
 const balance=rc=>{const earned=refList().filter(r=>r.rcode==rc&&r.st=='approved').reduce((s,r)=>s+(+r.amt||0),0),k=keyOfR(rc),used=wdList().filter(w=>w.key==k&&w.status!='rejected').reduce((s,w)=>s+(+w.amount||0),0);return{earned,used,avail:earned-used}};
 const inRange=t=>{if(!t)return false;const d=new Date(t).toISOString().slice(0,10);return(!RG.from||d>=RG.from)&&(!RG.to||d<=RG.to)};
 function events(){
   const e=[];
-  Object.entries(D.referrers).forEach(([rc,r])=>e.push({t:r.t,k:'join',c:'#5B62E8',text:`${r.name} joined the program (${rc})`}));
+  Object.entries(D.users).forEach(([uid,u])=>e.push({t:u.t,k:'join',c:'#5B62E8',text:`${u.name} signed up (${u.email})`,sub:'Referral code '+u.rcode}));
   refList().forEach(r=>{
     e.push({t:r.t,k:'referral',c:'#F5A524',text:`${r.who} got a new referral: ${r.a.name||'a friend'} made a ${r.a.type=='bday'?'birthday':'friendship'} gift`,sub:'Payment '+(r.a.pay||'?')});
     if(r.st=='approved'&&r.at)e.push({t:r.at,k:'approved',c:'#14A38B',text:`Approved ${money(r.amt)} for ${r.who}`,sub:'Referral of '+(r.a.name||'a friend')});
@@ -134,7 +135,7 @@ function render(){
   const sum=a=>a.reduce((s,x)=>s+(+(x.amount!=null?x.amount:x.amt)||0),0);
   app.innerHTML=`<div class="top"><h1>💰 Referrals & payouts</h1><span class="sp"></span><span class="who">${esc(auth.email||'')}</span><a class="btn g" href="admin.html">← Main admin</a><button class="btn g" id="rf">↻ Refresh</button><button class="btn g" id="lo">Sign out</button></div>
   <div class="stats">
-   <div class="stat"><b>${Object.keys(D.referrers).length}</b><span>Referrers</span></div>
+   <div class="stat"><b>${Object.keys(D.users).length}</b><span>People signed up</span></div>
    <div class="stat ${pend.length?'warn':''}"><b>${pend.length}</b><span>Referrals to verify</span></div>
    <div class="stat good"><b>${appr.length}</b><span>Approved (${money(sum(appr))})</span></div>
    <div class="stat ${reqd.length?'warn':''}"><b>${reqd.length}</b><span>Withdrawals to pay (${money(sum(reqd))})</span></div>
@@ -142,7 +143,7 @@ function render(){
    <div class="stat"><b>${money(Math.max(0,sum(appr)-sum(W.filter(w=>w.status!='rejected'))))}</b><span>Earned, not yet requested</span></div>
    <div class="stat ${S.on?'good':'warn'}"><b>${S.on?'On':'Paused'}</b><span>Program · ${money(S.reward)} per referral</span></div></div>
   <div id="note">${note}</div>
-  <div class="tabs">${[['overview','📊 Overview'],['referrals','🤝 Referrals ('+R.length+')'],['withdrawals','💸 Withdrawals ('+W.length+')'],['referrers','👥 Referrers ('+Object.keys(D.referrers).length+')'],['history','🕘 History'],['reports','📈 Reports'],['settings','⚙️ Settings']].map(t=>`<button data-t="${t[0]}" class="${tab==t[0]?'on':''}">${t[1]}</button>`).join('')}</div>
+  <div class="tabs">${[['overview','📊 Overview'],['referrals','🤝 Referrals ('+R.length+')'],['withdrawals','💸 Withdrawals ('+W.length+')'],['referrers','👥 People ('+Object.keys(D.users).length+')'],['history','🕘 History'],['reports','📈 Reports'],['settings','⚙️ Settings']].map(t=>`<button data-t="${t[0]}" class="${tab==t[0]?'on':''}">${t[1]}</button>`).join('')}</div>
   <div class="card" id="pane"></div>`;
   $('#rf').onclick=load;$('#lo').onclick=()=>{auth=null;try{localStorage.removeItem('om_admin_tok')}catch(e){}loginView()};
   app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;note='';render()});
@@ -152,7 +153,7 @@ function render(){
 /* ---------- overview ---------- */
 function paneOverview(){
   const R=refList(),W=wdList(),S=RS(),pane=$('#pane');
-  const top=Object.keys(D.referrers).map(rc=>({rc,name:D.referrers[rc].name,...balance(rc),n:R.filter(r=>r.rcode==rc&&r.st=='approved').length})).sort((a,b)=>b.earned-a.earned).slice(0,5);
+  const top=Object.values(D.users).map(u=>u.rcode).map(rc=>({rc,name:userOf(rc).name,...balance(rc),n:R.filter(r=>r.rcode==rc&&r.st=='approved').length})).sort((a,b)=>b.earned-a.earned).slice(0,5);
   const toDo=[];
   const pend=R.filter(r=>r.st=='pending').length,reqd=W.filter(w=>w.status=='requested').length;
   if(pend)toDo.push(`<li><b>${pend}</b> referral${pend==1?'':'s'} waiting for you to verify the payment → <a href="#" data-go="referrals">open Referrals</a></li>`);
@@ -212,7 +213,7 @@ function paneWithdrawals(){
     const q=F.wq.toLowerCase(),list=wdList().filter(w=>(!F.ws||w.status==F.ws)&&(!q||[w.who,w.upi,w.rcode].join(' ').toLowerCase().includes(q)));
     $('#tb').innerHTML=list.map(w=>{const b=balance(w.rcode),over=b.used>b.earned;
       const upi='upi://pay?pa='+encodeURIComponent(w.upi)+'&pn='+encodeURIComponent(w.who)+'&am='+(+w.amount)+'&cu=INR&tn='+encodeURIComponent('OurMoments referral payout');
-      return `<tr><td>${fmt(w.t)}</td><td>${esc(w.who)}<div class="small">${esc(w.rcode)}</div></td><td><b>${esc(w.upi)}</b></td><td><b>${money(w.amount)}</b></td>
+      return `<tr><td>${fmt(w.t)}</td><td>${esc(w.who)}<div class="small">${esc(w.email||w.rcode)}</div></td><td><b>${esc(w.upi)}</b></td><td><b>${money(w.amount)}</b></td>
       <td>${over?`<span class="pill bad">⚠️ over by ${money(b.used-b.earned)}</span>`:'<span class="pill ok">✓ within earnings</span>'}<div class="small">approved ${money(b.earned)} · requested/paid ${money(b.used)}</div></td>
       <td>${pillW(w.status)}${w.status=='paid'?'<div class="small">'+fmt(w.at)+(w.ref?' · ref '+esc(w.ref):'')+'</div>':w.note?'<div class="small">'+esc(w.note)+'</div>':''}</td>
       <td><div class="acts">${w.status=='requested'?`<a class="btn s" href="${esc(upi)}">Pay</a><button class="btn s g" data-a="cp" data-u="${esc(w.upi)}">Copy UPI</button><button class="btn s ok" data-a="pd" data-k="${esc(w.key)}" data-i="${esc(w.id)}">Mark paid</button><button class="btn s r" data-a="rj" data-k="${esc(w.key)}" data-i="${esc(w.id)}">Reject</button>`:''}${w.status!='requested'?`<button class="btn s g" data-a="re" data-k="${esc(w.key)}" data-i="${esc(w.id)}">Re-open</button>`:''}</div></td></tr>`}).join('');
@@ -230,8 +231,12 @@ function paneWithdrawals(){
 
 /* ---------- referrers ---------- */
 function paneReferrers(){
-  const R=refList(),list=Object.entries(D.referrers).map(([rc,r])=>({rc,...r,...balance(rc),key:keyOfR(rc),ok:R.filter(x=>x.rcode==rc&&x.st=='approved').length,wait:R.filter(x=>x.rcode==rc&&x.st=='pending').length,no:R.filter(x=>x.rcode==rc&&x.st=='rejected').length})).sort((a,b)=>(b.t||0)-(a.t||0));
-  $('#pane').innerHTML=`<div class="tw"><table><thead><tr><th>Joined</th><th>Name</th><th>Code</th><th>✅ / ⏳ / ✖</th><th>Earned</th><th>Withdrawn / requested</th><th>Balance</th><th></th></tr></thead><tbody>${list.map(x=>`<tr><td>${fmt(x.t)}</td><td>${esc(x.name)}</td><td>${esc(x.rc)}</td><td>${x.ok} / ${x.wait} / ${x.no}</td><td>${money(x.earned)}</td><td>${money(x.used)}</td><td><b>${money(x.avail)}</b></td><td>${x.key?`<a class="btn s g" target="_blank" rel="noopener" href="${dir}wallet.html#k=${encodeURIComponent(x.key)}">View wallet</a>`:''}</td></tr>`).join('')}</tbody></table></div>${list.length?'':'<div class="empty">Nobody has a referral link yet.</div>'}`;
+  const R=refList(),list=Object.entries(D.users).map(([uid,u])=>({uid,rc:u.rcode,...u,...balance(u.rcode),ok:R.filter(x=>x.rcode==u.rcode&&x.st=='approved').length,wait:R.filter(x=>x.rcode==u.rcode&&x.st=='pending').length,no:R.filter(x=>x.rcode==u.rcode&&x.st=='rejected').length})).sort((a,b)=>(b.t||0)-(a.t||0));
+  $('#pane').innerHTML=`<div class="bar"><input id="q" type="text" placeholder="Search name or email…" value="${esc(F.pq||'')}"></div><div class="tw"><table><thead><tr><th>Signed up</th><th>Name</th><th>Email</th><th>Code</th><th>✅ / ⏳ / ✖</th><th>Earned</th><th>Withdrawn / requested</th><th>Balance</th></tr></thead><tbody id="tb"></tbody></table></div><div id="emp"></div>`;
+  const draw=()=>{const q=(F.pq||'').toLowerCase(),l=list.filter(x=>!q||(x.name+' '+x.email+' '+x.rc).toLowerCase().includes(q));
+    $('#tb').innerHTML=l.map(x=>`<tr><td>${fmt(x.t)}</td><td>${esc(x.name)}</td><td>${esc(x.email)}</td><td>${esc(x.rc)}</td><td>${x.ok} / ${x.wait} / ${x.no}</td><td>${money(x.earned)}</td><td>${money(x.used)}</td><td><b>${money(x.avail)}</b></td></tr>`).join('');
+    $('#emp').innerHTML=l.length?'':'<div class="empty">Nobody has signed up yet.</div>'};
+  draw();$('#q').oninput=e=>{F.pq=e.target.value;draw()};
 }
 
 /* ---------- history ---------- */
@@ -248,7 +253,7 @@ function paneHistory(){
 /* ---------- reports ---------- */
 function paneReports(){
   $('#pane').innerHTML=`<div class="bar"><label class="small">From</label><input type="date" id="f" value="${esc(RG.from)}" style="max-width:170px"><label class="small">To</label><input type="date" id="t" value="${esc(RG.to)}" style="max-width:170px"><button class="btn g" id="clr">Clear dates</button></div><div id="rep"></div>
-  <h3>Download</h3><div class="row"><button class="btn g" id="e1">⬇ Referrals</button><button class="btn g" id="e2">⬇ Withdrawals</button><button class="btn g" id="e3">⬇ Referrers</button><button class="btn g" id="e4">⬇ Monthly summary</button></div>`;
+  <h3>Download</h3><div class="row"><button class="btn g" id="e1">⬇ Referrals</button><button class="btn g" id="e2">⬇ Withdrawals</button><button class="btn g" id="e3">⬇ People</button><button class="btn g" id="e4">⬇ Monthly summary</button></div>`;
   const sel=t=>RG.from||RG.to?inRange(t):true;
   const R=()=>refList().filter(r=>sel(r.t)),W=()=>wdList().filter(w=>sel(w.t));
   const months=()=>{const m={};const g=k=>m[k]=m[k]||{ref:0,ok:0,okAmt:0,req:0,reqAmt:0,paid:0,paidAmt:0};
@@ -264,9 +269,9 @@ function paneReports(){
   };
   draw();
   $('#f').onchange=e=>{RG.from=e.target.value;draw()};$('#t').onchange=e=>{RG.to=e.target.value;draw()};$('#clr').onclick=()=>{RG={from:'',to:''};paneReports()};
-  $('#e1').onclick=()=>csv('referrals.csv',['date','referrer','referrer_code','friend','gift_by','type','payment_id','status','reward','decided_at','note'],R().map(r=>[new Date(r.t).toISOString(),r.who,r.rcode,r.a.name||'',r.a.from||'',r.a.type||'',r.a.pay||'',r.st,r.st=='approved'?r.amt:'',r.at?new Date(r.at).toISOString():'',r.note||'']));
-  $('#e2').onclick=()=>csv('withdrawals.csv',['date','referrer','referrer_code','upi_id','amount','status','reference','decided_at','note'],W().map(w=>[new Date(w.t).toISOString(),w.who,w.rcode,w.upi,w.amount,w.status,w.ref||'',w.at?new Date(w.at).toISOString():'',w.note||'']));
-  $('#e3').onclick=()=>csv('referrers.csv',['joined','name','code','approved','pending','rejected','earned','withdrawn_or_requested','balance'],Object.entries(D.referrers).map(([rc,x])=>{const b=balance(rc),L=refList().filter(r=>r.rcode==rc);return[x.t?new Date(x.t).toISOString():'',x.name,rc,L.filter(r=>r.st=='approved').length,L.filter(r=>r.st=='pending').length,L.filter(r=>r.st=='rejected').length,b.earned,b.used,b.avail]}));
+  $('#e1').onclick=()=>csv('referrals.csv',['date','referrer','email','referrer_code','friend','gift_by','type','payment_id','status','reward','decided_at','note'],R().map(r=>[new Date(r.t).toISOString(),r.who,r.email||'',r.rcode,r.a.name||'',r.a.from||'',r.a.type||'',r.a.pay||'',r.st,r.st=='approved'?r.amt:'',r.at?new Date(r.at).toISOString():'',r.note||'']));
+  $('#e2').onclick=()=>csv('withdrawals.csv',['date','referrer','email','referrer_code','upi_id','amount','status','reference','decided_at','note'],W().map(w=>[new Date(w.t).toISOString(),w.who,w.email||'',w.rcode,w.upi,w.amount,w.status,w.ref||'',w.at?new Date(w.at).toISOString():'',w.note||'']));
+  $('#e3').onclick=()=>csv('people.csv',['signed_up','name','email','code','approved','pending','rejected','earned','withdrawn_or_requested','balance'],Object.values(D.users).map(x=>{const rc=x.rcode,b=balance(rc),L=refList().filter(r=>r.rcode==rc);return[x.t?new Date(x.t).toISOString():'',x.name,x.email,rc,L.filter(r=>r.st=='approved').length,L.filter(r=>r.st=='pending').length,L.filter(r=>r.st=='rejected').length,b.earned,b.used,b.avail]}));
   $('#e4').onclick=()=>csv('monthly-summary.csv',['month','referrals','approved','rewards','withdrawal_requests','requested_amount','paid_count','paid_amount'],months().map(([k,x])=>[k,x.ref,x.ok,x.okAmt,x.req,x.reqAmt,x.paid,x.paidAmt]));
 }
 

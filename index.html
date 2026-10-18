@@ -256,6 +256,8 @@ body.fr-env .room,body.fr-env .card{border:2px solid #ffffffcc;box-shadow:0 24px
 .srow{display:flex;gap:6px;margin:6px 0;align-items:center;min-width:0}.srow input{min-width:0}.srow input:first-child{flex:0 0 34%;width:auto}.srow input:nth-child(2){flex:1;width:auto}.srow .btn{margin:0;flex:none}
 .card,.room,.bx2,.qb{min-width:0;max-width:100%}.duo input{min-width:0}.qrow input[type=text]{min-width:0;width:auto}
 #acct{left:10px;display:none}
+#refpill{left:10px;display:none;text-decoration:none;color:var(--ink);font-size:12.5px;padding:7px 12px}
+#acct[style*="block"]~#refpill{left:112px}
 [hidden]{display:none!important}
 .lnk{background:none;border:0;color:#0f8a74;font:inherit;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
 .aerr{color:#d64545;font-size:13px;min-height:18px;margin:8px 0 0;text-align:center}
@@ -517,7 +519,7 @@ async function api(path,body){
   return j;
 }
 async function dbMy(path){const t=await idt(),r=await fetch(CONFIG.DB.replace(/\/+$/,'')+'/'+path+'.json?auth='+encodeURIComponent(t));if(!r.ok)throw new Error('Could not load your data ('+r.status+').');return r.json()}
-function refreshAcctBtn(){const b=$('#acct');if(!b)return;b.style.display=apiOn()&&!V?'block':'none';b.textContent=ME?'👤 '+firstName():'👤 Log in'}
+function refreshAcctBtn(){refreshRefPill();const b=$('#acct');if(!b)return;b.style.display=apiOn()&&!V?'block':'none';b.textContent=ME?'👤 '+firstName():'👤 Log in'}
 $('#acct').onclick=()=>{AUTHRET='';ME?acctView('home'):acctView('login')};
 
 /* --- login / sign-up / forgot password screens --- */
@@ -742,7 +744,7 @@ function showLink(out,url,short,err){
   out.innerHTML=`<label>Your gift link ${short?"(short ✓ saved online)":""}</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">📋 Copy link</button><div class="row"><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Send on WhatsApp</a><button class="btn ghost" id="sh" style="width:56px">📤</button></div><p class="hint">${short?"Short link · saved online and verified ✓":(CONFIG.DB?"⚠️ Could not save online ("+esc(err)+"), so this is the long link. It still works.":"Long link (CONFIG.DB not set)")+" · "+(url.length/1024).toFixed(0)+" KB"}</p>`;
   $('#cp').onclick=()=>{navigator.clipboard.writeText(url).then(()=>{$('#cp').textContent='Copied ✓'})};
   $('#sh').onclick=()=>{if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt)};
-  if(short){out.insertAdjacentHTML('beforeend',referBoxHtml());bindRefer(S.from||S.name,false)}
+  if(short){out.insertAdjacentHTML('beforeend',referBoxHtml());bindRefer()}
 }
 
 /* ---------- MUSEUM (friendship) ---------- */
@@ -765,7 +767,7 @@ function fStages(g){
 }
 function startMuseum(g,preview){
   if(g.type=='bday')return startBday(g,preview);
-  setEnv(false);setFEnv(g.vibe||'chaos');document.title=g.name+', a museum made for you 💛';$('#acct').style.display='none';
+  setEnv(false);setFEnv(g.vibe||'chaos');document.title=g.name+', a museum made for you 💛';$('#acct').style.display='none';hideRefPill();
   V={g,preview,i:0,stages:fStages(g),knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
   document.body.dataset.vibe=g.vibe;
   $('#badge').style.display=preview?'block':'none';
@@ -893,7 +895,7 @@ function room(){
   if(st=='finale'){
     confetti();chime();V.elapsed=Math.round((Date.now()-V.t0)/1000);
     const stats=[];if(g.notes&&g.notes.length)stats.push([g.notes.length,'reasons']);if(V.quiz)stats.push([V.quiz.score+'/'+V.quiz.total,'quiz']);if(g.awards&&g.awards.length)stats.push([g.awards.length,'awards']);if(V.moves)stats.push([V.moves,'puzzle moves']);stats.push([Math.floor(V.elapsed/60)+':'+String(V.elapsed%60).padStart(2,'0'),'time']);
-    frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats">${stats.map(s=>`<div><b>${esc(s[0])}</b>${s[1]}</div>`).join('')}</div></div><button class="btn" id="dl">⬇ Save your certificate</button><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div>${referBoxHtml()}<button class="btn ghost" id="nx">Walk through again</button>`);bindRefer(g.name,V.preview);
+    frame(`<div class="cert"><p class="eyebrow">Certificate of friendship</p><big>${esc(g.name)} & ${esc(g.from)}</big><p>Officially best-in-class ${KIND_LINE[g.kind]}s</p>${V.sig?`<img src="${V.sig}" style="width:60%;margin-top:8px">`:''}<div class="stats">${stats.map(s=>`<div><b>${esc(s[0])}</b>${s[1]}</div>`).join('')}</div></div><button class="btn" id="dl">⬇ Save your certificate</button><p>Thank you for being you. 💛<br>— ${esc(g.from)}</p><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div>${referBoxHtml()}<button class="btn ghost" id="nx">Walk through again</button>`);bindRefer();
     if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:V.elapsed,moves:V.moves,rules:(g.rules||[]).length,quiz:V.quiz?V.quiz.score+'/'+V.quiz.total:'',sig:V.sig||'',ts:new Date().toISOString()};V.rec=rec;dbAdd(CONFIG.KEY_REPLIES,rec);V.rid=Date.now().toString(36);V.slim=(({sig,...s})=>s)(rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
     $('#dl').onclick=async()=>{const b=$('#dl');b.disabled=true;b.textContent='Making your certificate…';let ok=false;try{ok=await saveCert(g)}catch(e){}b.disabled=false;b.textContent=ok?'⬇ Saved! Save it again':'Your browser can’t save images here'};
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
@@ -1134,7 +1136,7 @@ shell.addEventListener('click',e=>{
 
 // ----- what the birthday person sees -----
 function startBday(g,preview){
-  document.title='Happy Birthday '+g.name+'! 🎂';$('#acct').style.display='none';
+  document.title='Happy Birthday '+g.name+'! 🎂';$('#acct').style.display='none';hideRefPill();
   setEnv(true);musicStop();MUS.preview=false;
   V={g,preview,bday:true,s:0,t0:Date.now(),popped:new Set(),ex:0,stages:['gift','hello','cake'].concat((g.balloons||[]).some(x=>x&&x.trim())?['balloons']:[],g.game===true?['game']:[],(g.photos&&g.photos.length)?['memories']:[],(g.msg&&g.msg.trim())?['letter']:[],['finale'])};
   document.body.dataset.vibe='bday';
@@ -1279,7 +1281,7 @@ function bscreen(){
   if(st=='finale'){
     confetti(70);chime();
     const el=Math.round((Date.now()-V.t0)/1000);
-    bframe(`<div class="cert"><p class="eyebrow">Happy birthday</p><big>${esc(g.name)} 🎂</big><p>With love from ${esc(g.from)} 💛</p></div><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div>${referBoxHtml()}<button class="btn ghost" id="nx">Watch again</button>`);bindRefer(g.name,V.preview);
+    bframe(`<div class="cert"><p class="eyebrow">Happy birthday</p><big>${esc(g.name)} 🎂</big><p>With love from ${esc(g.from)} 💛</p></div><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div>${referBoxHtml()}<button class="btn ghost" id="nx">Watch again</button>`);bindRefer();
     if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:el,moves:V.gmoves||0,rules:g.balloons.filter(x=>x&&x.trim()).length,sig:'',ts:new Date().toISOString()};V.rec=rec;V.rid=Date.now().toString(36);V.slim=(({sig,...x})=>x)(rec);dbAdd(CONFIG.KEY_REPLIES,rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
     $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
       if(CONFIG.DB&&V.rec.gid)fb('PUT','replies/'+encodeURIComponent(V.rec.gid)+'/'+V.rid,{...V.slim,reply:t}).then(()=>{$('#sr').textContent='Sent ✓ 💛';chime()}).catch(()=>{$('#sr').textContent='Could not send — try again'});
@@ -1312,17 +1314,19 @@ shell.addEventListener('click',e=>{
   else if(d.act=='addaward'){const v=$('#f-ca').value.trim();if(v&&!S.awards.includes(v)&&S.awards.length<5){S.awards.push(v);wiz()}}
 });
 
-/* ---------- referral program (no server): referral link at the finale, a wallet page, admin verifies and pays by UPI ---------- */
+/* ---------- referral program: a "Refer & earn" button on the first screen, a referral box at the finale; people sign up on refer.html; admin verifies and pays by UPI ---------- */
 const REF_DAYS=30;
 let REFSET={on:true,reward:20,min:20,every:false};   // replaced by the admin's settings (settings/refer)
 const rKey=n=>{let r='';try{const a=new Uint8Array(n);crypto.getRandomValues(a);r=Array.from(a,b=>(b%36).toString(36)).join('')}catch(e){while(r.length<n)r+=Math.random().toString(36).slice(2);r=r.slice(0,n)}return r};
-const myWallet=()=>{try{return JSON.parse(localStorage.getItem('om_swallet')||'null')}catch(e){return null}};
+// the account of the person using this browser (made on refer.html; shared with wallet.html through localStorage)
+const acct=()=>{try{const a=JSON.parse(localStorage.getItem('om_acct')||'null');return a&&a.uid&&a.rcode?a:null}catch(e){return null}};
 const refRec=()=>{try{const r=JSON.parse(localStorage.getItem('om_sref')||'null');return r&&r.c&&Date.now()-r.t<REF_DAYS*864e5?r:null}catch(e){return null}};
 // the referral that should be credited for a gift made in this browser ('' = none). You can't refer yourself.
-const refCode=()=>{const r=refRec();if(!r||REFSET.on===false)return '';const w=myWallet();if(w&&w.rcode===r.c)return '';if(r.used&&!REFSET.every)return '';return r.c};
+const refCode=()=>{const r=refRec();if(!r||REFSET.on===false)return '';const a=acct();if(a&&a.rcode===r.c)return '';if(r.used&&!REFSET.every)return '';return r.c};
 const siteDir=()=>location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
 const refLinkOf=rc=>siteDir()+'index.html#ref='+rc;
-const walletUrlOf=k=>siteDir()+'wallet.html#k='+k;
+const referUrl=()=>siteDir()+'refer.html';
+const walletUrl=()=>siteDir()+'wallet.html';
 // someone opened a referral link: remember who invited them (the first referrer wins, for 30 days)
 async function captureRef(code){
   try{
@@ -1335,6 +1339,14 @@ function refChip(){
   const r=refRec();if(!r||!r.n||REFSET.on===false||document.querySelector('.refbar'))return;
   const b=document.createElement('div');b.className='refbar';b.textContent='🎁 Invited by '+r.n;document.body.appendChild(b);
 }
+// the small "Refer & earn" button, shown only while someone is building a gift (not while a gift is being opened)
+function refreshRefPill(){
+  let p=$('#refpill');
+  if(!CONFIG.DB||REFSET.on===false||V){if(p)p.style.display='none';return}
+  if(!p){p=document.createElement('a');p.id='refpill';p.className='fix';p.textContent='💰 Refer & earn';document.body.appendChild(p)}
+  p.href=referUrl();p.style.display='block';
+}
+const hideRefPill=()=>{const p=$('#refpill');if(p)p.style.display='none'};
 // called right after a gift link is saved: counts as one referral for whoever invited this person
 async function recordReferral(giftCode){
   try{
@@ -1349,39 +1361,22 @@ async function recordReferral(giftCode){
     const r=refRec();if(r){r.used=true;localStorage.setItem('om_sref',JSON.stringify(r))}
   }catch(e){}
 }
-async function ensureWallet(name){
-  let w=myWallet();if(w)return w;
-  const first=String(name||'Friend').trim().split(/\s+/)[0].slice(0,20)||'Friend';
-  for(let t=0;t<4;t++){
-    const rcode=(slug(first)||'friend')+'-'+rand5(),key=rKey(24),now=Date.now();
-    try{
-      await fb('PUT','referrers/'+rcode,{name:first,t:now});
-      await fb('PUT','wallets/'+key,{rcode,name:first,t:now});
-      w={rcode,key,name:first};localStorage.setItem('om_swallet',JSON.stringify(w));return w;
-    }catch(e){}
-  }
-  throw new Error('Could not create your referral link right now. Please try again.');
-}
 function referBoxHtml(){
-  return CONFIG.DB?`<div class="refer" id="refer" style="display:none"><b>💰 Earn ₹<span class="rw">20</span> for every friend who makes a gift</b><small>Share your own link. When a friend pays and creates a gift with it, you earn ₹<span class="rw">20</span>. Withdraw to UPI from ₹<span id="rf-min">20</span>.</small><button class="btn" id="rf-go">🔗 Get my referral link</button><div id="rf-out"></div></div>`:'';
+  return CONFIG.DB?`<div class="refer" id="refer" style="display:none"><b>💰 Earn ₹<span class="rw">20</span> for every friend who makes a gift</b><small>Sign up free, share your link, and earn ₹<span class="rw">20</span> each time a friend pays and creates a gift with it. Withdraw to UPI from ₹<span id="rf-min">20</span>.</small><div id="rf-out"></div></div>`:'';
 }
-async function bindRefer(name,preview){
+async function bindRefer(){
   const box=$('#refer');if(!box)return;
   try{const st=await fb('GET','settings/refer');if(st&&typeof st=='object')Object.assign(REFSET,st)}catch(e){}
   if(REFSET.on===false||!$('#refer'))return;
   box.querySelectorAll('.rw').forEach(e=>e.textContent=REFSET.reward);$('#rf-min').textContent=REFSET.min;box.style.display='';
-  const show=w=>{
-    const rl=refLinkOf(w.rcode),wl=walletUrlOf(w.key),txt='🎁 Make a personalised gift for someone you love with my link: '+rl;
-    $('#rf-out').innerHTML=`<label>Your referral link</label><input class="share" readonly value="${rl}" onclick="this.select()"><div class="row"><button class="btn ghost" id="rf-cp">📋 Copy</button><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Share on WhatsApp</a></div><p class="hint"><b>Save your wallet link</b> to see your earnings and withdraw to UPI: <a href="${wl}" target="_blank" rel="noopener">Open my wallet</a></p>`;
+  const a=acct(),out=$('#rf-out');
+  if(a){   // already signed in on this device: show the link right here
+    const rl=refLinkOf(a.rcode),txt='🎁 Make a personalised gift for someone you love with my link: '+rl;
+    out.innerHTML=`<label>Your referral link</label><input class="share" readonly value="${rl}" onclick="this.select()"><div class="row"><button class="btn ghost" id="rf-cp">📋 Copy</button><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Share on WhatsApp</a></div><p class="hint"><a href="${walletUrl()}">Open my wallet</a> to see earnings and withdraw to UPI.</p>`;
     $('#rf-cp').onclick=()=>navigator.clipboard.writeText(rl).then(()=>{$('#rf-cp').textContent='Copied ✓'}).catch(()=>{});
-    $('#rf-go').style.display='none';
-  };
-  const have=myWallet();if(have&&!preview)show(have);
-  $('#rf-go').onclick=async()=>{
-    if(preview){$('#rf-out').innerHTML='<p class="hint">Preview only. Real visitors get their own link here.</p>';return}
-    const b=$('#rf-go');b.disabled=true;b.textContent='Creating your link…';
-    try{show(await ensureWallet(name))}catch(e){b.disabled=false;b.textContent='🔗 Get my referral link';$('#rf-out').innerHTML='<p class="hint" style="color:#d64545">'+esc(e.message)+'</p>'}
-  };
+  }else{
+    out.innerHTML=`<a class="btn" id="rf-go" style="display:block;text-align:center;text-decoration:none" href="${referUrl()}">🔐 Sign up or log in to start earning</a>`;
+  }
 }
 
 /* ---------- admin bypass: a signed-in admin (from admin.html) can create gifts without paying ---------- */

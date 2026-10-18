@@ -26,26 +26,26 @@
       ".write": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'"
     },
 
+    "users": {
+      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "(auth != null && auth.uid === $uid && !data.exists()) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
+        ".validate": "newData.hasChildren(['name','email','rcode','t']) && newData.child('name').isString() && newData.child('name').val().length <= 30 && newData.child('email').isString() && newData.child('rcode').isString() && newData.child('rcode').val().matches(/^[a-z0-9-]{3,40}$/)"
+      }
+    },
     "referrers": {
       ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
       "$rcode": {
         ".read": true,
-        ".write": "(!data.exists() && $rcode.matches(/^[a-z0-9-]{3,40}$/)) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
+        ".write": "(auth != null && !data.exists() && $rcode.matches(/^[a-z0-9-]{3,40}$/)) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
         ".validate": "newData.hasChildren(['name','t']) && newData.child('name').isString() && newData.child('name').val().length <= 30"
-      }
-    },
-    "wallets": {
-      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
-      "$key": {
-        ".read": true,
-        ".write": "(!data.exists() && $key.matches(/^[a-z0-9]{24}$/)) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
-        ".validate": "newData.hasChildren(['rcode','name','t'])"
       }
     },
     "referrals": {
       ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
       "$rcode": {
-        ".read": true,
+        ".read": "auth != null && root.child('users').child(auth.uid).child('rcode').val() === $rcode",
         "$rid": {
           ".write": "(!data.exists() && root.child('referrers').child($rcode).exists()) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
           ".validate": "newData.hasChildren(['t','st']) && (newData.child('st').val() === 'pending' || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'))"
@@ -67,11 +67,11 @@
     },
     "withdrawals": {
       ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
-      "$key": {
-        ".read": true,
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
         "$wid": {
-          ".write": "(!data.exists() && root.child('wallets').child($key).exists()) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
-          ".validate": "newData.hasChildren(['rcode','upi','amount','status','t'])",
+          ".write": "(auth != null && auth.uid === $uid && !data.exists() && root.child('users').child($uid).exists()) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
+          ".validate": "newData.hasChildren(['rcode','upi','amount','status','t']) && newData.child('rcode').val() === root.child('users').child($uid).child('rcode').val()",
           "upi": { ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._-]{2,256}@[A-Za-z]{2,64}$/)" },
           "amount": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100000" },
           "status": { ".validate": "newData.isString() && (newData.val() === 'requested' || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'))" }
