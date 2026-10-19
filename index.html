@@ -1316,8 +1316,9 @@ shell.addEventListener('click',e=>{
 
 /* ---------- referral program: a "Refer & earn" button on the first screen, a referral box at the finale; people sign up on refer.html; admin verifies and pays by UPI ---------- */
 const REF_DAYS=30;
-const REFERRAL_ENABLED=false;   // referral rewards are switched off on the public site
-let REFSET={on:false,reward:20,min:20,every:false};   // replaced by the admin's settings (settings/refer)
+const REFERRAL_ENABLED=true;    // referral links are tracked silently; the admin dashboard is the only place they show
+const REF_UI=false;             // no referral button, boxes or banners anywhere on the public site
+let REFSET={on:true,reward:20,every:false};   // replaced by the admin's settings (settings/refer)
 const rKey=n=>{let r='';try{const a=new Uint8Array(n);crypto.getRandomValues(a);r=Array.from(a,b=>(b%36).toString(36)).join('')}catch(e){while(r.length<n)r+=Math.random().toString(36).slice(2);r=r.slice(0,n)}return r};
 // the account of the person using this browser (made on refer.html; shared with wallet.html through localStorage)
 const acct=()=>{try{const a=JSON.parse(localStorage.getItem('om_acct')||'null');return a&&a.uid&&a.rcode?a:null}catch(e){return null}};
@@ -1338,14 +1339,14 @@ async function captureRef(code){
   }catch(e){}
 }
 function refChip(){
-  if(!REFERRAL_ENABLED)return;
+  if(!REF_UI)return;
   const r=refRec();if(!r||!r.n||REFSET.on===false||document.querySelector('.refbar'))return;
   const b=document.createElement('div');b.className='refbar';b.textContent='🎁 Invited by '+r.n;document.body.appendChild(b);
 }
 // the small "Refer & earn" button, shown only while someone is building a gift (not while a gift is being opened)
 function refreshRefPill(){
   let p=$('#refpill');
-  if(!REFERRAL_ENABLED||!CONFIG.DB||REFSET.on===false||V){if(p)p.style.display='none';return}
+  if(!REF_UI||!CONFIG.DB||REFSET.on===false||V){if(p)p.style.display='none';return}
   if(!p){p=document.createElement('a');p.id='refpill';p.className='fix';p.textContent='💰 Refer & earn';document.body.appendChild(p)}
   p.href=referUrl();p.style.display='block';
 }
@@ -1365,10 +1366,10 @@ async function recordReferral(giftCode){
   }catch(e){}
 }
 function referBoxHtml(){
-  return REFERRAL_ENABLED&&CONFIG.DB?`<div class="refer" id="refer" style="display:none"><b>💰 Earn ₹<span class="rw">20</span> for every friend who makes a gift</b><small>Sign up free, share your link, and earn ₹<span class="rw">20</span> each time a friend pays and creates a gift with it. Withdraw to UPI from ₹<span id="rf-min">20</span>.</small><div id="rf-out"></div></div>`:'';
+  return REF_UI&&CONFIG.DB?`<div class="refer" id="refer" style="display:none"><b>💰 Earn ₹<span class="rw">20</span> for every friend who makes a gift</b><small>Sign up free, share your link, and earn ₹<span class="rw">20</span> each time a friend pays and creates a gift with it. Withdraw to UPI from ₹<span id="rf-min">20</span>.</small><div id="rf-out"></div></div>`:'';
 }
 async function bindRefer(){
-  const box=$('#refer');if(!REFERRAL_ENABLED||!box)return;
+  const box=$('#refer');if(!REF_UI||!box)return;
   try{const st=await fb('GET','settings/refer');if(st&&typeof st=='object')Object.assign(REFSET,st)}catch(e){}
   if(REFSET.on===false||!$('#refer'))return;
   box.querySelectorAll('.rw').forEach(e=>e.textContent=REFSET.reward);$('#rf-min').textContent=REFSET.min;box.style.display='';
