@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Partner page</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#17332d;--mut:#6b8079;--acc:#F5A524;--acc2:#FF6B57;--ok:#14A38B;--bad:#d64545;--line:#e3ece8;--bg:#f3f8f6}
+*{box-sizing:border-box;margin:0}
+body{font-family:Outfit,system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh}
+button,input{font:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:18px 14px 60px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-size:25px}h3{font-family:'Bricolage Grotesque',sans-serif;margin:0 0 8px}
+.card{background:#fff;border-radius:16px;box-shadow:0 6px 24px #17332d14;padding:16px;margin-bottom:14px}
+.btn{border:0;border-radius:10px;padding:10px 15px;font-weight:600;cursor:pointer;background:linear-gradient(90deg,var(--acc),var(--acc2));color:#fff;text-decoration:none;display:inline-block}
+.btn.g{background:#e9f1ee;color:var(--ink)}.btn:disabled{opacity:.5;cursor:not-allowed}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+input[type=text],input[type=number]{width:100%;padding:10px 12px;border:1.5px solid #d6e3de;border-radius:10px;background:#fafdfc}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 4px 16px #17332d10}.stat b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:24px}.stat span{font-size:12px;color:var(--mut)}
+.stat.good b{color:var(--ok)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);padding:8px;border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid var(--line)}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.pill.ok{background:#dff6ef;color:#0b7a64}.pill.bad{background:#fde8e8;color:var(--bad)}.pill.wait{background:#fff1cf;color:#a86a00}
+.msg{margin:10px 0;padding:10px 12px;border-radius:10px;background:#e9f6f1;font-size:13.5px}.msg.bad{background:#fde8e8;color:var(--bad)}
+.small{font-size:12.5px;color:var(--mut)}.empty{color:var(--mut);padding:10px 2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row input{flex:1;min-width:160px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:520px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const P={DB:'https://friend-museum-default-rtdb.firebaseio.com/'};
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'₹'+(+n||0).toLocaleString('en-IN');
+const fmt=t=>t?new Date(t).toLocaleDateString([], {dateStyle:'medium'}):'—';
+const app=$('#app');
+const dir=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
+const UPI=/^[A-Za-z0-9._-]{2,256}@[A-Za-z]{2,64}$/;
+let K='',RC='',ME={},ST={reward:20,min:20,on:true},REFS={},REQS={},note='';
+
+async function db(method,path,body){
+  let r;
+  try{r=await fetch(P.DB.replace(/\/+$/,'')+'/'+path+'.json',{method,body:body===undefined?undefined:JSON.stringify(body)})}
+  catch(e){throw new Error('Could not reach the server. Check your internet and try again.')}
+  if(r.status==401||r.status==403)throw new Error('Not allowed.');
+  if(!r.ok)throw new Error('Something went wrong ('+r.status+').');
+  return r.json();
+}
+const say=(m,bad)=>{note=m?`<div class="msg ${bad?'bad':''}">${esc(m)}</div>`:'';const n=$('#note');if(n)n.innerHTML=note};
+const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+function deny(msg){app.innerHTML=`<div class="card" style="margin-top:12vh;text-align:center"><h1>🔒 Partner page</h1><p class="small" style="margin-top:8px">${esc(msg)}</p></div>`}
+
+async function start(){
+  const m=location.hash.match(/#k=([a-z0-9]{16,40})/);
+  try{if(m)localStorage.setItem('om_pk',m[1]);K=m?m[1]:(localStorage.getItem('om_pk')||'')}catch(e){K=m?m[1]:''}
+  if(!/^[a-z0-9]{16,40}$/.test(K))return deny('Open the personal link you were given.');
+  try{
+    RC=await db('GET','refkeys/'+K);
+    if(!RC)return deny('This link is not active. Ask for a new one.');
+    await load();
+  }catch(e){deny(e.message)}
+}
+async function load(){
+  const [name,me,st,refs,reqs]=await Promise.all([db('GET','referrers/'+RC+'/name'),db('GET','partner/'+K),db('GET','settings/refer'),db('GET','referrals/'+RC),db('GET','payreq/'+K)]);
+  ME=Object.assign({name:name||''},me||{});ST=Object.assign({reward:20,min:20,on:true},st||{});REFS=refs||{};REQS=reqs||{};
+  render();
+}
+const mine=()=>Object.entries(REFS).map(([id,r])=>({id,...r})).sort((a,b)=>(b.t||0)-(a.t||0));
+const reqs=()=>Object.entries(REQS).map(([id,r])=>({id,...r})).sort((a,b)=>(b.t||0)-(a.t||0));
+function figures(){
+  const R=mine(),Q=reqs();
+  const ok=R.filter(r=>r.st=='approved'),earned=ok.reduce((s,r)=>s+(+r.amt||0),0);
+  const paid=Q.filter(q=>q.status=='paid').reduce((s,q)=>s+(+q.amount||0),0),open=Q.filter(q=>q.status=='requested').reduce((s,q)=>s+(+q.amount||0),0);
+  return{R,Q,ok,earned,paid,open,avail:Math.max(0,earned-paid-open)};
+}
+const pillR=s=>s=='approved'?'<span class="pill ok">✅ approved</span>':s=='rejected'?'<span class="pill bad">✖ not counted</span>':'<span class="pill wait">⏳ checking</span>';
+const pillQ=s=>s=='paid'?'<span class="pill ok">✅ paid</span>':s=='rejected'?'<span class="pill bad">✖ declined</span>':'<span class="pill wait">⏳ requested</span>';
+
+function render(){
+  const f=figures(),link=dir+'index.html#ref='+RC;
+  const hello=ME.dname||ME.name||'there';
+  app.innerHTML=`<div class="row" style="margin-bottom:12px"><h1 style="flex:1">👋 Hi ${esc(hello)}</h1><button class="btn g" id="rf">↻ Refresh</button></div>
+  <div class="stats"><div class="stat"><b>${f.R.length}</b><span>Friends referred</span></div><div class="stat good"><b>${f.ok.length}</b><span>Counted</span></div><div class="stat"><b>${money(f.earned)}</b><span>Total earnings</span></div><div class="stat"><b>${money(f.paid)}</b><span>Paid to you</span></div><div class="stat good"><b>${money(f.avail)}</b><span>Ready to request</span></div></div>
+  <div id="note">${note}</div>
+  <div class="card"><h3>🔗 Your referral link</h3><p class="small" style="margin-bottom:8px">Share it. When someone opens it and buys a gift, it shows up below. Earn ${money(ST.reward)} for each friend who pays.${ST.on===false?' <b>Referral tracking is paused right now.</b>':''}</p>
+   <div class="row"><input type="text" id="lk" readonly value="${esc(link)}"><button class="btn" id="cp">Copy</button><a class="btn g" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Make a personalised gift for someone you love 🎁 '+link)}">WhatsApp</a></div></div>
+  <div class="card"><h3>💸 Request a payment</h3>${f.avail>=ST.min?`<div class="two"><div><label>Amount (₹)</label><input type="number" id="am" min="${ST.min}" max="${f.avail}" step="1" value="${f.avail}"></div><div><label>Your UPI ID</label><input type="text" id="up" maxlength="80" placeholder="name@okhdfcbank" value="${esc(ME.upi||'')}"></div></div><button class="btn" id="rq" style="margin-top:12px">Send request</button><p class="small" style="margin-top:8px">Requests are paid by hand, usually within a few days. You can request ${money(ST.min)} or more.</p>`:`<p class="small">You can request a payment once you have at least ${money(ST.min)} ready. Right now: ${money(f.avail)}.</p>`}
+   ${f.Q.length?`<h3 style="margin-top:16px">Your requests</h3><div class="tw"><table><thead><tr><th>Date</th><th>Amount</th><th>UPI</th><th>Status</th></tr></thead><tbody>${f.Q.map(q=>`<tr><td>${fmt(q.t)}</td><td><b>${money(q.amount)}</b></td><td>${esc(q.upi)}</td><td>${pillQ(q.status)}${q.status=='paid'?`<div class="small">${fmt(q.at)}${q.ref?' · ref '+esc(q.ref):''}</div>`:q.note?`<div class="small">${esc(q.note)}</div>`:''}</td></tr>`).join('')}</tbody></table></div>`:''}</div>
+  <div class="card"><h3>📈 Your referral report</h3>${f.R.length?`<div class="tw"><table><thead><tr><th>#</th><th>Date</th><th>Status</th><th>Reward</th></tr></thead><tbody>${f.R.map((r,i)=>`<tr><td>${f.R.length-i}</td><td>${fmt(r.t)}</td><td>${pillR(r.st)}</td><td>${r.st=='approved'?money(r.amt):'—'}</td></tr>`).join('')}</tbody></table></div><p class="small" style="margin-top:8px">“Checking” means the payment is still being verified. It turns into a reward once confirmed.</p>`:'<p class="empty">No referrals yet. Share your link to get started.</p>'}</div>
+  <div class="card"><h3>👤 Your details</h3><div class="two"><div><label>Name</label><input type="text" id="dn" maxlength="30" value="${esc(ME.dname||ME.name||'')}"></div><div><label>Phone</label><input type="text" id="ph" maxlength="20" value="${esc(ME.phone||'')}"></div><div><label>Email</label><input type="text" id="em" maxlength="80" value="${esc(ME.email||'')}"></div><div><label>UPI ID</label><input type="text" id="up2" maxlength="80" placeholder="name@okhdfcbank" value="${esc(ME.upi||'')}"></div></div><button class="btn" id="sv" style="margin-top:12px">Save details</button></div>`;
+  $('#rf').onclick=()=>load().catch(e=>say(e.message,true));
+  $('#cp').onclick=async e=>{try{await navigator.clipboard.writeText(link);e.target.textContent='Copied ✓'}catch(x){$('#lk').select()}};
+  $('#sv').onclick=async()=>{
+    const v={dname:$('#dn').value.trim(),phone:$('#ph').value.trim(),email:$('#em').value.trim(),upi:$('#up2').value.trim()};
+    if(v.upi&&!UPI.test(v.upi))return say('That UPI ID does not look right (example: name@okhdfcbank).',true);
+    if(v.phone&&!/^[0-9+ ()-]{6,20}$/.test(v.phone))return say('That phone number does not look right.',true);
+    if(v.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email))return say('That email does not look right.',true);
+    const rec={};Object.entries(v).forEach(([k,x])=>{if(x)rec[k]=x});
+    try{await db('PUT','partner/'+K,rec);ME=Object.assign({name:ME.name},rec);say('Details saved.');render()}catch(e){say(e.message,true)}};
+  if($('#rq'))$('#rq').onclick=async()=>{
+    const amt=Math.round(+$('#am').value),upi=$('#up').value.trim(),F=figures();
+    if(!UPI.test(upi))return say('Enter a valid UPI ID (example: name@okhdfcbank).',true);
+    if(!(amt>=ST.min))return say('The minimum is '+money(ST.min)+'.',true);
+    if(amt>F.avail)return say('You can request up to '+money(F.avail)+'.',true);
+    const id=rid(),rec={rcode:RC,upi,amount:amt,status:'requested',t:Date.now()};
+    $('#rq').disabled=true;
+    try{await db('PUT','payreq/'+K+'/'+id,rec);REQS[id]=rec;
+      if(!ME.upi){ME.upi=upi;const d=Object.assign({},ME);delete d.name;await db('PUT','partner/'+K,d).catch(()=>{})}
+      say('Request sent. You will be paid to '+upi+'.');render()}
+    catch(e){say(e.message,true);$('#rq').disabled=false}};
+}
+start();
+</script>
+</body>
+</html>

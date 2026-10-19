@@ -52,7 +52,7 @@ const app=$('#app');
 const money=n=>'₹'+(+n||0).toLocaleString('en-IN');
 const fmt=t=>t?new Date(t).toLocaleString([], {dateStyle:'medium',timeStyle:'short'}):'—';
 const dir=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'');
-let auth=null,D={referrals:{},audit:{},paid:{},referrers:{},meta:{},settings:{}},tab='overview',note='';
+let auth=null,D={referrals:{},audit:{},paid:{},referrers:{},meta:{},settings:{},partner:{},payreq:{}},tab='overview',note='';
 let F={rs:'',rq:'',pq:'',hk:'',hq:'',ps:''},RG={from:'',to:''};
 
 /* ---------- database (signed in as the admin) ---------- */
@@ -92,16 +92,21 @@ async function load(){
   app.innerHTML='<div class="card login"><h1>Loading… ⏳</h1></div>';
   try{
     const g=p=>fb('GET',p).then(v=>v||{});
-    const [referrals,audit,paid,referrers,meta,settings]=await Promise.all(['referrals','refaudit','refpaid','referrers','refmeta','settings'].map(g));
-    D={referrals,audit,paid,referrers,meta,settings};
+    const [referrals,audit,paid,referrers,meta,settings,partner,payreq]=await Promise.all(['referrals','refaudit','refpaid','referrers','refmeta','settings','partner','payreq'].map(g));
+    D={referrals,audit,paid,referrers,meta,settings,partner,payreq};
     render();
   }catch(e){auth=null;loginView(e.message)}
 }
 
 /* ---------- derived data ---------- */
-const RS=()=>Object.assign({on:true,reward:20,every:false},D.settings.refer||{});
+const RS=()=>Object.assign({on:true,reward:20,min:20,every:false},D.settings.refer||{});
 const nameOf=rc=>(D.referrers[rc]||{}).name||rc;
-const refList=()=>{const a=[];Object.entries(D.referrals).forEach(([rc,o])=>Object.entries(o||{}).forEach(([rid,r])=>a.push(Object.assign({rcode:rc,rid,a:D.audit[rid]||{},who:nameOf(rc)},r))));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
+// what the referrer typed on their own page wins over what you entered
+const det=rc=>{const m=D.meta[rc]||{},q=D.partner[m.pk]||{};return{contact:[q.phone,q.email].filter(Boolean).join(' · ')||m.contact||'',upi:q.upi||m.upi||'',pk:m.pk||''}};
+const partnerUrl=pk=>dir+'partner.html#k='+pk;
+const newKey=()=>{const a=new Uint8Array(20);crypto.getRandomValues(a);return Array.from(a,b=>'abcdefghijklmnopqrstuvwxyz0123456789'[b%36]).join('')};
+const reqList=()=>{const a=[];Object.entries(D.payreq).forEach(([pk,o])=>Object.entries(o||{}).forEach(([id,q])=>a.push(Object.assign({pk,id,who:nameOf(q.rcode)},q))));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
+const refList=()=>{const a=[];Object.entries(D.referrals).forEach(([rc,o])=>Object.entries(o||{}).forEach(([rid,r])=>a.push(Object.assign({rcode:rc,rid,a:D.audit[rid]||{},who:nameOf(rc),note:(D.audit[rid]||{}).note||''},r))));return a.sort((x,y)=>(y.t||0)-(x.t||0))};
 const payList=()=>Object.entries(D.paid).map(([id,p])=>Object.assign({id,who:nameOf(p.rcode)},p)).sort((x,y)=>(y.t||0)-(x.t||0));
 const balance=rc=>{const earned=refList().filter(r=>r.rcode==rc&&r.st=='approved').reduce((s,r)=>s+(+r.amt||0),0),paid=payList().filter(p=>p.rcode==rc).reduce((s,p)=>s+(+p.amount||0),0);return{earned,paid,due:earned-paid}};
 const inRange=t=>{if(!t)return false;const d=new Date(t).toISOString().slice(0,10);return(!RG.from||d>=RG.from)&&(!RG.to||d<=RG.to)};
@@ -114,6 +119,7 @@ function events(){
     if(r.st=='approved'&&r.at)e.push({t:r.at,k:'approved',c:'#14A38B',text:`Approved ${money(r.amt)} for ${r.who}`,sub:'Referral of '+(r.a.name||'a friend')});
     if(r.st=='rejected'&&r.at)e.push({t:r.at,k:'rejected',c:'#d64545',text:`Rejected a referral for ${r.who}`,sub:r.note||''});
   });
+  reqList().forEach(q=>e.push({t:q.t,k:'request',c:'#FF6B57',text:`${q.who} requested ${money(q.amount)}`,sub:'To '+q.upi+(q.status=='rejected'?' · declined':'')}));
   payList().forEach(p=>e.push({t:p.t,k:'paid',c:'#0b7a64',text:`Paid ${money(p.amount)} to ${p.who}`,sub:[p.ref?'reference '+p.ref:'',p.note||''].filter(Boolean).join(' · ')}));
   return e.filter(x=>x.t).sort((a,b)=>b.t-a.t);
 }
@@ -126,7 +132,7 @@ const rnd=()=>Math.random().toString(36).slice(2,6);
 
 /* ---------- main view ---------- */
 function render(){
-  const R=refList(),P=payList(),S=RS();
+  const R=refList(),P=payList(),S=RS(),Q=reqList().filter(q=>q.status=='requested');
   const pend=R.filter(r=>r.st=='pending'),appr=R.filter(r=>r.st=='approved');
   const sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
   const earned=sum(appr,'amt'),paid=sum(P,'amount');
@@ -136,10 +142,11 @@ function render(){
    <div class="stat ${pend.length?'warn':''}"><b>${pend.length}</b><span>Referrals to verify</span></div>
    <div class="stat good"><b>${appr.length}</b><span>Approved (${money(earned)})</span></div>
    <div class="stat good"><b>${money(paid)}</b><span>Paid out so far</span></div>
+   <div class="stat ${Q.length?'warn':''}"><b>${Q.length}</b><span>Payment requests (${money(Q.reduce((s,q)=>s+(+q.amount||0),0))})</span></div>
    <div class="stat ${earned-paid>0?'warn':''}"><b>${money(Math.max(0,earned-paid))}</b><span>Still to pay</span></div>
    <div class="stat ${S.on?'good':'warn'}"><b>${S.on?'On':'Paused'}</b><span>Program · ${money(S.reward)} per referral</span></div></div>
   <div id="note">${note}</div>
-  <div class="tabs">${[['overview','📊 Overview'],['referrers','👥 Referrers ('+Object.keys(D.referrers).length+')'],['referrals','🤝 Referrals ('+R.length+')'],['payouts','💸 Payouts ('+P.length+')'],['history','🕘 History'],['reports','📈 Reports'],['settings','⚙️ Settings']].map(t=>`<button data-t="${t[0]}" class="${tab==t[0]?'on':''}">${t[1]}</button>`).join('')}</div>
+  <div class="tabs">${[['overview','📊 Overview'],['referrers','👥 Referrers ('+Object.keys(D.referrers).length+')'],['referrals','🤝 Referrals ('+R.length+')'],['payouts','💸 Requests & payouts ('+(Q.length?Q.length+' new · ':'')+P.length+')'],['history','🕘 History'],['reports','📈 Reports'],['settings','⚙️ Settings']].map(t=>`<button data-t="${t[0]}" class="${tab==t[0]?'on':''}">${t[1]}</button>`).join('')}</div>
   <div class="card" id="pane"></div>`;
   $('#rf').onclick=load;$('#lo').onclick=()=>{auth=null;try{localStorage.removeItem('om_admin_tok')}catch(e){}loginView()};
   app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;note='';render()});
@@ -152,11 +159,13 @@ function paneOverview(){
   const top=Object.keys(D.referrers).map(rc=>({rc,name:nameOf(rc),...balance(rc),n:R.filter(r=>r.rcode==rc&&r.st=='approved').length})).sort((a,b)=>b.earned-a.earned).slice(0,5);
   const toDo=[],pend=R.filter(r=>r.st=='pending').length,due=Object.keys(D.referrers).filter(rc=>balance(rc).due>0).length;
   if(!Object.keys(D.referrers).length)toDo.push(`<li>No referrers yet → <a href="#" data-go="referrers">add your first referrer</a></li>`);
+  const nq=reqList().filter(q=>q.status=='requested').length;
+  if(nq)toDo.push(`<li><b>${nq}</b> payment request${nq==1?'':'s'} from referrers → <a href="#" data-go="payouts">open Requests</a></li>`);
   if(pend)toDo.push(`<li><b>${pend}</b> referral${pend==1?'':'s'} waiting for you to verify the payment → <a href="#" data-go="referrals">open Referrals</a></li>`);
   if(due)toDo.push(`<li><b>${due}</b> referrer${due==1?' has':'s have'} money waiting to be paid → <a href="#" data-go="referrers">open Referrers</a></li>`);
   pane.innerHTML=`<h3 style="margin-top:0">What needs your attention</h3>${toDo.length?`<ul style="padding-left:20px;line-height:1.9">${toDo.join('')}</ul>`:'<p class="empty">Nothing waiting. 🎉</p>'}
-  <h3>How it works</h3><ol style="padding-left:20px;line-height:1.8;font-size:14px"><li>You add a person under <b>Referrers</b>. They get their own link; copy it or send it on WhatsApp.</li><li>Someone opens that link, pays and creates a gift: a <b>pending</b> referral appears here.</li><li>You check the payment in Razorpay (the payment ID is a link), then <b>Approve</b>. The referrer earns ${money(S.reward)}.</li><li>When you pay them (UPI, cash, anything) press <b>Record payout</b> so the balance stays right.</li></ol>
-  <p class="small">Referrers never log in and there is no page for them on the public site. This dashboard is the only place the data lives.</p>
+  <h3>How it works</h3><ol style="padding-left:20px;line-height:1.8;font-size:14px"><li>You add a person under <b>Referrers</b>. They get a referral link <b>and</b> a private partner page link (their report, details and payment requests). Send them both.</li><li>Someone opens that link, pays and creates a gift: a <b>pending</b> referral appears here.</li><li>You check the payment in Razorpay (the payment ID is a link), then <b>Approve</b>. The referrer earns ${money(S.reward)}.</li><li>They can request a payment from their page. You pay it, then press <b>Mark paid</b> under Requests &amp; payouts. (You can also record a payout yourself from the Referrers tab.)</li></ol>
+  <p class="small">The partner page is not linked from your public site. Only people you send the personal link to can open it.</p>
   <h3>Top referrers</h3>${top.length?`<div class="tw"><table><thead><tr><th>Referrer</th><th>Approved</th><th>Earned</th><th>Paid</th><th>To pay</th></tr></thead><tbody>${top.map(t=>`<tr><td>${esc(t.name)} <span class="small">${esc(t.rc)}</span></td><td>${t.n}</td><td>${money(t.earned)}</td><td>${money(t.paid)}</td><td>${money(t.due)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="empty">No referrers yet.</p>'}`;
   pane.querySelectorAll('[data-go]').forEach(a=>a.onclick=e=>{e.preventDefault();tab=a.dataset.go;render()});
 }
@@ -167,12 +176,12 @@ function paneReferrers(){
   const rows=()=>Object.entries(D.referrers).map(([rc,r])=>({rc,...r,m:D.meta[rc]||{},...balance(rc),ok:R.filter(x=>x.rcode==rc&&x.st=='approved').length,wait:R.filter(x=>x.rcode==rc&&x.st=='pending').length,no:R.filter(x=>x.rcode==rc&&x.st=='rejected').length})).sort((a,b)=>(b.t||0)-(a.t||0));
   $('#pane').innerHTML=`<h3 style="margin-top:0">➕ Add a referrer</h3>
   <div class="bar"><input id="nn" type="text" placeholder="Name (e.g. Sam)" maxlength="30"><input id="nc" type="text" placeholder="Phone or email (optional)" maxlength="80"><input id="nu" type="text" placeholder="UPI ID for payouts (optional)" maxlength="80"><button class="btn" id="add">Create link</button></div>
-  <p class="small" style="margin-bottom:12px">The link is made from the name, for example <b>sam-k3j9</b>. Only you can see the phone, email and UPI ID.</p>
+  <p class="small" style="margin-bottom:12px">The link is made from the name, for example <b>sam-k3j9</b>. Each person also gets a private <b>partner page</b> link (their report, details and payment requests). Only you can see the phone, email and UPI ID.</p>
   <div class="bar"><input id="q" type="text" placeholder="Search name, code, phone…" value="${esc(F.pq)}"></div>
   <div class="tw"><table><thead><tr><th>Added</th><th>Referrer</th><th>Link</th><th>✅ / ⏳ / ✖</th><th>Earned</th><th>Paid</th><th>To pay</th><th>Actions</th></tr></thead><tbody id="tb"></tbody></table></div><div id="emp"></div>`;
-  const draw=()=>{const q=F.pq.toLowerCase(),l=rows().filter(x=>!q||(x.name+' '+x.rc+' '+(x.m.contact||'')+' '+(x.m.upi||'')).toLowerCase().includes(q));
-    $('#tb').innerHTML=l.map(x=>`<tr><td>${fmt(x.t)}</td><td><b>${esc(x.name)}</b><div class="small">${esc(x.rc)}${x.m.contact?' · '+esc(x.m.contact):''}${x.m.upi?'<br>UPI: '+esc(x.m.upi):''}</div></td>
-      <td><div class="acts"><button class="btn s g" data-a="cl" data-c="${esc(x.rc)}">Copy link</button><a class="btn s g" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Make a personalised gift for someone you love: '+linkOf(x.rc))}">WhatsApp</a></div></td>
+  const draw=()=>{const q=F.pq.toLowerCase(),l=rows().filter(x=>!q||(x.name+' '+x.rc+' '+det(x.rc).contact+' '+det(x.rc).upi).toLowerCase().includes(q));
+    $('#tb').innerHTML=l.map(x=>`<tr><td>${fmt(x.t)}</td><td><b>${esc(x.name)}</b><div class="small">${esc(x.rc)}${det(x.rc).contact?' · '+esc(det(x.rc).contact):''}${det(x.rc).upi?'<br>UPI: '+esc(det(x.rc).upi):''}</div></td>
+      <td><div class="acts"><button class="btn s g" data-a="cl" data-c="${esc(x.rc)}">Copy referral link</button>${det(x.rc).pk?`<button class="btn s g" data-a="pp" data-c="${esc(x.rc)}">Copy partner page</button>`:`<button class="btn s ok" data-a="mk" data-c="${esc(x.rc)}">Create partner page</button>`}<a class="btn s g" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Make a personalised gift for someone you love: '+linkOf(x.rc))}">WhatsApp</a></div></td>
       <td>${x.ok} / ${x.wait} / ${x.no}</td><td>${money(x.earned)}</td><td>${money(x.paid)}</td><td><b>${money(x.due)}</b></td>
       <td><div class="acts"><button class="btn s ok" data-a="pay" data-c="${esc(x.rc)}" ${x.due>0?'':'disabled'}>Record payout</button><button class="btn s g" data-a="ed" data-c="${esc(x.rc)}">Edit</button><button class="btn s r" data-a="del" data-c="${esc(x.rc)}">Remove</button></div></td></tr>`).join('');
     $('#emp').innerHTML=l.length?'':'<div class="empty">No referrers yet. Add one above.</div>'};
@@ -185,14 +194,16 @@ function paneReferrers(){
       let code='',tries=0;
       while(tries++<6){const c=slug(name.split(/\s+/)[0])+'-'+rnd();if(!(await fb('GET','referrers/'+c))){code=c;break}}
       if(!code)return say('Could not make a free code. Try again.',true);
-      const rec={name,t:Date.now()},m={};if(contact)m.contact=contact;if(upi)m.upi=upi;
+      const rec={name,t:Date.now()},m={pk:newKey()};if(contact)m.contact=contact;if(upi)m.upi=upi;
       await fb('PUT','referrers/'+code,rec);D.referrers[code]=rec;
-      if(Object.keys(m).length){await fb('PUT','refmeta/'+code,m);D.meta[code]=m}
-      say('Added '+name+'. Their link: '+linkOf(code));render();
+      await fb('PUT','refkeys/'+m.pk,code);await fb('PUT','refmeta/'+code,m);D.meta[code]=m
+      say('Added '+name+'. Referral link: '+linkOf(code)+' · Partner page: '+partnerUrl(m.pk));render();
     }catch(e){say(e.message,true)}};
   $('#tb').onclick=async e=>{const b=e.target.closest('button[data-a]');if(!b||b.disabled)return;const rc=b.dataset.c,a=b.dataset.a;
     try{
       if(a=='cl'){await navigator.clipboard.writeText(linkOf(rc));b.textContent='Copied ✓';return}
+      if(a=='pp'){await navigator.clipboard.writeText(partnerUrl(det(rc).pk));b.textContent='Copied ✓';return}
+      if(a=='mk'){const m=Object.assign({},D.meta[rc]||{},{pk:newKey()});await fb('PUT','refkeys/'+m.pk,rc);await fb('PUT','refmeta/'+rc,m);D.meta[rc]=m;say('Partner page created for '+nameOf(rc)+': '+partnerUrl(m.pk));render();return}
       if(a=='pay'){const bal=balance(rc).due;const v=prompt('Amount paid to '+nameOf(rc)+' (₹). Owed now: '+money(bal),bal);if(v===null)return;const amt=Math.round(+v);
         if(!(amt>0&&amt<=100000))return say('Enter an amount between ₹1 and ₹1,00,000.',true);
         if(amt>bal&&!confirm('That is more than the '+money(bal)+' owed. Record it anyway?'))return;
@@ -201,16 +212,16 @@ function paneReferrers(){
         await fb('PUT','refpaid/'+id,rec);D.paid[id]=rec;say('Recorded '+money(amt)+' paid to '+nameOf(rc)+'.');render();return}
       if(a=='ed'){const cur=D.referrers[rc],m=D.meta[rc]||{};
         const name=prompt('Name:',cur.name);if(name===null)return;
-        const contact=prompt('Phone or email (optional):',m.contact||'');if(contact===null)return;
-        const upi=prompt('UPI ID (optional):',m.upi||'');if(upi===null)return;
+        const contact=prompt('Phone or email (optional):',det(rc).contact);if(contact===null)return;
+        const upi=prompt('UPI ID (optional):',det(rc).upi);if(upi===null)return;
         if(!name.trim())return say('A name is needed.',true);
         if(upi.trim()&&!/^[A-Za-z0-9._-]{2,256}@[A-Za-z]{2,64}$/.test(upi.trim()))return say('That UPI ID does not look right.',true);
-        const rec={name:name.trim().slice(0,30),t:cur.t},mm={};if(contact.trim())mm.contact=contact.trim();if(upi.trim())mm.upi=upi.trim();
+        const rec={name:name.trim().slice(0,30),t:cur.t},mm={};if(m.pk)mm.pk=m.pk;if(contact.trim())mm.contact=contact.trim();if(upi.trim())mm.upi=upi.trim();
         await fb('PUT','referrers/'+rc,rec);D.referrers[rc]=rec;
         await fb('PUT','refmeta/'+rc,Object.keys(mm).length?mm:null);if(Object.keys(mm).length)D.meta[rc]=mm;else delete D.meta[rc];
         say('Saved.');render();return}
       if(a=='del'){if(!confirm('Remove '+nameOf(rc)+'? Their link stops earning new referrals. Existing referrals and payouts stay in the records.'))return;
-        await fb('DELETE','referrers/'+rc);delete D.referrers[rc];delete D.meta[rc];fb('DELETE','refmeta/'+rc).catch(()=>{});say('Removed.');render()}
+        const pk=det(rc).pk;await fb('DELETE','referrers/'+rc);if(pk){await fb('DELETE','refkeys/'+pk);fb('DELETE','partner/'+pk).catch(()=>{})}delete D.referrers[rc];delete D.meta[rc];fb('DELETE','refmeta/'+rc).catch(()=>{});say('Removed.');render()}
     }catch(err){say(err.message,true)}};
 }
 
@@ -245,7 +256,7 @@ function paneReferrals(){
   const upd=async(rc,rid,patch,msg)=>{try{await fb('PATCH','referrals/'+rc+'/'+rid,patch);Object.assign(D.referrals[rc][rid],patch);say(msg);render()}catch(e){say(e.message,true)}};
   $('#tb').onclick=e=>{const b=e.target.closest('button[data-a]');if(!b)return;const rc=b.dataset.r,rid=b.dataset.i,a=b.dataset.a;
     if(a=='ap')upd(rc,rid,{st:'approved',amt:RS().reward,at:Date.now()},'Approved. The referrer earned '+money(RS().reward)+'.');
-    if(a=='rj'){const n=prompt('Why is this referral not valid? (shown only to you)','Payment not verified');if(n===null)return;upd(rc,rid,{st:'rejected',note:n,at:Date.now()},'Referral rejected.')}
+    if(a=='rj'){const n=prompt('Why is this referral not valid? (shown only to you)','Payment not verified');if(n===null)return;(async()=>{try{if(D.audit[rid]){await fb('PATCH','refaudit/'+rid,{note:n});D.audit[rid].note=n}}catch(e){}upd(rc,rid,{st:'rejected',at:Date.now()},'Referral rejected.')})()}
     if(a=='pe')upd(rc,rid,{st:'pending'},'Moved back to pending.')};
   $('#ba').onclick=async()=>{const todo=refList().filter(r=>r.st=='pending'&&/^pay_/.test(r.a.pay||''));
     if(!todo.length)return say('No pending referrals with a payment ID.',true);
@@ -253,11 +264,29 @@ function paneReferrals(){
     try{for(const r of todo){const p={st:'approved',amt:RS().reward,at:Date.now()};await fb('PATCH','referrals/'+r.rcode+'/'+r.rid,p);Object.assign(D.referrals[r.rcode][r.rid],p)}say('Approved '+todo.length+' referral(s).');render()}catch(e){say(e.message,true)}};
 }
 
-/* ---------- payouts (recorded by the admin) ---------- */
+/* ---------- payment requests + payouts ---------- */
 function panePayouts(){
-  $('#pane').innerHTML=`<div class="bar"><input id="q" type="text" placeholder="Search name or reference…" value="${esc(F.ps)}"></div>
-  <p class="small" style="margin-bottom:8px">A payout is a record of money you already paid a referrer. Add new ones from the <b>Referrers</b> tab. Delete one only if it was entered by mistake.</p>
+  const Q=reqList();
+  $('#pane').innerHTML=`<h3 style="margin-top:0">Payment requests</h3><p class="small" style="margin-bottom:8px">Referrers ask for these on their own page. Pay by UPI, then press <b>Mark paid</b> and enter the UPI reference. That also records the payout.</p>
+  <div class="tw"><table><thead><tr><th>Requested</th><th>Referrer</th><th>UPI ID</th><th>Amount</th><th>Check</th><th>Status</th><th>Actions</th></tr></thead><tbody id="qb"></tbody></table></div><div id="qe"></div>
+  <h3 style="margin-top:22px">Payouts made</h3><div class="bar"><input id="q" type="text" placeholder="Search name or reference…" value="${esc(F.ps)}"></div>
+  <p class="small" style="margin-bottom:8px">Money you already paid. Record extra payouts from the <b>Referrers</b> tab. Delete one only if it was entered by mistake.</p>
   <div class="tw"><table><thead><tr><th>Date</th><th>Referrer</th><th>Amount</th><th>Reference</th><th></th></tr></thead><tbody id="tb"></tbody></table></div><div id="emp"></div>`;
+  $('#qb').innerHTML=Q.map(q=>{const b=balance(q.rcode),over=q.status=='requested'&&q.amount>b.due;
+    const upi='upi://pay?pa='+encodeURIComponent(q.upi)+'&pn='+encodeURIComponent(q.who)+'&am='+(+q.amount)+'&cu=INR&tn='+encodeURIComponent('Referral payout');
+    return `<tr><td>${fmt(q.t)}</td><td>${esc(q.who)}<div class="small">${esc(q.rcode)}</div></td><td><b>${esc(q.upi)}</b></td><td><b>${money(q.amount)}</b></td>
+    <td>${q.status=='requested'?(over?`<span class="pill bad">⚠️ more than the ${money(b.due)} owed</span>`:'<span class="pill ok">✓ within earnings</span>'):'—'}<div class="small">approved ${money(b.earned)} · paid ${money(b.paid)}</div></td>
+    <td>${q.status=='paid'?'<span class="pill ok">✅ paid</span>':q.status=='rejected'?'<span class="pill bad">✖ declined</span>':'<span class="pill wait">⏳ requested</span>'}${q.status=='paid'?'<div class="small">'+fmt(q.at)+(q.ref?' · ref '+esc(q.ref):'')+'</div>':q.note?'<div class="small">'+esc(q.note)+'</div>':''}</td>
+    <td><div class="acts">${q.status=='requested'?`<a class="btn s" href="${esc(upi)}">Pay</a><button class="btn s g" data-a="cp" data-u="${esc(q.upi)}">Copy UPI</button><button class="btn s ok" data-a="pd" data-k="${esc(q.pk)}" data-i="${esc(q.id)}">Mark paid</button><button class="btn s r" data-a="rj" data-k="${esc(q.pk)}" data-i="${esc(q.id)}">Decline</button>`:''}${q.status=='rejected'?`<button class="btn s g" data-a="re" data-k="${esc(q.pk)}" data-i="${esc(q.id)}">Re-open</button>`:''}</div></td></tr>`}).join('');
+  $('#qe').innerHTML=Q.length?'':'<div class="empty">No payment requests yet.</div>';
+  const updQ=async(k,id,patch,msg)=>{try{await fb('PATCH','payreq/'+k+'/'+id,patch);Object.assign(D.payreq[k][id],patch);say(msg);render()}catch(e){say(e.message,true)}};
+  $('#qb').onclick=async e=>{const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a,k=b.dataset.k,id=b.dataset.i;
+    if(a=='cp'){navigator.clipboard.writeText(b.dataset.u).then(()=>{b.textContent='Copied ✓'}).catch(()=>{});return}
+    if(a=='pd'){const q=D.payreq[k][id],ref=prompt('UPI reference (UTR) of your payment:','');if(ref===null)return;
+      try{const pid='q'+id,rec={rcode:q.rcode,amount:q.amount,t:Date.now(),req:id};if(ref.trim())rec.ref=ref.trim().slice(0,80);
+        await fb('PUT','refpaid/'+pid,rec);D.paid[pid]=rec;await updQ(k,id,{status:'paid',ref:ref.trim(),at:Date.now()},'Marked as paid and recorded as a payout.')}catch(err){say(err.message,true)}}
+    if(a=='rj'){const n=prompt('Reason (the referrer will see this):','');if(n===null)return;updQ(k,id,{status:'rejected',note:n.trim(),at:Date.now()},'Request declined.')}
+    if(a=='re')updQ(k,id,{status:'requested'},'Re-opened.')};
   const draw=()=>{const q=F.ps.toLowerCase(),l=payList().filter(p=>!q||[p.who,p.rcode,p.ref].join(' ').toLowerCase().includes(q));
     $('#tb').innerHTML=l.map(p=>`<tr><td>${fmt(p.t)}</td><td>${esc(p.who)}<div class="small">${esc(p.rcode)}</div></td><td><b>${money(p.amount)}</b></td><td>${esc(p.ref||'—')}</td><td><button class="btn s r" data-i="${esc(p.id)}">Delete</button></td></tr>`).join('');
     $('#emp').innerHTML=l.length?'':'<div class="empty">No payouts recorded yet.</div>'};
@@ -268,7 +297,7 @@ function panePayouts(){
 
 /* ---------- history ---------- */
 function paneHistory(){
-  const kinds=[['','Everything'],['join','Referrers added'],['referral','New referrals'],['approved','Approved'],['rejected','Rejected'],['paid','Payouts']];
+  const kinds=[['','Everything'],['join','Referrers added'],['referral','New referrals'],['approved','Approved'],['rejected','Rejected'],['request','Payment requests'],['paid','Payouts']];
   $('#pane').innerHTML=`<div class="bar"><input id="q" type="text" placeholder="Search the history…" value="${esc(F.hq)}"><select id="k">${kinds.map(k=>`<option value="${k[0]}" ${F.hk==k[0]?'selected':''}>${k[1]}</option>`).join('')}</select><button class="btn g" id="ex">⬇ CSV</button></div><ul class="tl" id="tl"></ul><div id="emp"></div>`;
   const get=()=>{const q=F.hq.toLowerCase();return events().filter(e=>(!F.hk||e.k==F.hk)&&(!q||(e.text+' '+(e.sub||'')).toLowerCase().includes(q)))};
   const draw=()=>{const l=get();$('#tl').innerHTML=l.map(e=>`<li style="--c:${e.c}"><b>${esc(e.text)}</b>${e.sub?`<small>${esc(e.sub)}</small>`:''}<small>${fmt(e.t)}</small></li>`).join('');$('#emp').innerHTML=l.length?'':'<div class="empty">Nothing yet.</div>'};
@@ -298,7 +327,7 @@ function paneReports(){
   $('#f').onchange=e=>{RG.from=e.target.value;draw()};$('#t').onchange=e=>{RG.to=e.target.value;draw()};$('#clr').onclick=()=>{RG={from:'',to:''};paneReports()};
   $('#e1').onclick=()=>csv('referrals.csv',['date','referrer','referrer_code','friend','gift_by','type','payment_id','status','reward','decided_at','note'],R().map(r=>[new Date(r.t).toISOString(),r.who,r.rcode,r.a.name||'',r.a.from||'',r.a.type||'',r.a.pay||'',r.st,r.st=='approved'?r.amt:'',r.at?new Date(r.at).toISOString():'',r.note||'']));
   $('#e2').onclick=()=>csv('payouts.csv',['date','referrer','referrer_code','amount','reference'],P().map(p=>[new Date(p.t).toISOString(),p.who,p.rcode,p.amount,p.ref||'']));
-  $('#e3').onclick=()=>csv('referrers.csv',['added','name','code','contact','upi','approved','pending','rejected','earned','paid','to_pay'],Object.entries(D.referrers).map(([rc,x])=>{const b=balance(rc),L=refList().filter(r=>r.rcode==rc),m=D.meta[rc]||{};return[x.t?new Date(x.t).toISOString():'',x.name,rc,m.contact||'',m.upi||'',L.filter(r=>r.st=='approved').length,L.filter(r=>r.st=='pending').length,L.filter(r=>r.st=='rejected').length,b.earned,b.paid,b.due]}));
+  $('#e3').onclick=()=>csv('referrers.csv',['added','name','code','contact','upi','approved','pending','rejected','earned','paid','to_pay'],Object.entries(D.referrers).map(([rc,x])=>{const b=balance(rc),L=refList().filter(r=>r.rcode==rc),m=D.meta[rc]||{};return[x.t?new Date(x.t).toISOString():'',x.name,rc,det(rc).contact,det(rc).upi,L.filter(r=>r.st=='approved').length,L.filter(r=>r.st=='pending').length,L.filter(r=>r.st=='rejected').length,b.earned,b.paid,b.due]}));
   $('#e4').onclick=()=>csv('monthly-summary.csv',['month','referrals','approved','rewards','payouts','paid_amount'],months().map(([k,x])=>[k,x.ref,x.ok,x.okAmt,x.paid,x.paidAmt]));
 }
 
@@ -307,11 +336,12 @@ function paneSettings(){
   const S=RS();
   $('#pane').innerHTML=`<div class="set"><div><label>Tracking</label><div class="row"><button class="btn ${S.on?'r':'ok'}" id="on">${S.on?'⏸ Pause tracking':'▶ Turn tracking on'}</button></div><p class="small" style="margin-top:6px">When paused, referral links stop recording new referrals. Nothing changes for the people who buy gifts.</p></div>
   <div><label>Reward per approved referral (₹)</label><input type="number" id="rw" min="1" step="1" value="${S.reward}" style="max-width:160px"><p class="small" style="margin-top:6px">Applies to referrals you approve from now on. Already approved ones keep their amount.</p></div>
+  <div><label>Minimum payment request (₹)</label><input type="number" id="mn" min="1" step="1" value="${S.min}" style="max-width:160px"><p class="small" style="margin-top:6px">Referrers see this on their partner page.</p></div>
   <div><label>Which purchases count?</label><select id="ev" style="max-width:340px"><option value="first" ${S.every?'':'selected'}>Only a friend’s first purchase</option><option value="every" ${S.every?'selected':''}>Every purchase a friend makes</option></select></div>
   <button class="btn" id="sv" style="max-width:200px">Save settings</button></div>`;
   $('#on').onclick=async()=>{try{await fb('PATCH','settings',{refer:{...S,on:!S.on}});D.settings.refer={...S,on:!S.on};say(S.on?'Tracking paused.':'Tracking is on.');render()}catch(e){say(e.message,true)}};
-  $('#sv').onclick=async()=>{const rw=Math.round(+$('#rw').value);if(!(rw>0))return say('Enter an amount above zero.',true);
-    try{const v={on:S.on,reward:rw,every:$('#ev').value=='every'};await fb('PATCH','settings',{refer:v});D.settings.refer=v;say('Saved: ₹'+rw+' per approved referral.');render()}catch(e){say(e.message,true)}};
+  $('#sv').onclick=async()=>{const rw=Math.round(+$('#rw').value),mn=Math.round(+$('#mn').value);if(!(rw>0&&mn>0))return say('Enter amounts above zero.',true);
+    try{const v={on:S.on,reward:rw,min:mn,every:$('#ev').value=='every'};await fb('PATCH','settings',{refer:v});D.settings.refer=v;say('Saved: ₹'+rw+' per approved referral.');render()}catch(e){say(e.message,true)}};
 }
 
 /* ---------- start ---------- */

@@ -41,7 +41,8 @@
         "$rid": {
           ".write": "(!data.exists() && root.child('referrers').child($rcode).exists()) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
           ".validate": "newData.hasChildren(['t','st']) && (newData.child('st').val() === 'pending' || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'))"
-        }
+        },
+        ".read": true
       }
     },
     "refaudit": {
@@ -66,6 +67,56 @@
       ".write": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
       "$id": {
         ".validate": "newData.hasChildren(['rcode','amount','t']) && newData.child('amount').isNumber() && newData.child('amount').val() >= 1 && newData.child('amount').val() <= 100000"
+      }
+    },
+    "refkeys": {
+      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+      "$pk": {
+        ".read": true,
+        ".write": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+        ".validate": "$pk.matches(/^[a-z0-9]{16,40}$/) && newData.isString() && newData.val().matches(/^[a-z0-9-]{3,40}$/)"
+      }
+    },
+    "partner": {
+      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+      "$pk": {
+        ".read": "root.child('refkeys').child($pk).exists()",
+        ".write": "root.child('refkeys').child($pk).exists() || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
+        ".validate": "newData.hasChildren() || !newData.exists()",
+        "dname": {
+          ".validate": "newData.isString() && newData.val().length <= 30"
+        },
+        "phone": {
+          ".validate": "newData.isString() && newData.val().matches(/^[0-9+ ()-]{6,20}$/)"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().length <= 80 && newData.val().matches(/^[^ @]+@[^ @]+\\.[^ @]+$/)"
+        },
+        "upi": {
+          ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._-]{2,256}@[A-Za-z]{2,64}$/)"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "payreq": {
+      ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
+      "$pk": {
+        ".read": "root.child('refkeys').child($pk).exists()",
+        "$id": {
+          ".write": "(!data.exists() && root.child('refkeys').child($pk).exists()) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
+          ".validate": "newData.hasChildren(['rcode','upi','amount','status','t']) && newData.child('rcode').val() === root.child('refkeys').child($pk).val()",
+          "upi": {
+            ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._-]{2,256}@[A-Za-z]{2,64}$/)"
+          },
+          "amount": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100000"
+          },
+          "status": {
+            ".validate": "newData.isString() && (newData.val() === 'requested' || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'))"
+          }
+        }
       }
     }
   }
