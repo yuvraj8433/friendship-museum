@@ -434,7 +434,7 @@ shell.addEventListener('click',e=>{
   else if(d.act=='prev'){S.step=stepMove(S.step,-1);wiz()}
   else if(d.act=='addnote'){const v=$('#f-cn').value.trim();if(v){if(!S.notes.includes(v)&&S.notes.length<5)S.notes.push(v);wiz()}}
   else if(d.act=='addrule'){const v=$('#f-cr').value.trim();if(v){if(!S.rules.includes(v)&&S.rules.length<5)S.rules.push(v);wiz()}}
-  else if(d.act=='preview')startMuseum(S,true);
+  else if(d.act=='preview'){recordPreview();startMuseum(S,true)}
   else if(d.act=='link'){if(apiOn()){if(S.code){showLink($('#out'),linkFor(S.code),true,'');return}if(!ME){AUTHRET='checkout';acctView('login');return}S.step=payStep();wiz();return}
     if(CONFIG.PAUSED&&!S.payId&&!CONFIG.ADMIN){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
     if(payOn()&&!S.payId){S.step=S.type=='bday'?7:9;wiz()}else makeLink()}
@@ -1352,17 +1352,33 @@ function refreshRefPill(){
 }
 const hideRefPill=()=>{const p=$('#refpill');if(p)p.style.display='none'};
 // called right after a gift link is saved: counts as one referral for whoever invited this person
+// Referral stages: the friend reaches the PREVIEW page -> the referral is "pending";
+// the friend pays and the link is created -> the same referral becomes a "success" (the reward counts).
+async function recordPreview(){
+  try{
+    if(!REFERRAL_ENABLED||!CONFIG.DB||S.refRid)return;
+    const rc=refCode();if(!rc)return;
+    const r=refRec();
+    if(r&&r.rid){S.refRid=r.rid;return}                                            // this browser already has a pending referral
+    if(!(await fb('GET','referrers/'+rc)))return;                                  // the referrer must still exist
+    const rid=rKey(10);S.refRid=rid;
+    await fb('PUT','referrals/'+rc+'/'+rid,{t:Date.now(),st:'pending'});
+    if(r){r.rid=rid;localStorage.setItem('om_sref',JSON.stringify(r))}
+  }catch(e){}
+}
 async function recordReferral(giftCode){
   try{
     if(!REFERRAL_ENABLED||!CONFIG.DB||S.refDone||!/^pay_[A-Za-z0-9]+$/.test(S.payId||''))return;
     const rc=refCode();if(!rc)return;
-    if(!(await fb('GET','referrers/'+rc)))return;                                // the referrer must still exist
+    if(!(await fb('GET','referrers/'+rc)))return;                                  // the referrer must still exist
     S.refDone=1;
-    const rid=rKey(10),t=Date.now();
-    await fb('PUT','refpay/'+S.payId,{r:rid,t});                                  // one payment can only ever count once
-    await fb('PUT','referrals/'+rc+'/'+rid,{t,st:'pending'});                      // waits for the admin to verify the payment
+    const t=Date.now();let rid=S.refRid||(refRec()||{}).rid;
+    const fresh=!rid;if(fresh)rid=rKey(10);
+    await fb('PUT','refpay/'+S.payId,{r:rid,t});                                    // one payment can only ever count once
+    if(fresh)await fb('PUT','referrals/'+rc+'/'+rid,{t,st:'pending'});              // paid without previewing first
     await fb('PUT','refaudit/'+rid,{rcode:rc,pay:S.payId,gift:giftCode,name:S.name,from:S.from,type:S.type||'friend',t});
-    const r=refRec();if(r){r.used=true;localStorage.setItem('om_sref',JSON.stringify(r))}
+    await fb('PATCH','referrals/'+rc+'/'+rid,{st:'success',amt:+REFSET.reward||20,at:t});   // paid + link created = success
+    const r=refRec();if(r){r.used=true;delete r.rid;localStorage.setItem('om_sref',JSON.stringify(r))}
   }catch(e){}
 }
 function referBoxHtml(){

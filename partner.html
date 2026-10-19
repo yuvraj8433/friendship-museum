@@ -73,28 +73,30 @@ async function load(){
   ME=Object.assign({name:name||''},me||{});ST=Object.assign({reward:20,min:20,on:true},st||{});REFS=refs||{};REQS=reqs||{};
   render();
 }
+const okS=s=>s=='success'||s=='approved';   // pending = friend reached the preview page; success = friend paid and made the link
 const mine=()=>Object.entries(REFS).map(([id,r])=>({id,...r})).sort((a,b)=>(b.t||0)-(a.t||0));
 const reqs=()=>Object.entries(REQS).map(([id,r])=>({id,...r})).sort((a,b)=>(b.t||0)-(a.t||0));
 function figures(){
   const R=mine(),Q=reqs();
-  const ok=R.filter(r=>r.st=='approved'),earned=ok.reduce((s,r)=>s+(+r.amt||0),0);
+  const ok=R.filter(r=>okS(r.st)),pend=R.filter(r=>r.st=='pending'),earned=ok.reduce((s,r)=>s+(+r.amt||0),0);
   const paid=Q.filter(q=>q.status=='paid').reduce((s,q)=>s+(+q.amount||0),0),open=Q.filter(q=>q.status=='requested').reduce((s,q)=>s+(+q.amount||0),0);
-  return{R,Q,ok,earned,paid,open,avail:Math.max(0,earned-paid-open)};
+  return{R,Q,ok,pend,earned,paid,open,avail:Math.max(0,earned-paid-open)};
 }
-const pillR=s=>s=='approved'?'<span class="pill ok">✅ approved</span>':s=='rejected'?'<span class="pill bad">✖ not counted</span>':'<span class="pill wait">⏳ checking</span>';
+const pillR=s=>okS(s)?'<span class="pill ok">✅ success</span>':s=='rejected'?'<span class="pill bad">✖ not counted</span>':'<span class="pill wait">⏳ pending</span>';
 const pillQ=s=>s=='paid'?'<span class="pill ok">✅ paid</span>':s=='rejected'?'<span class="pill bad">✖ declined</span>':'<span class="pill wait">⏳ requested</span>';
 
 function render(){
   const f=figures(),link=dir+'index.html#ref='+RC;
   const hello=ME.dname||ME.name||'there';
   app.innerHTML=`<div class="row" style="margin-bottom:12px"><h1 style="flex:1">👋 Hi ${esc(hello)}</h1><button class="btn g" id="rf">↻ Refresh</button></div>
-  <div class="stats"><div class="stat"><b>${f.R.length}</b><span>Friends referred</span></div><div class="stat good"><b>${f.ok.length}</b><span>Counted</span></div><div class="stat"><b>${money(f.earned)}</b><span>Total earnings</span></div><div class="stat"><b>${money(f.paid)}</b><span>Paid to you</span></div><div class="stat good"><b>${money(f.avail)}</b><span>Ready to request</span></div></div>
+  <div class="stats"><div class="stat"><b>${f.R.length}</b><span>Friends referred</span></div><div class="stat"><b>${f.pend.length}</b><span>Pending</span></div><div class="stat good"><b>${f.ok.length}</b><span>Success</span></div><div class="stat"><b>${money(f.earned)}</b><span>Total earnings</span></div><div class="stat"><b>${money(f.paid)}</b><span>Paid to you</span></div><div class="stat good"><b>${money(f.avail)}</b><span>Ready to request</span></div></div>
   <div id="note">${note}</div>
-  <div class="card"><h3>🔗 Your referral link</h3><p class="small" style="margin-bottom:8px">Share it. When someone opens it and buys a gift, it shows up below. Earn ${money(ST.reward)} for each friend who pays.${ST.on===false?' <b>Referral tracking is paused right now.</b>':''}</p>
+  <div class="card"><h3>📋 How a referral counts</h3><ol class="small" style="padding-left:20px;line-height:1.8"><li><b>⏳ Pending</b>: your friend opened your link and reached the preview page of their gift.</li><li><b>✅ Success</b>: your friend paid and created the gift link. You earn ${money(ST.reward)}.</li></ol></div>
+  <div class="card"><h3>🔗 Your referral link</h3><p class="small" style="margin-bottom:8px">Share it. Earn ${money(ST.reward)} for each friend who buys a gift through it.${ST.on===false?' <b>Referral tracking is paused right now.</b>':''}</p>
    <div class="row"><input type="text" id="lk" readonly value="${esc(link)}"><button class="btn" id="cp">Copy</button><a class="btn g" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Make a personalised gift for someone you love 🎁 '+link)}">WhatsApp</a></div></div>
   <div class="card"><h3>💸 Request a payment</h3>${f.avail>=ST.min?`<div class="two"><div><label>Amount (₹)</label><input type="number" id="am" min="${ST.min}" max="${f.avail}" step="1" value="${f.avail}"></div><div><label>Your UPI ID</label><input type="text" id="up" maxlength="80" placeholder="name@okhdfcbank" value="${esc(ME.upi||'')}"></div></div><button class="btn" id="rq" style="margin-top:12px">Send request</button><p class="small" style="margin-top:8px">Requests are paid by hand, usually within a few days. You can request ${money(ST.min)} or more.</p>`:`<p class="small">You can request a payment once you have at least ${money(ST.min)} ready. Right now: ${money(f.avail)}.</p>`}
    ${f.Q.length?`<h3 style="margin-top:16px">Your requests</h3><div class="tw"><table><thead><tr><th>Date</th><th>Amount</th><th>UPI</th><th>Status</th></tr></thead><tbody>${f.Q.map(q=>`<tr><td>${fmt(q.t)}</td><td><b>${money(q.amount)}</b></td><td>${esc(q.upi)}</td><td>${pillQ(q.status)}${q.status=='paid'?`<div class="small">${fmt(q.at)}${q.ref?' · ref '+esc(q.ref):''}</div>`:q.note?`<div class="small">${esc(q.note)}</div>`:''}</td></tr>`).join('')}</tbody></table></div>`:''}</div>
-  <div class="card"><h3>📈 Your referral report</h3>${f.R.length?`<div class="tw"><table><thead><tr><th>#</th><th>Date</th><th>Status</th><th>Reward</th></tr></thead><tbody>${f.R.map((r,i)=>`<tr><td>${f.R.length-i}</td><td>${fmt(r.t)}</td><td>${pillR(r.st)}</td><td>${r.st=='approved'?money(r.amt):'—'}</td></tr>`).join('')}</tbody></table></div><p class="small" style="margin-top:8px">“Checking” means the payment is still being verified. It turns into a reward once confirmed.</p>`:'<p class="empty">No referrals yet. Share your link to get started.</p>'}</div>
+  <div class="card"><h3>📈 Your referral report</h3>${f.R.length?`<div class="tw"><table><thead><tr><th>#</th><th>Previewed</th><th>Status</th><th>Success on</th><th>Reward</th></tr></thead><tbody>${f.R.map((r,i)=>`<tr><td>${f.R.length-i}</td><td>${fmt(r.t)}</td><td>${pillR(r.st)}</td><td>${okS(r.st)?fmt(r.at):'—'}</td><td>${okS(r.st)?money(r.amt):'—'}</td></tr>`).join('')}</tbody></table></div><p class="small" style="margin-top:8px">Pending turns into a success when your friend pays and creates their gift link. It can take time, and some friends never buy.</p>`:'<p class="empty">No referrals yet. Share your link to get started.</p>'}</div>
   <div class="card"><h3>👤 Your details</h3><div class="two"><div><label>Name</label><input type="text" id="dn" maxlength="30" value="${esc(ME.dname||ME.name||'')}"></div><div><label>Phone</label><input type="text" id="ph" maxlength="20" value="${esc(ME.phone||'')}"></div><div><label>Email</label><input type="text" id="em" maxlength="80" value="${esc(ME.email||'')}"></div><div><label>UPI ID</label><input type="text" id="up2" maxlength="80" placeholder="name@okhdfcbank" value="${esc(ME.upi||'')}"></div></div><button class="btn" id="sv" style="margin-top:12px">Save details</button></div>`;
   $('#rf').onclick=()=>load().catch(e=>say(e.message,true));
   $('#cp').onclick=async e=>{try{await navigator.clipboard.writeText(link);e.target.textContent='Copied ✓'}catch(x){$('#lk').select()}};

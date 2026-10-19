@@ -39,8 +39,8 @@
       ".read": "auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'",
       "$rcode": {
         "$rid": {
-          ".write": "(!data.exists() && root.child('referrers').child($rcode).exists()) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
-          ".validate": "newData.hasChildren(['t','st']) && (newData.child('st').val() === 'pending' || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'))"
+          ".write": "(!data.exists() && root.child('referrers').child($rcode).exists()) || (data.exists() && data.child('st').val() === 'pending' && newData.child('st').val() === 'success') || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1')",
+          ".validate": "newData.hasChildren(['t','st']) && (newData.child('st').val() === 'pending' || (data.exists() && data.child('st').val() === 'pending' && newData.child('st').val() === 'success' && root.child('refaudit').child($rid).child('pay').exists() && root.child('refaudit').child($rid).child('rcode').val() === $rcode && root.child('refpay').child(root.child('refaudit').child($rid).child('pay').val()).child('r').val() === $rid && newData.child('t').val() === data.child('t').val() && newData.child('amt').isNumber() && ((root.child('settings').child('refer').child('reward').exists() && newData.child('amt').val() === root.child('settings').child('refer').child('reward').val()) || (!root.child('settings').child('refer').child('reward').exists() && newData.child('amt').val() === 20))) || (auth != null && auth.uid === 'Di2JVtSMK9U611AADd0zMbo7dgx1'))"
         },
         ".read": true
       }
