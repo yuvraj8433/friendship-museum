@@ -321,7 +321,7 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
 /* PRETTY: false -> links look like  yoursite/#c=sam-k3j9x   |   true -> yoursite/sam-k3j9x  (needs 404.html uploaded next to index.html) */
 /* ACCOUNTS + WALLET + REFERRALS: API = your server address (from worker/README.md), FIREBASE_KEY = your Firebase Web API key.
    Leave both '' to keep the simple version without accounts. rzp_test_Tn4GT0w0ha9ril     rzp_live_Tni4szqEX4QpvN    */
-const CONFIG={API:'',FIREBASE_KEY:'',PRETTY:false,RZP_KEY:'rzp_test_Tn4GT0w0ha9ril',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+const CONFIG={API:'',FIREBASE_KEY:'',PRETTY:false,RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 /* Admin-controlled switches for each builder step (loaded from the database; these are the defaults). */
 const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,f_quiz:true,f_story:true,f_awards:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true},fsongs:{calm:true,pop:true,lofi:true,box:true,none:true}};
 let ST=JSON.parse(JSON.stringify(ST_DEFAULT));
