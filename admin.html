@@ -34,6 +34,7 @@ td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}tr:hov
 .pill.ok{background:#dff6ef;color:#0b7a64}.pill.bad{background:#fde8e8;color:var(--bad)}.pill.off{background:#eee;color:#666}.pill.t{background:#fff1cf;color:#a86a00}
 .acts{display:flex;gap:5px;flex-wrap:wrap}
 a{color:#0f8a74;font-weight:600}
+.glink{word-break:break-all;font-size:12px;font-weight:600}
 .msg{margin:10px 0;padding:10px 12px;border-radius:10px;background:#e9f6f1;font-size:13.5px}.msg.bad{background:#fde8e8;color:var(--bad)}
 .modal{position:fixed;inset:0;background:#0007;display:flex;align-items:flex-start;justify-content:center;padding:30px 14px;overflow:auto;z-index:20}
 .modal .card{max-width:640px;width:100%}.modal h2{font-family:'Bricolage Grotesque',sans-serif}
@@ -213,7 +214,7 @@ function render(){
   app.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;note='';render()});
   ({gifts:paneGifts,replies:paneReplies,steps:paneSteps,settings:paneSettings})[tab]();
 }
-
+const shortLink=c=>giftLink(c).replace(/^https?:\/\//,'');
 /* ---------- gifts ---------- */
 function paneGifts(){
   const pane=$('#pane');
@@ -221,13 +222,14 @@ function paneGifts(){
    <select id="ft"><option value="">All types</option><option value="bday" ${filt.type=='bday'?'selected':''}>🎂 Birthday</option><option value="friend" ${filt.type=='friend'?'selected':''}>🤝 Friendship</option></select>
    <select id="fs"><option value="">All status</option><option value="paid" ${filt.status=='paid'?'selected':''}>Paid</option><option value="free" ${filt.status=='free'?'selected':''}>Free / admin-made</option><option value="unpaid" ${filt.status=='unpaid'?'selected':''}>No payment ID</option><option value="off" ${filt.status=='off'?'selected':''}>Disabled</option></select>
    <button class="btn g" id="ex">⬇ CSV</button><button class="btn g" id="im" title="Add gifts made before the dashboard existed">⤓ Import old gifts</button></div>
-  <div class="tw"><table><thead><tr><th>Created</th><th>Type</th><th>For</th><th>From</th><th>Payment</th><th>Replies</th><th>Status</th><th>Actions</th></tr></thead><tbody id="tb"></tbody></table></div><div id="emp"></div>`;
+  <div class="tw"><table><thead><tr><th>Created</th><th>Type</th><th>For</th><th>From</th><th>Gift link</th><th>Payment</th><th>Replies</th><th>Status</th><th>Actions</th></tr></thead><tbody id="tb"></tbody></table></div><div id="emp"></div>`;
   const draw=()=>{
     const q=filt.q.toLowerCase();
     const list=rows().filter(g=>(!q||[g.name,g.from,g.code,g.pay,g.id].join(' ').toLowerCase().includes(q))&&(!filt.type||(g.type||'friend')==filt.type)&&
       (!filt.status||(filt.status=='paid'&&g.pay&&!isFree(g))||(filt.status=='free'&&isFree(g))||(filt.status=='unpaid'&&!g.pay)||(filt.status=='off'&&g.disabled)));
     $('#tb').innerHTML=list.slice(0,500).map(g=>`<tr>
       <td>${fmt(g.created)}</td><td><span class="pill t">${g.type=='bday'?'🎂 Birthday':'🤝 Friend'}</span></td><td>${esc(g.name)}</td><td>${esc(g.from)}</td>
+      <td><a class="glink" target="_blank" rel="noopener" href="${esc(giftLink(g.code))}" title="${esc(giftLink(g.code))}">${esc(shortLink(g.code))}</a></td>
       <td>${payCell(g)}</td>
       <td>${repsOf(g).length}</td><td>${g.disabled?'<span class="pill off">disabled</span>':'<span class="pill ok">live</span>'}</td>
       <td><div class="acts"><button class="btn s g" data-a="view" data-c="${esc(g.code)}">View</button><a class="btn s g" target="_blank" rel="noopener" href="${esc(giftLink(g.code))}" style="text-decoration:none">Open ↗</a>
@@ -238,7 +240,7 @@ function paneGifts(){
   };
   draw();
   $('#q').oninput=e=>{filt.q=e.target.value;draw()};$('#ft').onchange=e=>{filt.type=e.target.value;draw()};$('#fs').onchange=e=>{filt.status=e.target.value;draw()};
-  $('#ex').onclick=()=>csv('gifts.csv',['code','type','for','from','payment_id','created','disabled','replies'],rows().map(g=>[g.code,g.type||'friend',g.name,g.from,g.pay||'',g.created||'',g.disabled?'yes':'',repsOf(g).length]));
+  $('#ex').onclick=()=>csv('gifts.csv',['code','link','type','for','from','payment_id','created','disabled','replies'],rows().map(g=>[g.code,giftLink(g.code),g.type||'friend',g.name,g.from,g.pay||'',g.created||'',g.disabled?'yes':'',repsOf(g).length]));
   $('#im').onclick=importOld;
   $('#tb').onclick=async e=>{const b=e.target.closest('button[data-a]');if(!b)return;const code=b.dataset.c,a=b.dataset.a;
     try{
@@ -267,26 +269,27 @@ async function viewGift(code){
     const g=await fb('GET','gifts/'+code);if(!g){m.firstChild.innerHTML='Gift not found. <button class="btn g" id="x">Close</button>';$('#x',m).onclick=()=>m.remove();return}
     const bal=(g.balloons||[]).filter(x=>x&&x.trim()),notes=g.notes||[],rules=g.rules||[];
     m.firstChild.innerHTML=`<h2>${g.type=='bday'?'🎂':'🤝'} ${esc(g.name)} <small style="font-weight:500;color:var(--mut)">from ${esc(g.from)}</small></h2>
-    <div class="kv"><b>Code</b><span>${esc(code)}</span><b>Gift ID</b><span>${esc(g.id||'—')}</span><b>Created</b><span>${fmt(g.created)}</span>
+    <div class="kv"><b>Gift link</b><span><a target="_blank" rel="noopener" href="${esc(giftLink(code))}" style="word-break:break-all">${esc(giftLink(code))}</a> <button class="btn s g" id="cpl">Copy</button></span><b>Code</b><span>${esc(code)}</span><b>Gift ID</b><span>${esc(g.id||'—')}</span><b>Created</b><span>${fmt(g.created)}</span>
     <b>Payment</b><span>${g.payId?esc(g.payId):'<span class="pill bad">none</span>'}</span>${g.ref?`<b>Referred by</b><span>${esc(g.ref)}</span>`:''}<b>Status</b><span>${g.disabled?'disabled':'live'}</span>
     ${g.type=='bday'?`<b>Cake</b><span>${esc(g.cake)}</span><b>Mini game</b><span>${g.game===true?'yes':'no'}</span><b>Song</b><span>${esc(g.song||'bday')}</span><b>Age / birthday</b><span>${esc(g.age||'—')} · ${g.bm&&g.bd?esc(g.bd+'/'+g.bm):'—'}</span><b>Balloons</b><span>${bal.map(esc).join('<br>')||'—'}</span>`
       :`<b>Kind / vibe</b><span>${esc(g.kind)} · ${esc(g.vibe)}</span><b>Notes</b><span>${notes.map(esc).join('<br>')||'—'}</span><b>Rules</b><span>${rules.map(esc).join('<br>')||'—'}</span>`}
     <b>Message</b><span style="white-space:pre-wrap">${esc(g.msg||'—')}</span></div>
     <b style="color:var(--mut);font-size:13px">Photos (${(g.photos||[]).length})</b><div class="thumbs">${(g.photos||[]).map(p=>`<div><img src="${esc(p.src)}"><div style="font-size:11px;max-width:92px">${esc(p.cap)}</div></div>`).join('')||'—'}</div>
     <div class="row" style="margin-top:16px"><button class="btn g" id="x">Close</button></div>`;
-    $('#x',m).onclick=()=>m.remove();
+    $('#x',m).onclick=()=>m.remove();$('#cpl',m).onclick=async e=>{try{await navigator.clipboard.writeText(giftLink(code));e.target.textContent='Copied ✓'}catch(x){}};
   }catch(e){m.firstChild.innerHTML=esc(e.message)+' <button class="btn g" id="x">Close</button>';$('#x',m).onclick=()=>m.remove()}
 }
 
 /* ---------- replies ---------- */
 function paneReplies(){
   const list=allReplies(),pane=$('#pane');
-  pane.innerHTML=`<div class="bar"><button class="btn g" id="ex">⬇ CSV</button></div><div class="tw"><table><thead><tr><th>When</th><th>Gift for</th><th>Reply from</th><th>Reply</th><th>Time</th><th>Moves</th><th>Quiz</th><th></th></tr></thead>
-  <tbody>${list.map(r=>`<tr><td>${fmt(r.ts)}</td><td>${r.gift?esc(r.gift.name)+' <small style="color:var(--mut)">('+esc(r.gift.code)+')</small>':'<small>deleted gift</small>'}</td><td>${esc(r.name)}</td>
+  pane.innerHTML=`<div class="bar"><button class="btn g" id="ex">⬇ CSV</button></div><div class="tw"><table><thead><tr><th>When</th><th>Gift for</th><th>Gift link</th><th>Reply from</th><th>Reply</th><th>Time</th><th>Moves</th><th>Quiz</th><th></th></tr></thead>
+  <tbody>${list.map(r=>`<tr><td>${fmt(r.ts)}</td><td>${r.gift?esc(r.gift.name)+' <small style="color:var(--mut)">('+esc(r.gift.code)+')</small>':'<small>deleted gift</small>'}</td><td>${r.gift?`<a class="glink" target="_blank" rel="noopener" href="${esc(giftLink(r.gift.code))}">${esc(shortLink(r.gift.code))}</a> <button class="btn s g" data-cl="${esc(r.gift.code)}">Copy</button>`:'—'}</td><td>${esc(r.name)}</td>
   <td style="max-width:340px;white-space:pre-wrap">${r.reply?esc(r.reply):'<span class="who">(opened, no reply)</span>'}</td><td>${r.elapsed||0}s</td><td>${r.moves||0}</td><td>${esc(r.quiz||'—')}</td>
   <td><button class="btn s r" data-g="${esc(r.gid)}" data-r="${esc(r.rid)}">Delete</button></td></tr>`).join('')}</tbody></table></div>${list.length?'':'<div class="empty">No replies yet.</div>'}`;
-  $('#ex').onclick=()=>csv('replies.csv',['when','gift_for','reply_from','reply','seconds','moves','quiz'],list.map(r=>[r.ts,r.gift?r.gift.name:'',r.name,r.reply||'',r.elapsed||0,r.moves||0,r.quiz||'']));
-  pane.onclick=async e=>{const b=e.target.closest('button[data-r]');if(!b||!confirm('Delete this reply?'))return;
+  $('#ex').onclick=()=>csv('replies.csv',['when','gift_for','gift_link','reply_from','reply','seconds','moves','quiz'],list.map(r=>[r.ts,r.gift?r.gift.name:'',r.gift?giftLink(r.gift.code):'',r.name,r.reply||'',r.elapsed||0,r.moves||0,r.quiz||'']));
+  pane.onclick=async e=>{const cl=e.target.closest('button[data-cl]');if(cl){try{await navigator.clipboard.writeText(giftLink(cl.dataset.cl));cl.textContent='Copied ✓'}catch(x){}return}
+    const b=e.target.closest('button[data-r]');if(!b||!confirm('Delete this reply?'))return;
     try{await fb('DELETE','replies/'+b.dataset.g+'/'+b.dataset.r);delete replies[b.dataset.g][b.dataset.r];say('Reply deleted');render()}catch(err){say(err.message,true)}};
 }
 

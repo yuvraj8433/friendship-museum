@@ -320,7 +320,7 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
    PRICE_INR is the price in rupees. Leave RZP_KEY '' to skip payment (links are free). */
 /* PRETTY: false -> links look like  yoursite/#c=sam-k3j9x   |   true -> yoursite/sam-k3j9x  (needs 404.html uploaded next to index.html) */
 /* ACCOUNTS + WALLET + REFERRALS: API = your server address (from worker/README.md), FIREBASE_KEY = your Firebase Web API key.
-   Leave both '' to keep the simple version without accounts. rzp_test_Tn4GT0w0ha9ril     rzp_live_Tni4szqEX4QpvN    */
+   Leave both '' to keep the simple version without accounts. */
 const CONFIG={API:'',FIREBASE_KEY:'',PRETTY:false,RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
 /* Admin-controlled switches for each builder step (loaded from the database; these are the defaults). */
 const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,f_quiz:true,f_story:true,f_awards:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true},fsongs:{calm:true,pop:true,lofi:true,box:true,none:true}};
@@ -406,6 +406,7 @@ function wiz(){
   ${payBlock()}
   <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Friendship</span></div><div class="dots">${dots}</div>${h}</div>`;
+  if(n>=8)recordPreview();   // the "It’s ready" page (and the payment page after it) counts as a pending referral
   if(apiOn()&&n==9)loadQuote();
 }
 shell.addEventListener('input',e=>{
@@ -1112,6 +1113,7 @@ function wizB(){
   ${payBlock()}
   <button class="btn ghost" data-act="prev">← Back</button>`;
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Birthday</span></div><div class="dots">${dots}</div>${h}</div>`;
+  if(n>=6)recordPreview();   // the "It’s ready" page (and the payment page after it) counts as a pending referral
   if(apiOn()&&n==7)loadQuote();
 }
 
@@ -1354,7 +1356,8 @@ const hideRefPill=()=>{const p=$('#refpill');if(p)p.style.display='none'};
 // called right after a gift link is saved: counts as one referral for whoever invited this person
 // Referral stages: the friend reaches the PREVIEW page -> the referral is "pending";
 // the friend pays and the link is created -> the same referral becomes a "success" (the reward counts).
-async function recordPreview(){
+function recordPreview(){return S.refP=S.refP||recordPreview1()}
+async function recordPreview1(){
   try{
     if(!REFERRAL_ENABLED||!CONFIG.DB||S.refRid)return;
     const rc=refCode();if(!rc)return;
@@ -1372,7 +1375,9 @@ async function recordReferral(giftCode){
     const rc=refCode();if(!rc)return;
     if(!(await fb('GET','referrers/'+rc)))return;                                  // the referrer must still exist
     S.refDone=1;
+    if(S.refP)await S.refP;                                                         // a pending referral may still be saving
     const t=Date.now();let rid=S.refRid||(refRec()||{}).rid;
+    if(rid&&(await fb('GET','referrals/'+rc+'/'+rid+'/st'))!=='pending')rid=null;    // the pending record never got saved: start again
     const fresh=!rid;if(fresh)rid=rKey(10);
     await fb('PUT','refpay/'+S.payId,{r:rid,t});                                    // one payment can only ever count once
     if(fresh)await fb('PUT','referrals/'+rc+'/'+rid,{t,st:'pending'});              // paid without previewing first
