@@ -277,6 +277,47 @@ body.fr-env .room,body.fr-env .card{border:2px solid #ffffffcc;box-shadow:0 24px
 .refer .row{display:flex;gap:8px}.refer .row .btn{margin-top:10px;width:auto;flex:1 1 auto}.refer .row .btn.ghost{flex:0 0 auto;width:auto;padding:14px 18px}
 .refbar{position:fixed;left:50%;bottom:52px;transform:translateX(-50%);z-index:29;background:#fff;color:#17332d;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;box-shadow:0 6px 18px #0003;white-space:nowrap}
 .dlink{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:600;color:var(--c);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
+/* ---------- Diwali special ---------- */
+[data-vibe=diwali]{--bg1:#1b1140;--bg2:#4a1d5c;--acc:#F5A524;--acc2:#FF6B57;--ink:#2b1608;--mut:#8a6a4a}
+body.dw-env{background:radial-gradient(circle at 50% 112%,#ff9d2e77 0,#0000 46%),radial-gradient(circle at 14% 6%,#7b3fe466 0,#0000 40%),linear-gradient(160deg,#150d38,#3b1a58 55%,#6a2a4c);background-attachment:fixed}
+body.dw-env #bg{display:none}
+body.dw-env .shell{padding-bottom:64px}
+#dwenv{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;display:none}
+body.dw-env #dwenv{display:block}
+.dws{position:absolute;width:calc(var(--z)*2px);height:calc(var(--z)*2px);border-radius:50%;background:#fff6c9;box-shadow:0 0 6px 1px #ffe08a;animation:twk 3.2s ease-in-out infinite alternate}
+.dwl{position:absolute;bottom:-60px;font-size:30px;opacity:.85;filter:drop-shadow(0 0 10px #ffb300);animation:dwup linear infinite}
+@keyframes dwup{0%{transform:translate(0,0)}50%{transform:translate(24px,-60vh)}100%{transform:translate(-10px,-125vh)}}
+.dwk{position:absolute;top:-10px;width:5px;height:5px;border-radius:50%;background:#ffd54a;box-shadow:0 0 8px 2px #ffb30088;animation:fallc linear infinite}
+.dwrow{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-around;font-size:26px;padding:0 4px;background:linear-gradient(transparent,#0006)}
+.dwrow span{filter:drop-shadow(0 0 8px #ffb300);animation:dwflick 1.1s ease-in-out infinite alternate}
+@keyframes dwflick{from{opacity:.75;transform:scale(.96)}to{opacity:1;transform:scale(1.06)}}
+body.dw-env .card,body.dw-env .room{background:linear-gradient(#fffaf0,#fff3da);border:2px solid #f3c969;box-shadow:0 0 0 4px #f3c96933,0 24px 70px #000a,0 0 40px #ffb30033}
+body.dw-env .pill-room,body.dw-env .lg,body.dw-env .lg a{color:#ffe9b8}
+body.dw-env .pill-room i s{background:#ffffff33}body.dw-env .pill-room i s.on{background:#ffb300}
+body.dw-env .shell{padding-top:28px}
+.dwopt{border:1.5px solid #f3c969!important;background:#fffdf6}.dwopt.on{background:#fff1cf;box-shadow:0 0 0 3px #f5a52455}
+.dwp{margin-left:auto;font-weight:800;background:#fff1cf;border:1.5px solid #f3c969;border-radius:99px;padding:3px 11px;white-space:nowrap}
+.dwh{font-family:'Bricolage Grotesque',sans-serif;font-size:34px;line-height:1.1;background:linear-gradient(90deg,#b8741a,#f5a524,#ffdd7a,#f5a524,#b8741a);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:dwsh 4s linear infinite}
+@keyframes dwsh{to{background-position:-200% 0}}
+.diyas{display:flex;gap:2px;justify-content:center;margin:10px 0;flex-wrap:nowrap}
+.diya{background:none;border:0;font-size:38px;position:relative;cursor:pointer;filter:grayscale(1) brightness(.55);transition:filter .35s,transform .25s;padding:8px 3px;width:auto;margin:0;box-shadow:none}
+.diya:active{transform:scale(.9)}
+.diya .dfl{position:absolute;left:50%;top:0;width:15px;height:24px;margin-left:-8px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(#fff8d0,#ffb300 58%,#ff6b00);box-shadow:0 0 20px 9px #ffb30099;display:none;animation:flk .18s infinite alternate}
+.diya.lit{filter:none;transform:scale(1.08)}.diya.lit .fl{display:block}
+.lants{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lant{font-size:46px;background:none;border:0;cursor:pointer;filter:grayscale(.35) drop-shadow(0 0 6px #ffb30088);animation:bob 2.6s ease-in-out infinite;padding:4px 6px;width:auto;margin:0;box-shadow:none}
+.lant.open{filter:drop-shadow(0 0 16px #ffd54a) brightness(1.25);animation:none;transform:scale(1.12)}
+.wish{min-height:70px;display:flex;align-items:center;justify-content:center;padding:12px 14px;border-radius:14px;background:#fff1cf;border:1.5px solid #f3c969;font-weight:600;font-style:italic;width:100%}
+.rangoli{width:118px;height:118px;border-radius:50%;background:radial-gradient(circle,#fff 0 11%,#e14b8a 12% 24%,#f5a524 25% 36%,#fff 37% 40%,#14a38b 41% 54%,#5b62e8 55% 66%,#ffd54a 67% 70%,transparent 71%);box-shadow:0 0 28px #f5a52455;animation:dwspin 22s linear infinite;position:relative}
+.rangoli::after{content:"";position:absolute;inset:-8px;border-radius:50%;background:conic-gradient(from 0deg,#ff6b57 0 10%,transparent 10% 25%,#f5a524 25% 35%,transparent 35% 50%,#e14b8a 50% 60%,transparent 60% 75%,#14a38b 75% 85%,transparent 85%);-webkit-mask:radial-gradient(circle,transparent 62%,#000 63%,#000 72%,transparent 73%);mask:radial-gradient(circle,transparent 62%,#000 63%,#000 72%,transparent 73%)}
+@keyframes dwspin{to{transform:rotate(360deg)}}
+.dphoto{width:100%}.dphoto img{width:100%;max-width:300px;aspect-ratio:1;object-fit:cover;border-radius:150px 150px 14px 14px;border:4px solid #f3c969;box-shadow:0 0 0 4px #fff1cf,0 0 26px #ffb30077;animation:pop .4s ease}
+.dphoto p{margin-top:8px;font-family:'Shantell Sans',cursive;font-weight:600}
+.fwc{width:100%;max-width:440px;aspect-ratio:11/8;border-radius:14px;background:#0f0828;touch-action:none;box-shadow:0 0 0 3px #f3c969,0 10px 30px #0006;cursor:pointer}
+.dwc{background:repeating-linear-gradient(45deg,#fffaf0,#fffaf0 12px,#fff1cf 12px,#fff1cf 24px);border-color:#f3a824}
+.dwc big{background:linear-gradient(90deg,#b8741a,#f5a524,#b8741a);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.gcard{border:1.5px solid #e3ece8;border-radius:14px;padding:12px;margin:8px 0}.gcard small{display:block;color:#6b8079;margin-top:2px}.gcard .share{margin-top:8px}.gcard .row .btn{margin-top:8px;text-align:center;text-decoration:none;font-size:13px;padding:10px;width:auto;flex:1}
 </style>
 </head>
 <body>
@@ -322,13 +363,44 @@ $('#bg').insertAdjacentHTML('beforeend',['💛','🎈','🧸','🍕','🎶','�
 /* ACCOUNTS + WALLET + REFERRALS: API = your server address (from worker/README.md), FIREBASE_KEY = your Firebase Web API key.
    Leave both '' to keep the simple version without accounts. */
 const CONFIG={API:'',FIREBASE_KEY:'',PRETTY:false,RZP_KEY:'rzp_live_Tni4szqEX4QpvN',PRICE_INR:99,DB:'https://friend-museum-default-rtdb.firebaseio.com/',KEY_GIFTS:'om_gifts',KEY_REPLIES:'om_replies'};
+/* ---------- DIWALI SPECIAL: who it is for, and the price of each ---------- */
+// [id, emoji, label, short description, flavour, default price in ₹, placeholder for "what do you call them"]
+const DREL=[
+ ['friends','🪔','Friends','Fun wishes for the whole gang','friend',79,'e.g. Gang'],
+ ['bestie','💛','Bestie','For your forever person','friend',99,'e.g. Bestie'],
+ ['girlfriend','💖','Girlfriend','Romantic lights & promises','love',149,'e.g. Jaan'],
+ ['boyfriend','💙','Boyfriend','Warm, loving & a little filmy','love',149,'e.g. Babu'],
+ ['wife','💍','Wife','For the heart of your home','love',149,'e.g. Jaan'],
+ ['husband','🫶','Husband','For your partner in everything','love',149,'e.g. Sweetheart'],
+ ['loveone','❤️','Love one','For the one who lights up your life','love',149,'e.g. My love'],
+ ['family','🏠','Family','Blessings & togetherness','family',129,'e.g. Maa, Papa'],
+ ['relatives','🤝','Relatives','Warm, respectful festive wishes','family',79,'e.g. Chacha ji']
+];
+const DW_DEFAULT={on:true,photos:true,maxPhotos:5,songs:{diwali:true,dsoft:true,none:true},rels:{}};
+DREL.forEach(r=>{DW_DEFAULT.rels[r[0]]={on:true,price:r[5]}});
+let DW=JSON.parse(JSON.stringify(DW_DEFAULT));
+const dwRel=id=>DREL.find(r=>r[0]==id)||DREL[0];
+const dwRelOn=id=>DW.on!==false&&(DW.rels[id]||{}).on!==false;
+const dwAvail=()=>DW.on!==false&&DREL.some(r=>dwRelOn(r[0]));
+const dwPrice=id=>{const p=+((DW.rels[id]||{}).price);return p>0?p:dwRel(id)[5]};
+const dwFrom=()=>Math.min(...DREL.filter(r=>dwRelOn(r[0])).map(r=>dwPrice(r[0])),9e9);
+function dwMerge(o){
+  if(!o||typeof o!='object')return;
+  DW=JSON.parse(JSON.stringify(DW_DEFAULT));
+  if(o.on===false)DW.on=false;if(o.photos===false)DW.photos=false;if(+o.maxPhotos>=1&&+o.maxPhotos<=8)DW.maxPhotos=+o.maxPhotos;
+  if(o.songs&&typeof o.songs=='object')Object.keys(DW.songs).forEach(k=>{if(o.songs[k]===false)DW.songs[k]=false});
+  if(o.rels&&typeof o.rels=='object')DREL.forEach(r=>{const x=o.rels[r[0]];if(x&&typeof x=='object'){if(x.on===false)DW.rels[r[0]].on=false;if(+x.price>0)DW.rels[r[0]].price=+x.price}});
+}
+// The price follows what is being built: a Diwali gift costs what the admin set for that relationship, everything else the normal price.
+let BASE_PRICE=CONFIG.PRICE_INR;
+Object.defineProperty(CONFIG,'PRICE_INR',{get(){return S&&S.type=='diwali'?dwPrice(S.rel):BASE_PRICE},set(v){BASE_PRICE=v},enumerable:true,configurable:true});
 /* Admin-controlled switches for each builder step (loaded from the database; these are the defaults). */
 const ST_DEFAULT={friend:true,bday:true,f_kind:true,f_vibe:true,f_photos:true,f_maxPhotos:4,f_puzzle:true,f_msg:true,f_rules:true,f_quiz:true,f_story:true,f_awards:true,b_balloons:true,b_photos:true,b_maxPhotos:5,b_letter:true,b_game:'choose',songs:{bday:true,box:true,pop:true,dance:true,none:true},fsongs:{calm:true,pop:true,lofi:true,box:true,none:true}};
 let ST=JSON.parse(JSON.stringify(ST_DEFAULT));
 // Is payment required right now? Not in free mode, and not for a signed-in admin.
 const payOn=()=>!!((CONFIG.API&&CONFIG.FIREBASE_KEY)||(CONFIG.RZP_KEY&&!CONFIG.FREE&&!CONFIG.ADMIN));
-const stepOff=(type,n)=>type=='bday'?((n==3&&!ST.b_balloons)||(n==4&&!ST.b_photos)||(n==5&&!ST.b_letter)):((n==2&&!ST.f_kind)||(n==3&&!ST.f_vibe)||(n==4&&!ST.f_photos)||(n==5&&!ST.f_msg)||(n==6&&!ST.f_rules)||(n==7&&!(ST.f_quiz||ST.f_story||ST.f_awards)));
-const stepMove=(n,dir)=>{const last=S.type=='bday'?6:8;let k=n+dir;while(k>1&&k<last&&stepOff(S.type,k))k+=dir;return Math.min(Math.max(k,1),last+1)};
+const stepOff=(type,n)=>type=='diwali'?(n==3&&DW.photos===false):type=='bday'?((n==3&&!ST.b_balloons)||(n==4&&!ST.b_photos)||(n==5&&!ST.b_letter)):((n==2&&!ST.f_kind)||(n==3&&!ST.f_vibe)||(n==4&&!ST.f_photos)||(n==5&&!ST.f_msg)||(n==6&&!ST.f_rules)||(n==7&&!(ST.f_quiz||ST.f_story||ST.f_awards)));
+const stepMove=(n,dir)=>{const last=S.type!='friend'?6:8;let k=n+dir;while(k>1&&k<last&&stepOff(S.type,k))k+=dir;return Math.min(Math.max(k,1),last+1)};
 const allowedSongs=()=>SONGS.filter(x=>ST.songs[x[0]]!==false);
 const dbGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}};
 const dbAdd=(k,o)=>{try{const a=dbGet(k);a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}};
@@ -351,7 +423,8 @@ function confetti(n=40){const em=['🎉','💛','✨','🧡','💫','🎊'];for(
 /* ---------- WIZARD ---------- */
 function wiz(){
   document.title=BASE_TITLE;refreshAcctBtn();
-  if(!S.type){const on=[ST.friend&&'friend',ST.bday&&'bday'].filter(Boolean);if(on.length==1){S.type=on[0];S.step=1;S.vibe=on[0]=='bday'?'bday':'chaos'}else return chooser()}
+  if(!S.type){const on=[ST.friend&&'friend',ST.bday&&'bday',dwAvail()&&'diwali'].filter(Boolean);if(on.length==1){S.type=on[0];S.step=1;S.vibe=on[0]=='bday'?'bday':on[0]=='diwali'?'diwali':'chaos'}else return chooser()}
+  if(S.type=='diwali')return wizD();
   if(S.type=='bday')return wizB();
   setEnv(false);setFEnv(S.vibe||'chaos');
   document.body.dataset.vibe=S.vibe;
@@ -365,7 +438,7 @@ function wiz(){
   if(n==1)h=`<span class="chip">🚪 No occasion needed · send it any day</span><p class="eyebrow">Not a card · an interactive museum</p><h1>Build your best friend a <em>museum</em>.</h1><p class="sub">You’re about to make someone’s day unforgettable 🎀</p>
   <label>Who is this for?</label><input type="text" id="f-name" maxlength="40" placeholder="Your friend’s name" value="${esc(S.name)}">
   <label>And what’s your name?</label><input type="text" id="f-from" maxlength="40" placeholder="Your name" value="${esc(S.from)}">
-  <button class="btn" id="go1" data-act="next" ${S.name&&S.from?'':'disabled'}>Start building →</button><p class="hint">Takes about 4 minutes · works on any phone</p>${ST.friend&&ST.bday?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
+  <button class="btn" id="go1" data-act="next" ${S.name&&S.from?'':'disabled'}>Start building →</button><p class="hint">Takes about 4 minutes · works on any phone</p>${(ST.friend?1:0)+(ST.bday?1:0)+(dwAvail()?1:0)>1?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
   if(n==2){const yrs=Array.from({length:50},(_,i)=>2026-i);h=`<p class="eyebrow">Step 2 · About them</p><h1>What kind of <em>friend</em> are they?</h1><p class="sub">Pick the one that fits <b>${esc(S.name)}</b> best.</p>
   <div class="tiles">${KINDS.map(k=>`<button class="tile ${S.kind==k[0]?'on':''}" data-kind="${k[0]}"><span>${k[1]}</span><span>${k[2]}</span></button>`).join('')}</div>
   <label>When did you two become friends? <small>— optional. We’ll count the days for them.</small></label>
@@ -438,7 +511,7 @@ shell.addEventListener('click',e=>{
   else if(d.act=='preview'){recordPreview();startMuseum(S,true)}
   else if(d.act=='link'){if(apiOn()){if(S.code){showLink($('#out'),linkFor(S.code),true,'');return}if(!ME){AUTHRET='checkout';acctView('login');return}S.step=payStep();wiz();return}
     if(CONFIG.PAUSED&&!S.payId&&!CONFIG.ADMIN){const o=$('#out');if(o)o.innerHTML='<p class="hint">⏸️ New gifts are paused for a little while. Please try again later.</p>';return}
-    if(payOn()&&!S.payId){S.step=S.type=='bday'?7:9;wiz()}else makeLink()}
+    if(payOn()&&!S.payId){S.step=S.type!='friend'?7:9;wiz()}else makeLink()}
   else if(d.act=='type'){S.type='';wiz()}
   else if(d.act=='pay'){apiOn()?payServer():pay()}
   else if(d.act=='dash')dashboard();
@@ -452,19 +525,25 @@ async function dashboard(){
     if(got.length)reps=got.sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));
   }
   const f=s=>new Date(s).toLocaleString();
-  shell.innerHTML=`<div class="dash"><h1>📂 My gifts & replies</h1><p class="sub">${CONFIG.DB?'Gifts are listed from this browser; replies are loaded live from your database.':'Saved in this browser only. Set CONFIG.DB to collect replies from friends’ phones.'}</p>
-  <h3>🎁 Gifts created (${gifts.length})</h3><table><tr><th>For</th><th>From</th><th>Vibe</th><th>Created</th></tr>${gifts.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.from)}</td><td>${esc(g.vibe)}</td><td>${f(g.created)}</td></tr>`).join('')||'<tr><td colspan=4>None yet</td></tr>'}</table>
+  const occ=g=>g.type=='diwali'?'🪔 Diwali'+(g.rel?' · '+esc(dwRel(g.rel)[2]):''):g.type=='bday'?'🎂 Birthday':'🤝 Friendship';
+  const rc=g=>reps.filter(r=>r.gid&&r.gid==g.id).length;
+  const list=gifts.slice().reverse();
+  const wa=(g)=>'https://wa.me/?text='+encodeURIComponent((g.type=='diwali'?'🪔 '+g.from+' sent you a Diwali surprise, '+g.name+': ':g.type=='bday'?'🎂 '+g.from+' made a birthday surprise just for you, '+g.name+': ':'💛 '+g.from+' made a little museum just for you, '+g.name+': ')+g.url);
+  shell.innerHTML=`<div class="dash"><h1>📂 My gifts & replies</h1><p class="sub">Your gift links are kept here, on this device, so you can find and share them again. ${CONFIG.DB?'Replies are loaded live.':''}</p>
+  <h3>🎁 Gifts created (${gifts.length})</h3>
+  ${list.map((g,i)=>`<div class="gcard"><b>${occ(g)}</b> · for ${esc(g.name)}<small>from ${esc(g.from)} · ${f(g.created)} · 💌 ${rc(g)} repl${rc(g)==1?'y':'ies'}</small>${g.url?`<input class="share" readonly value="${esc(g.url)}" onclick="this.select()"><div class="row"><button class="btn" data-cl="${i}">📋 Copy link</button><a class="btn ghost" style="width:auto" target="_blank" rel="noopener" href="${esc(g.url)}">Open</a><a class="btn" target="_blank" rel="noopener" href="${esc(wa(g))}">💬 Send</a></div>`:'<small>The link was not saved on this device.</small>'}</div>`).join('')||'<p class="hint">None yet</p>'}
   <h3>💌 Replies received (${reps.length})</h3><table><tr><th>Friend</th><th>Reply</th><th>Time · moves</th><th>When</th></tr>${reps.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.reply||'—')}</td><td>${r.elapsed}s · ${r.moves}</td><td>${f(r.ts)}</td></tr>`).join('')||'<tr><td colspan=4>None yet</td></tr>'}</table>
   <div class="tools"><button class="btn" id="ej">⬇ Export JSON</button><button class="btn" id="ec">⬇ Export CSV</button><button class="btn ghost" id="cl">🗑 Clear all</button><button class="btn ghost" id="bk">← Back</button></div></div>`;
+  shell.querySelectorAll('[data-cl]').forEach(bt=>bt.onclick=()=>{const g=list[+bt.dataset.cl];navigator.clipboard.writeText(g.url).then(()=>{bt.textContent='Copied ✓'}).catch(()=>{})});
   const dl=(n,t,m)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()};
   $('#ej').onclick=()=>dl('moments-data.json',JSON.stringify({gifts,replies:reps.map(({sig,...r})=>r)},null,2),'application/json');
   $('#ec').onclick=()=>dl('moments-replies.csv','gift,friend,reply,seconds,moves,when\n'+reps.map(r=>[r.gid,r.name,r.reply||'',r.elapsed,r.moves,r.ts].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv');
-  $('#cl').onclick=()=>{if(confirm('Delete all saved gifts and replies from this browser?')){localStorage.removeItem(CONFIG.KEY_GIFTS);localStorage.removeItem(CONFIG.KEY_REPLIES);dashboard()}};
+  $('#cl').onclick=()=>{if(confirm('Delete all saved gifts and replies from this browser? The links will be gone from this list.')){localStorage.removeItem(CONFIG.KEY_GIFTS);localStorage.removeItem(CONFIG.KEY_REPLIES);dashboard()}};
   $('#bk').onclick=wiz;
 }
 function tog(a,v,max){const i=a.indexOf(v);if(i>=0)a.splice(i,1);else if(a.length<max)a.push(v)}
 function addPhotos(files){
-  files.slice(0,(S.type=='bday'?ST.b_maxPhotos:ST.f_maxPhotos)-S.photos.length).forEach(f=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
+  files.slice(0,(S.type=='diwali'?DW.maxPhotos:S.type=='bday'?ST.b_maxPhotos:ST.f_maxPhotos)-S.photos.length).forEach(f=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
     const m=Math.min(im.width,im.height),c=document.createElement('canvas');c.width=c.height=400;
     c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,400,400);
     S.photos.push({src:c.toDataURL('image/jpeg',.55),cap:''});wiz()};im.src=r.result};r.readAsDataURL(f)});
@@ -475,8 +554,8 @@ function pay(){
   try{
     const rz=new Razorpay({
       key:CONFIG.RZP_KEY,amount:Math.round(CONFIG.PRICE_INR*100),currency:'INR',
-      name:'OurMoments',description:(S.type=='bday'?'Birthday Surprise for ':'Friendship Museum for ')+S.name,theme:{color:'#F5A524'},
-      handler:r=>{S.payId=r.razorpay_payment_id;S.step=S.type=='bday'?6:8;wiz();makeLink()}, // paid: go back and create the link
+      name:'OurMoments',description:(S.type=='diwali'?'Diwali Special for ':S.type=='bday'?'Birthday Surprise for ':'Friendship Museum for ')+S.name,theme:{color:'#F5A524'},
+      handler:r=>{S.payId=r.razorpay_payment_id;S.step=S.type!='friend'?6:8;wiz();makeLink()}, // paid: go back and create the link
       modal:{ondismiss:()=>{st.textContent='Payment cancelled. You can try again.'}}
     });
     rz.on('payment.failed',e=>{st.textContent='Payment failed: '+((e.error&&e.error.description)||'please try again')});
@@ -495,7 +574,7 @@ const savedRef=()=>{try{const o=JSON.parse(localStorage.getItem('om_ref')||'null
 // a friend's invite link (?ref=CODE) is remembered for 30 days, until they sign up
 try{const rq=new URLSearchParams(location.search).get('ref');if(rq&&/^[A-Za-z0-9]{4,10}$/.test(rq)&&!savedRef())localStorage.setItem('om_ref',JSON.stringify({c:rq.toUpperCase(),t:Date.now()}))}catch(e){}
 let AUTHRET='',QUOTE=null;
-const reviewStep=()=>S.type=='bday'?6:8, payStep=()=>S.type=='bday'?7:9;
+const reviewStep=()=>S.type!='friend'?6:8, payStep=()=>S.type!='friend'?7:9;
 const linkFor=code=>{const base=location.href.split('#')[0].split('?')[0];return CONFIG.PRETTY?base.replace(/[^/]*$/,'')+code:base+'#c='+code};
 async function idt(){   // a fresh login token (renewed quietly when it is getting old)
   if(!ME)throw new Error('Please log in first.');
@@ -681,7 +760,7 @@ async function payServer(){
     const r=await api('/api/checkout',{draft:prepDraft(),walletUse:!!($('#usew')&&$('#usew').checked)});
     if(r.code)return finishDone(r.code);
     if(typeof Razorpay==='undefined')throw new Error('Payment could not load. Check your internet and try again.');
-    const rz=new Razorpay({key:r.key,order_id:r.orderId,amount:r.amount,currency:'INR',name:'OurMoments',description:(S.type=='bday'?'Birthday Surprise for ':'Friendship Museum for ')+S.name,theme:{color:'#F5A524'},prefill:{name:ME.name,email:ME.email},
+    const rz=new Razorpay({key:r.key,order_id:r.orderId,amount:r.amount,currency:'INR',name:'OurMoments',description:(S.type=='diwali'?'Diwali Special for ':S.type=='bday'?'Birthday Surprise for ':'Friendship Museum for ')+S.name,theme:{color:'#F5A524'},prefill:{name:ME.name,email:ME.email},
       handler:resp=>completeOrder({orderId:resp.razorpay_order_id,paymentId:resp.razorpay_payment_id,signature:resp.razorpay_signature}),
       modal:{ondismiss:()=>{btn.disabled=false;st.textContent='Payment cancelled. You can try again.'}}});
     rz.on('payment.failed',e=>{btn.disabled=false;st.textContent='Payment failed: '+((e.error&&e.error.description)||'please try again')});
@@ -714,22 +793,26 @@ async function makeLink(){
   applyForced();
   {const rc0=refCode();if(rc0&&/^pay_/.test(S.payId||''))S.ref=rc0}
   const out=$('#out'),base=location.href.split('#')[0];
-  if(!S.recorded){S.recorded=1;const rec={id:S.id,type:S.type,name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,pay:S.payId||'',created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
+  if(!S.recorded){S.recorded=1;const rec={id:S.id,type:S.type,rel:S.rel||'',name:S.name,from:S.from,kind:S.kind,vibe:S.vibe,pay:S.payId||'',created:new Date().toISOString()};dbAdd(CONFIG.KEY_GIFTS,rec)}
 let url,short=false,err='';
   if(CONFIG.DB){
     out.innerHTML='<p class="hint">⏳ Saving your gift online…</p>';
     // The link is shown only after the database confirms it saved. A code that is already taken is refused by the Rules, so we retry.
     for(let t=0;t<4&&!short;t++){
       const code=linkBase()+'-'+rand5();
-      try{await fb('PUT','gifts/'+code,S);url=CONFIG.PRETTY?base.split('?')[0].replace(/[^/]*$/,'')+code:base+'#c='+code;short=true;S.code=code;recordReferral(code);fb('PUT','index/'+code,{id:S.id,type:S.type||'friend',name:S.name,from:S.from,created:S.created,pay:S.payId||''}).catch(()=>{})}
+      try{await fb('PUT','gifts/'+code,S);url=CONFIG.PRETTY?base.split('?')[0].replace(/[^/]*$/,'')+code:base+'#c='+code;short=true;S.code=code;recordReferral(code);fb('PUT','index/'+code,{id:S.id,type:S.type||'friend',rel:S.rel||'',amt:/^pay_/.test(S.payId||'')?CONFIG.PRICE_INR:0,name:S.name,from:S.from,created:S.created,pay:S.payId||''}).catch(()=>{})}
       catch(e){err=String(e.message||e)}
     }
   }
   if(!short)url=base+'#g='+btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  saveMyLink(url,S.code);
   showLink(out,url,short,err);
 }
+// keep the finished link on this device so “My gifts & replies” can show it again later
+function saveMyLink(url,code){try{const a=dbGet(CONFIG.KEY_GIFTS),x=a.find(y=>y.id==S.id);if(x){x.url=url;if(code)x.code=code;localStorage.setItem(CONFIG.KEY_GIFTS,JSON.stringify(a))}}catch(e){}}
 function applyForced(){
   if(S.type=='bday'){if(ST.b_game=='on')S.game=true;if(ST.b_game=='off')S.game=false;const al=allowedSongs();if(al.length&&!al.some(x=>x[0]==S.song))S.song=al[0][0]}
+  else if(S.type=='diwali'){const ds=dwSongs();if(ds.length&&!ds.some(x=>x[0]==S.song))S.song=ds[0][0]}
   else{S.puzzle=ST.f_puzzle!==false;S.quiz=ST.f_quiz?cleanQuiz(S.quiz):[];S.story=ST.f_story?cleanStory(S.story):[];S.awards=ST.f_awards?(S.awards||[]):[];const af=allowedFSongs();if(af.length&&!af.some(x=>x[0]==S.fsong))S.fsong=af[0][0]}
 }
 // the gift exactly as it will be saved (without the builder's own bookkeeping)
@@ -741,10 +824,11 @@ function prepDraft(){
   return d;
 }
 function showLink(out,url,short,err){
-  const txt=S.type=='bday'?`🎂 ${S.from} made a birthday surprise just for you, ${S.name}: ${url}`:`💛 ${S.from} made a little museum just for you, ${S.name}: ${url}`;
+  const txt=S.type=='diwali'?`🪔 ${S.from} sent you a Diwali surprise, ${S.name}: ${url}`:S.type=='bday'?`🎂 ${S.from} made a birthday surprise just for you, ${S.name}: ${url}`:`💛 ${S.from} made a little museum just for you, ${S.name}: ${url}`;
   out.innerHTML=`<label>Your gift link ${short?"(short ✓ saved online)":""}</label><input class="share" readonly value="${url}" onclick="this.select()"><button class="btn" id="cp">📋 Copy link</button><div class="row"><a class="btn" style="text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">💬 Send on WhatsApp</a><button class="btn ghost" id="sh" style="width:56px">📤</button></div><p class="hint">${short?"Short link · saved online and verified ✓":(CONFIG.DB?"⚠️ Could not save online ("+esc(err)+"), so this is the long link. It still works.":"Long link (CONFIG.DB not set)")+" · "+(url.length/1024).toFixed(0)+" KB"}</p>`;
   $('#cp').onclick=()=>{navigator.clipboard.writeText(url).then(()=>{$('#cp').textContent='Copied ✓'})};
   $('#sh').onclick=()=>{if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt)};
+  out.insertAdjacentHTML('beforeend','<button class="dlink" data-act="dash">📂 Lost the link later? Find it in “My gifts & replies”</button>');
   if(short){out.insertAdjacentHTML('beforeend',referBoxHtml());bindRefer()}
 }
 
@@ -767,6 +851,7 @@ function fStages(g){
   return L;
 }
 function startMuseum(g,preview){
+  if(g.type=='diwali')return startDiwali(g,preview);
   if(g.type=='bday')return startBday(g,preview);
   setEnv(false);setFEnv(g.vibe||'chaos');document.title=g.name+', a museum made for you 💛';$('#acct').style.display='none';hideRefPill();
   V={g,preview,i:0,stages:fStages(g),knocks:0,ex:0,notes:0,rules:new Set(),moves:0,t0:Date.now(),elapsed:0,signed:false};
@@ -775,7 +860,7 @@ function startMuseum(g,preview){
   $('#back').style.display=preview?'block':'none';
   room();
 }
-$('#back').onclick=()=>{if(V&&V.tk)clearInterval(V.tk);musicStop();V=null;wiz()};
+$('#back').onclick=()=>{if(V&&V.tk)clearInterval(V.tk);if(V&&V.raf)cancelAnimationFrame(V.raf);musicStop();V=null;wiz()};
 function days(g){if(!g.sy)return null;const d=new Date(+g.sy,(+g.sm||1)-1,1);return Math.max(1,Math.floor((Date.now()-d)/864e5))}
 function frame(inner){
   const pr=V.stages.map((_,i)=>`<s class="${i<=V.i?'on':''}"></s>`).join(''),st=V.stages[V.i];
@@ -985,6 +1070,29 @@ function songLoop(track,t0){
     }
     return 16*beat;
   }
+  if(track=='diwali'){ // festive: dhol-style beat and a bright Bhairav-scale melody
+    const beat=.36,SC=[261.63,277.18,329.63,349.23,392,415.3,493.88,523.25];
+    const MEL=[[0,2,4,5,4,2,3,2],[2,4,5,7,5,4,2,0],[0,0,2,3,4,3,2,1],[4,5,7,5,4,2,3,0]];
+    for(let bar=0;bar<4;bar++){
+      const b0=t0+bar*8*beat;
+      mnote(130.81,b0,8*beat,'sine',.05);mnote(196,b0,8*beat,'sine',.035);
+      for(let k=0;k<8;k++){
+        const at=b0+k*beat,f=SC[MEL[bar][k]];
+        if(k%4==0)mkick(at,.32);if(k%4==2)mkick(at,.2);mhat(at+beat/2,.03);
+        mnote(f,at,beat*.9,'triangle',.09);mnote(f*2,at,beat*.4,'sine',.02);
+      }
+    }
+    return 32*beat;
+  }
+  if(track=='dsoft'){ // soft: slow plucks like candlelight
+    const step=.6,SC=[261.63,329.63,349.23,392,493.88,523.25,415.3];
+    const ARP=[[0,1,3,5,3,1,2,1],[2,3,4,5,4,3,2,1],[0,2,3,4,3,2,1,0],[1,3,4,5,4,3,6,3]];
+    for(let bar=0;bar<4;bar++){
+      const b0=t0+bar*8*step;mnote(130.81,b0,8*step,'sine',.045);mnote(196,b0+4*step,4*step,'sine',.03);
+      ARP[bar].forEach((k,j)=>{const at=b0+j*step;mnote(SC[k],at,step*2.2,'sine',.08);mnote(SC[k]*2,at,step*.6,'sine',.02)});
+    }
+    return 32*step;
+  }
   // 'calm' (friendship museum)
   const step=.45;
   CALM.forEach((ch,i)=>{
@@ -1041,6 +1149,7 @@ const fDraft=()=>({notes:S.notes,story:ST.f_story?cleanStory(S.story):[],photos:
 /* ---------- BIRTHDAY SURPRISE ---------- */
 // Party scenery (bunting, floating balloons, confetti) shown on every birthday screen
 function setEnv(on){
+  setDEnv(false);
   if(on)setFEnv(false);
   document.body.classList.toggle('bd-env',!!on);
   let e=$('#bdenv');
@@ -1066,9 +1175,10 @@ function chooser(){
   $('#back').style.display='none';$('#badge').style.display='none';
   shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span></div>
   <p class="eyebrow">Pick an occasion</p><h1>What are we <em>celebrating</em>?</h1><p class="sub">Build a gift they can open on any phone 🎀</p>
+  ${dwAvail()?`<button class="opt dwopt" data-type="diwali"><span class="em">🪔</span><span><b>Diwali special</b><small>For friends, love & family · from ₹${dwFrom()}</small></span></button>`:''}
   ${ST.friend?'<button class="opt" data-type="friend"><span class="em">🤝</span><span><b>Friendship museum</b><small>Up to 12 rooms of surprises · no occasion needed</small></span></button>':''}
   ${ST.bday?'<button class="opt" data-type="bday"><span class="em">🎂</span><span><b>Birthday surprise</b><small>Cake, balloons, memories & a letter</small></span></button>':''}
-  ${!ST.friend&&!ST.bday?'<p class="sub">New gifts are not available right now. Please come back soon.</p>':''}
+  ${!ST.friend&&!ST.bday&&!dwAvail()?'<p class="sub">New gifts are not available right now. Please come back soon.</p>':''}
   <button class="dlink" data-act="dash">📂 My gifts & replies</button></div>`;
 }
 
@@ -1090,7 +1200,7 @@ function wizB(){
   <label>Their birthday <small>— optional. Unlocks the midnight countdown.</small></label>
   <div class="duo"><select id="b-bm"><option value="">Month</option>${MONTHS.map((m,i)=>`<option value="${i+1}" ${S.bm==i+1?'selected':''}>${m}</option>`).join('')}</select><select id="b-bd"><option value="">Day</option>${Array.from({length:31},(_,i)=>`<option ${S.bd==i+1?'selected':''}>${i+1}</option>`).join('')}</select></div>
   <p class="hint">If they open early, a countdown holds the surprise until 12:00 AM 🎈</p>
-  <button class="btn" id="b-go" data-act="next" ${S.name&&S.from?'':'disabled'}>Let’s begin 🎂</button>${ST.friend&&ST.bday?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
+  <button class="btn" id="b-go" data-act="next" ${S.name&&S.from?'':'disabled'}>Let’s begin 🎂</button>${(ST.friend?1:0)+(ST.bday?1:0)+(dwAvail()?1:0)>1?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
   if(n==2)h=`<p class="eyebrow">Step 2</p><h1>Pick their <em>cake</em> 🎂</h1><p class="sub">They’ll light it, wish on it, and cut it.</p>
   ${CAKES.map(c=>`<button class="opt ${S.cake==c[0]?'on':''}" data-cake="${c[0]}"><span class="em">${c[1]}</span><span><b>${c[2]}</b><small>${c[3]}</small></span></button>`).join('')}
   ${ST.b_game=='choose'?`<label>Mini game</label><button class="opt ${S.game?'on':''}" data-game="1"><span class="em">🎮</span><span><b>${S.game?'Include a mini game':'No mini game'}</b><small>Uses your photos as the cards · tap to turn ${S.game?'off':'on'}</small></span></button>`:''}
@@ -1128,7 +1238,7 @@ shell.addEventListener('input',e=>{
 shell.addEventListener('change',e=>{const t=e.target;if(S.type!='bday'||V)return;if(t.id=='b-bm')S.bm=t.value;if(t.id=='b-bd')S.bd=t.value});
 shell.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||V)return;const d=b.dataset;
-  if(d.type){S.type=d.type;S.step=1;S.vibe=d.type=='bday'?'bday':'chaos';if(d.type=='friend')S.photos=S.photos.slice(0,4);wiz()}
+  if(d.type){S.type=d.type;S.step=1;S.vibe=d.type=='bday'?'bday':d.type=='diwali'?'diwali':'chaos';if(d.type=='friend')S.photos=S.photos.slice(0,4);if(d.type=='diwali')S.photos=S.photos.slice(0,DW.maxPhotos);wiz()}
   else if(d.cake){S.cake=d.cake;wiz()}
   else if(d.game!=null){S.game=!S.game;wiz()}
   else if(d.song){S.song=d.song;MUS.preview=true;musicStart(d.song);clearTimeout(MUS.pt);MUS.pt=setTimeout(()=>{if(MUS.preview){musicStop();MUS.preview=false}},9000);wiz()}
@@ -1418,6 +1528,197 @@ async function adminCheck(){
   }catch(e){}
 }
 
+/* ---------- DIWALI SPECIAL: the builder and what the receiver sees ---------- */
+const DSONGS=[['diwali','🪔','Festive Diwali','Bright, dhol-style celebration'],['dsoft','🕯️','Soft & glowing','Gentle plucks, like candlelight'],['none','🔇','No music','Just the surprise']];
+const dwSongs=()=>DSONGS.filter(x=>DW.songs[x[0]]!==false);
+const DWISH={
+ love:['May your life shine brighter than every diya tonight','You are the light in my life, today and always','May this Diwali bring us even closer','Every diya I light tonight has your name on it','Wishing you love, laughter and endless sweetness','Another Diwali with you is my favourite blessing','May every wish you make this Diwali come true'],
+ family:['May our home be full of light, laughter and sweets','Wishing you health, happiness and prosperity','May this Diwali bring peace and togetherness to us all','Grateful for every Diwali we celebrate together','May the blessings of this festival stay with you all year','Sending warmth, love and the sweetest Diwali wishes'],
+ friend:['Wishing you a Diwali as bright as your smile','May your year be full of sparkle and zero stress','Here’s to more laughs, more sweets and more late-night talks','May all your wishes light up like fireworks','Thank you for being my favourite person to celebrate with','Diwali is better when you’re around']
+};
+const DLETTER={
+ love:['Every year the lights get brighter, but none shine like you do. Thank you for being my home, my calm and my celebration. This Diwali, I only wish for more years of lighting diyas beside you 🪔','Another Diwali, another reason to say how grateful I am for you. You make ordinary days feel like festivals. May our life stay full of light, laughter and mithai 💛'],
+ family:['Diwali is when I miss home the most and remember how lucky I am to have all of you. Thank you for every blessing, every sweet and every bit of love. May the coming year be bright for us all 🪔','Wishing you and everyone at home a Diwali full of light, health and happiness. Thank you for always being there for me 💛'],
+ friend:['Some people make every festival feel like a party, and you are one of them. Thank you for the laughs, the chaos and the sweets we never share. May this Diwali sparkle for you 🪔','Here’s to another year of bad jokes, great memories and way too many sweets. Happy Diwali, and thank you for being you 💛']
+};
+const DGREET={
+ friends:'The whole gang is sending you light, laughter and way too many sweets.',
+ bestie:'To my forever person: may this Diwali shine as bright as our friendship.',
+ girlfriend:'You make every festival feel like home. Happy Diwali, my love.',
+ boyfriend:'Every light I see reminds me of you. Happy Diwali, my love.',
+ wife:'You are the light that keeps our home glowing. Happy Diwali, my love.',
+ husband:'Thank you for being my strength and my celebration. Happy Diwali.',
+ loveone:'You light up my life more than a thousand diyas. Happy Diwali.',
+ family:'May our home be filled with light, laughter and blessings this Diwali.',
+ relatives:'Warm wishes to you and your family for a bright and joyful Diwali.'
+};
+const dwFlav=g=>dwRel((g&&g.rel)||S.rel)[4];
+const dwWishes=g=>{const w=(g.wishes||[]).map(x=>String(x||'').trim()).filter(Boolean);return w.length?w:DWISH[dwFlav(g)].slice(0,3)};
+const dwCall=g=>(g.nick&&g.nick.trim())||g.name;
+
+// Festive backdrop: night sky, twinkling stars, rising lanterns and a row of glowing diyas
+function setDEnv(on){
+  document.body.classList.toggle('dw-env',!!on);
+  let e=$('#dwenv');
+  if(on&&!e){
+    e=document.createElement('div');e.id='dwenv';e.setAttribute('aria-hidden','true');
+    e.innerHTML=Array.from({length:44},(_,i)=>`<s class="dws" style="left:${(i*47)%100}%;top:${(i*29)%78}%;animation-delay:-${(i*7)%9}s;--z:${(i%3)+1}"></s>`).join('')
+      +Array.from({length:8},(_,i)=>`<b class="dwl" style="left:${4+i*12}%;animation-duration:${22+(i*5)%14}s;animation-delay:-${(i*6)%24}s">🏮</b>`).join('')
+      +Array.from({length:16},(_,i)=>`<i class="dwk" style="left:${(i*37)%100}%;animation-duration:${6+(i*3)%7}s;animation-delay:-${(i*2)%8}s"></i>`).join('')
+      +'<div class="dwrow">'+Array.from({length:9},(_,i)=>`<span style="animation-delay:-${(i*3)%7/10}s">🪔</span>`).join('')+'</div>';
+    document.body.appendChild(e);
+  }
+}
+
+/* ----- the builder ----- */
+function wizD(){
+  setEnv(false);setFEnv(false);setDEnv(true);refreshAcctBtn();
+  document.body.dataset.vibe='diwali';
+  $('#back').style.display='none';$('#badge').style.display='none';
+  if(!Array.isArray(S.wishes))S.wishes=[];
+  const DS=dwSongs();if(DS.length&&!DS.some(x=>x[0]==S.song))S.song=DS[0][0];
+  const n=S.step,tot=payOn()?7:6;
+  if(n!=5&&MUS.preview){musicStop();MUS.preview=false}
+  const dots=Array.from({length:tot},(_,i)=>`<span class="dot ${i<n?'on':''}"></span>`).join('');
+  const nav=(label='Continue →',ok=true)=>`<div class="row"><button class="btn ghost" data-act="prev">←</button><button class="btn" data-act="next" ${ok?'':'disabled'}>${label}</button></div>`;
+  const R=dwRel(S.rel),fl=R[4],maxP=DW.maxPhotos;
+  let h='';
+  if(n==1)h=`<span class="chip">🪔 Diwali special</span><h1>Light up their <em>Diwali</em>.</h1><p class="sub">Who is this gift for? Each one has its own words, wishes and price.</p>
+  ${DREL.filter(r=>dwRelOn(r[0])).map(r=>`<button class="opt dwopt ${S.rel==r[0]?'on':''}" data-rel="${r[0]}"><span class="em">${r[1]}</span><span><b>${r[2]}</b><small>${r[3]}</small></span><span class="dwp">₹${dwPrice(r[0])}</span></button>`).join('')}
+  ${ST.friend||ST.bday?'<button class="dlink" data-act="type">🔄 Change occasion</button>':''}<button class="dlink" data-act="dash">📂 My gifts & replies</button>`;
+  if(n==2)h=`<p class="eyebrow">Step 2 · ${R[1]} ${R[2]}</p><h1>Who’s getting the <em>lights</em>?</h1><p class="sub">We’ll write the greeting just for them.</p>
+  <label>Their name</label><input type="text" id="d-name" maxlength="40" placeholder="e.g. Ananya" value="${esc(S.name)}">
+  <label>Your name</label><input type="text" id="d-from" maxlength="40" placeholder="e.g. Rahul" value="${esc(S.from)}">
+  <label>What do you call them? <small>— optional, shown in the greeting</small></label><input type="text" id="d-nick" maxlength="24" placeholder="${esc(R[6])}" value="${esc(S.nick||'')}">
+  <button class="btn" id="d-go" data-act="next" ${S.name&&S.from?'':'disabled'}>Continue →</button><button class="dlink" data-act="prev">← Change who it’s for</button>`;
+  if(n==3)h=`<p class="eyebrow">Step 3</p><h1>Hang up some <em>memories</em> 📸</h1><p class="sub">Up to ${maxP} photos, shown in glowing frames. A caption like “Diwali 2024” makes hearts melt.</p>
+  <label class="drop"><input type="file" id="f-ph" accept="image/*" multiple hidden>🖼️ Tap to add photos<br><small>JPG or PNG · up to ${maxP} · we shrink them for you</small></label>
+  <div class="photos">${S.photos.map((p,i)=>`<div class="ph"><img src="${p.src}"><input type="text" data-cap="${i}" maxlength="60" placeholder="Caption" value="${esc(p.cap)}"><button data-rm="${i}">Remove</button></div>`).join('')}</div>${nav(S.photos.length?'Continue →':'Skip photos for now')}`;
+  if(n==4)h=`<p class="eyebrow">Step 4</p><h1>Add your <em>wishes</em> 🏮</h1><p class="sub">Pick up to 4. ${esc(S.name||'They')} will open them like lanterns.</p>
+  <div>${DWISH[fl].map((x,i)=>`<button class="pill ${S.wishes.includes(x)?'on':''}" data-dwish="${i}">${esc(x)}</button>`).join('')}</div>
+  <label>Or write your own</label><div class="srow"><input type="text" id="d-cw" maxlength="90" placeholder="A wish from your heart"><button class="btn" data-act="addwish">Add</button></div>
+  ${S.wishes.length?`<label>Your wishes (${S.wishes.length}/4)</label>${S.wishes.map((w,i)=>`<div class="balrow"><span>🏮</span><span style="flex:1;text-align:left">${esc(w)}</span><button class="pill" data-dwrm="${i}">✕</button></div>`).join('')}`:'<p class="hint">Nothing picked? We’ll add three warm wishes for you.</p>'}${nav()}`;
+  if(n==5)h=`<p class="eyebrow">Step 5</p><h1>Write a <em>Diwali note</em> 💌</h1><p class="sub">Optional, but it is the part they’ll read twice.</p>
+  <textarea id="d-msg" maxlength="500" placeholder="Dear ${esc(dwCall(S)||'you')}, this Diwali…">${esc(S.msg)}</textarea><div class="count"><span id="cnt">${S.msg.length}</span> / 500</div>
+  <label>Need a spark? <small>tap to use</small></label>${DLETTER[fl].map((x,i)=>`<button class="pill" data-dltr="${i}">${esc(x.slice(0,70))}…</button>`).join('')}
+  ${DS.length?`<label>Diwali music <small>— plays when they open it. Tap one to preview 🎧</small></label>${DS.map(x=>`<button class="opt ${S.song==x[0]?'on':''}" data-dsong="${x[0]}"><span class="em">${x[1]}</span><span><b>${x[2]}</b><small>${x[3]}</small></span></button>`).join('')}`:''}${nav('Light it up ✨')}`;
+  if(n==6)h=`<p class="eyebrow">Step 6 · Have a look</p><h1>It’s <em>ready</em>.</h1><p class="sub">Try it yourself first. This is exactly what they will see.</p><p style="text-align:center;font-weight:600">${R[1]} ${R[2]} · for ${esc(S.name)} · from ${esc(S.from)}</p>
+  <button class="btn" data-act="preview">👀 Take a look inside</button>${linkField()}<button class="btn ghost" data-act="link">${linkLabel()}</button><div id="out"></div><p class="hint">${linkHint()}</p><button class="btn ghost" data-act="prev">← Change something</button>`;
+  if(n==7)h=`<p class="eyebrow">Last step · Payment</p><h1>Almost <em>there</em> 🪔</h1><p class="sub">One-time payment · no account needed</p>
+  <div class="bill"><div class="bill-h"><span>🪔 Diwali gift for <b>${esc(S.name)}</b> (${R[2]})</span><b>₹${CONFIG.PRICE_INR}</b></div>
+  <ul><li>🪔 Five diyas to light & a festive greeting</li><li>🏮 ${dwWishes(S).length} wish${dwWishes(S).length==1?'':'es'} in lanterns</li>${S.photos.length?`<li>📸 ${S.photos.length} photo${S.photos.length==1?'':'s'} in glowing frames</li>`:''}<li>🎆 A fireworks show to launch</li>${S.msg.trim()?'<li>💌 Your Diwali note</li>':''}<li>🎵 ${esc((DSONGS.find(x=>x[0]==S.song)||DSONGS[0])[2])}</li><li>🔗 Your own shareable link</li><li>💬 Replies from ${esc(S.name)}</li></ul></div>
+  ${payBlock()}
+  <button class="btn ghost" data-act="prev">← Back</button>`;
+  shell.innerHTML=`<div class="card"><div class="brand"><span class="knot"></span><span class="bn">Our<b>Moments</b></span><span class="tag">Diwali</span></div><div class="dots">${dots}</div>${h}</div>`;
+  if(n>=6)recordPreview();   // the "It’s ready" page (and the payment page after it) counts as a pending referral
+  if(apiOn()&&n==7)loadQuote();
+}
+shell.addEventListener('input',e=>{
+  const t=e.target;if(S.type!='diwali'||V)return;
+  if(t.id=='d-name'||t.id=='d-from'){S.name=$('#d-name').value.trim();S.from=$('#d-from').value.trim();$('#d-go').disabled=!(S.name&&S.from)}
+  if(t.id=='d-nick')S.nick=t.value.trim();
+  if(t.id=='d-msg'){S.msg=t.value;$('#cnt').textContent=t.value.length}
+});
+shell.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||V||S.type!='diwali')return;const d=b.dataset;
+  if(d.rel){S.rel=d.rel;S.step=2;wiz()}
+  else if(d.dwish!=null){tog(S.wishes,DWISH[dwRel(S.rel)[4]][+d.dwish],4);wiz()}
+  else if(d.dwrm!=null){S.wishes.splice(+d.dwrm,1);wiz()}
+  else if(d.act=='addwish'){const v=$('#d-cw').value.trim();if(v&&!S.wishes.includes(v)&&S.wishes.length<4){S.wishes.push(v);wiz()}}
+  else if(d.dltr!=null){S.msg=DLETTER[dwRel(S.rel)[4]][+d.dltr];wiz()}
+  else if(d.dsong){S.song=d.dsong;MUS.preview=true;musicStart(d.dsong);clearTimeout(MUS.pt);MUS.pt=setTimeout(()=>{if(MUS.preview){musicStop();MUS.preview=false}},9000);wiz()}
+});
+
+/* ----- what the receiver sees ----- */
+function startDiwali(g,preview){
+  document.title='Shubh Diwali '+g.name+'! 🪔';$('#acct').style.display='none';hideRefPill();
+  setEnv(false);setFEnv(false);setDEnv(true);musicStop();MUS.preview=false;
+  V={g,preview,dw:true,s:0,t0:Date.now(),lit:0,opened:new Set(),fw:0,pi:0,
+     stages:['gate','greet','wishes'].concat((g.photos&&g.photos.length)?['photos']:[],['fireworks'],(g.msg&&g.msg.trim())?['letter']:[],['finale'])};
+  document.body.dataset.vibe='diwali';
+  $('#badge').style.display=preview?'block':'none';$('#back').style.display=preview?'block':'none';
+  dscreen();
+}
+function dframe(inner){
+  const NM={gate:'Diyas',greet:'Greeting',wishes:'Wishes',photos:'Memories',fireworks:'Fireworks',letter:'Letter',finale:'Finale'},names=V.stages.map(x=>NM[x]);
+  const bar=names.map((_,i)=>`<s class="${i<=V.s?'on':''}"></s>`).join('');
+  shell.innerHTML=`<div class="museum"><div class="pill-room">${names[V.s]}<i>${bar}</i></div><div class="room dwroom" id="room">${inner}</div></div>`;
+}
+function dgo(){cancelAnimationFrame(V.raf);V.s++;dscreen()}
+// fireworks on a canvas: rockets rise, then burst into sparks
+function dwFireworks(cv,onBurst){
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height,cols=['#ffd54a','#ff6b57','#ff8ad8','#7be0ff','#a6ff9e','#ffffff','#ffb300'];
+  let R=[],P=[];
+  const launch=x=>{R.push({x:x==null?W*(.2+Math.random()*.6):x,y:H,ty:H*(.15+Math.random()*.3),vy:-5-Math.random()*1.5,col:cols[(Math.random()*cols.length)|0]});beep(190+Math.random()*90,.12,'sawtooth',.025)};
+  const burst=(x,y,col)=>{for(let i=0;i<46;i++){const a=i/46*Math.PI*2,s=1.2+Math.random()*2.6;P.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,col:Math.random()<.35?cols[(Math.random()*cols.length)|0]:col})}beep(90,.22,'square',.04);onBurst&&onBurst()};
+  c.fillStyle='#0f0828';c.fillRect(0,0,W,H);
+  const frame=()=>{
+    if(!cv.isConnected)return;
+    c.fillStyle='rgba(15,8,40,.28)';c.fillRect(0,0,W,H);
+    R=R.filter(r=>{r.y+=r.vy;c.fillStyle=r.col;c.fillRect(r.x-1.5,r.y,3,9);if(r.y<=r.ty){burst(r.x,r.y,r.col);return false}return true});
+    P=P.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.035;p.vx*=.992;p.l-=.014;if(p.l<=0)return false;c.globalAlpha=p.l;c.fillStyle=p.col;c.beginPath();c.arc(p.x,p.y,2,0,6.3);c.fill();c.globalAlpha=1;return true});
+    if(V)V.raf=requestAnimationFrame(frame);
+  };
+  frame();
+  return launch;
+}
+function dscreen(){
+  const g=V.g,st=V.stages[V.s],call=dwCall(g);
+  if(st=='gate'){
+    dframe(`<p class="eyebrow">A Diwali gift for</p><h2 class="dwh">${esc(g.name)}</h2><p>${esc(g.from)} lit something special for you.<br>Tap each diya to light it 🪔</p>
+    <div class="diyas">${[0,1,2,3,4].map(i=>`<button class="diya" data-d="${i}" aria-label="Light diya ${i+1}"><i class="dfl"></i><b>🪔</b></button>`).join('')}</div>
+    <p class="hint" id="dwc">0 / 5 lit</p><button class="btn" id="nx" disabled>Open the doors ✨</button>`);
+    shell.querySelectorAll('.diya').forEach(b=>b.onclick=()=>{
+      if(b.classList.contains('lit'))return;b.classList.add('lit');V.lit++;
+      if(!V.mus){V.mus=1;musicStart(g.song||'diwali')}
+      beep(440+V.lit*110,.18,'triangle',.07);$('#dwc').textContent=V.lit+' / 5 lit';
+      if(V.lit>=5){$('#nx').disabled=false;chime();confetti(24);$('#dwc').textContent='All five diyas are glowing ✨'}});
+    $('#nx').onclick=()=>{if(!V.mus){V.mus=1;musicStart(g.song||'diwali')}dgo()};
+  }
+  if(st=='greet'){
+    dframe(`<div class="rangoli"></div><p class="eyebrow">Shubh Deepavali</p><h2 class="dwh">${esc(call)}</h2><p>${esc(DGREET[g.rel]||DGREET.friends)}</p><p style="font-weight:700">— ${esc(g.from)} 🪔</p><button class="btn" id="nx">Open the wishes →</button>`);
+    confetti(18);$('#nx').onclick=dgo;
+  }
+  if(st=='wishes'){
+    const W=dwWishes(g);
+    dframe(`<h2>Open the lanterns</h2><p>Tap each lantern to read a wish 🏮</p><div class="lants">${W.map((_,i)=>`<button class="lant" data-w="${i}" aria-label="Wish ${i+1}">🏮</button>`).join('')}</div><div class="wish" id="wsh">Tap a lantern…</div><button class="btn" id="nx" disabled>Continue →</button>`);
+    shell.querySelectorAll('.lant').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.w;V.opened.add(i);b.classList.add('open');beep(520+i*80,.2,'triangle',.07);
+      $('#wsh').textContent=W[i];if(V.opened.size>=W.length){$('#nx').disabled=false;chime()}});
+    $('#nx').onclick=dgo;
+  }
+  if(st=='photos'){
+    const P=g.photos,last=P.length-1,i=V.pi;
+    dframe(`<h2>Moments we lit up</h2><div class="dphoto"><img src="${P[i].src}" alt=""><p>${esc(P[i].cap||'')}</p></div><p class="hint">${i+1} / ${P.length}</p><button class="btn" id="nx">${i<last?'Next photo →':'Continue →'}</button>`);
+    $('#nx').onclick=()=>{if(V.pi<last){V.pi++;beep(600,.1,'sine',.06);dscreen()}else{V.pi=0;dgo()}};
+  }
+  if(st=='fireworks'){
+    dframe(`<h2>Light up the sky</h2><p>Tap the sky to launch fireworks 🎆</p><canvas id="fw" width="440" height="320" class="fwc"></canvas><p class="hint" id="fwh">0 / 5</p><button class="btn" id="nx" disabled>Continue →</button>`);
+    const cv=$('#fw');
+    const launch=dwFireworks(cv,()=>{V.fw++;const h=$('#fwh');if(h)h.textContent=Math.min(V.fw,5)+' / 5';const nx=$('#nx');if(nx&&V.fw>=5&&nx.disabled){nx.disabled=false;chime()}});
+    cv.addEventListener('pointerdown',e=>{const r=cv.getBoundingClientRect();launch((e.clientX-r.left)/r.width*cv.width);e.preventDefault()});
+    [200,900,1600].forEach(ms=>setTimeout(()=>{if(cv.isConnected)launch()},ms));
+    $('#nx').onclick=dgo;
+  }
+  if(st=='letter'){
+    dframe(`<h2>One last thing…</h2><p>${esc(g.from)} wrote you a note.</p><div class="env" id="env"><div class="seal">🪔</div></div><p>👆 Tap to open your note</p>`);
+    $('#env').onclick=()=>{$('#env').classList.add('broken');beep(300,.1,'square');
+      setTimeout(()=>{$('#room').innerHTML=`<div class="letter" id="lt"></div><div style="font-size:48px">🪔</div><button class="btn" id="nx">Continue</button>`;
+        const t=g.msg||`Happy Diwali, ${g.name}!`;let k=0;const iv=setInterval(()=>{$('#lt').textContent=t.slice(0,++k);if(k>=t.length)clearInterval(iv)},24);
+        $('#nx').onclick=()=>{clearInterval(iv);dgo()}},600)};
+  }
+  if(st=='finale'){
+    confetti(70);chime();
+    const el=Math.round((Date.now()-V.t0)/1000);
+    dframe(`<div class="cert dwc"><p class="eyebrow">Shubh Deepavali</p><big>${esc(call)} 🪔</big><p>With love from ${esc(g.from)} 💛</p></div><div class="reply" style="width:100%"><textarea id="rp" maxlength="300" placeholder="Write a reply to ${esc(g.from)}… 💬"></textarea><button class="btn" id="sr">Send reply 💌</button></div><button class="btn ghost" id="nx">Watch again</button>`);
+    if(!V.preview&&!V.logged){V.logged=1;const rec={gid:g.id||'',name:g.name,elapsed:el,moves:0,rules:0,sig:'',ts:new Date().toISOString()};V.rec=rec;V.rid=Date.now().toString(36);V.slim=(({sig,...x})=>x)(rec);dbAdd(CONFIG.KEY_REPLIES,rec);if(CONFIG.DB&&rec.gid)fb('PUT','replies/'+encodeURIComponent(rec.gid)+'/'+V.rid,V.slim).catch(()=>{})}
+    $('#sr').onclick=()=>{const t=$('#rp').value.trim();if(!t)return;if(V.preview){$('#sr').textContent='Preview only — not saved ✓';return}
+      if(CONFIG.DB&&V.rec.gid)fb('PUT','replies/'+encodeURIComponent(V.rec.gid)+'/'+V.rid,{...V.slim,reply:t}).then(()=>{$('#sr').textContent='Sent ✓ 💛';chime()}).catch(()=>{$('#sr').textContent='Could not send — try again'});
+      else{$('#sr').textContent='Saved on this device ✓';chime()}};
+    $('#nx').onclick=()=>{V.s=1;V.opened=new Set();V.fw=0;V.pi=0;dscreen()};
+  }
+}
+
 /* ---------- boot ---------- */
 (async()=>{
   const m=location.hash.match(/#g=(.+)/),mc=location.hash.match(/#c=([a-z0-9-]+)/);
@@ -1426,13 +1727,13 @@ async function adminCheck(){
     shell.innerHTML='<div class="card"><h1>Loading… 🎁</h1></div>';
     try{const st=await Promise.race([fb('GET','settings'),new Promise(r=>setTimeout(()=>r(null),1200))]);
       if(st){
-        if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;if(REFERRAL_ENABLED&&st.refer&&typeof st.refer=='object')Object.assign(REFSET,st.refer);
+        if(+st.price>0)CONFIG.PRICE_INR=+st.price;CONFIG.PAUSED=!!st.paused;CONFIG.FREE=!!st.free;if(REFERRAL_ENABLED&&st.refer&&typeof st.refer=='object')Object.assign(REFSET,st.refer);dwMerge(st.diwali);
         if(st.steps&&typeof st.steps=='object'){ST=Object.assign(JSON.parse(JSON.stringify(ST_DEFAULT)),st.steps);ST.songs=Object.assign({},ST_DEFAULT.songs,st.steps.songs||{});ST.fsongs=Object.assign({},ST_DEFAULT.fsongs,st.steps.fsongs||{})}
       }}catch(e){}
     if(!apiOn())await adminCheck();
     {const mr=location.hash.match(/#ref=([a-z0-9-]{3,40})/);if(mr)await captureRef(mr[1]);refChip()}
   }
-  {const lp=$('#lg-price');if(lp)lp.textContent=payOn()&&!CONFIG.FREE?'One gift link: ₹'+CONFIG.PRICE_INR+' · one-time payment · ':'';}
+  {const lp=$('#lg-price');if(lp)lp.textContent=payOn()&&!CONFIG.FREE?'Gifts from ₹'+Math.min(BASE_PRICE,dwAvail()?dwFrom():BASE_PRICE)+' · one-time payment · ':'';}
   if(m){try{const g=JSON.parse(decodeURIComponent(escape(atob(m[1]))));startMuseum(g,false)}catch(e){wiz()}}
   else if(mc&&CONFIG.DB){
     shell.innerHTML='<div class="card"><h1>Opening your gift… 🎁</h1><p class="sub">Just a moment</p></div>';

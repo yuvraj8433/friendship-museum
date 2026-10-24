@@ -117,7 +117,7 @@ function events(){
   Object.entries(D.referrers).forEach(([rc,r])=>e.push({t:r.t,k:'join',c:'#5B62E8',text:`${r.name} was added as a referrer`,sub:'Code '+rc}));
   refList().forEach(r=>{
     e.push({t:r.t,k:'referral',c:'#F5A524',text:`${r.who} has a new pending referral: a friend reached the preview page`,sub:'Not paid yet'});
-    if(okS(r.st)&&r.at)e.push({t:r.at,k:'approved',c:'#14A38B',text:`Success: ${r.a.name||'a friend'} paid and created a ${r.a.type=='bday'?'birthday':'friendship'} gift for ${r.who} (+${money(r.amt)})`,sub:'Payment '+(r.a.pay||'?')});
+    if(okS(r.st)&&r.at)e.push({t:r.at,k:'approved',c:'#14A38B',text:`Success: ${r.a.name||'a friend'} paid and created a ${r.a.type=='bday'?'birthday':r.a.type=='diwali'?'Diwali':'friendship'} gift for ${r.who} (+${money(r.amt)})`,sub:'Payment '+(r.a.pay||'?')});
     if(r.st=='rejected'&&r.at)e.push({t:r.at,k:'rejected',c:'#d64545',text:`Rejected a referral for ${r.who}`,sub:r.note||''});
   });
   reqList().forEach(q=>e.push({t:q.t,k:'request',c:'#FF6B57',text:`${q.who} requested ${money(q.amount)}`,sub:'To '+q.upi+(q.status=='rejected'?' · declined':'')}));
@@ -246,7 +246,7 @@ function paneReferrals(){
   const draw=()=>{
     const q=F.rq.toLowerCase(),list=refList().filter(r=>(!F.rs||(F.rs=='success'?okS(r.st):r.st==F.rs))&&(!q||[r.who,r.rcode,r.a.name,r.a.from,r.a.pay].join(' ').toLowerCase().includes(q)));
     $('#tb').innerHTML=list.map(r=>`<tr><td>${fmt(r.t)}</td><td>${esc(r.who)}<div class="small">${esc(r.rcode)}</div></td>
-      <td>${r.a.name?esc(r.a.name):(r.st=='pending'?'<span class="small">Friend previewed a gift</span>':'—')}<div class="small">${r.a.from?'by '+esc(r.a.from)+' · ':''} · ${r.a.type?(r.a.type=='bday'?'🎂 birthday':'🤝 friendship'):''}${r.a.gift?` · <a target="_blank" rel="noopener" href="${dir}index.html#c=${encodeURIComponent(r.a.gift)}">open</a>`:''}</div></td>
+      <td>${r.a.name?esc(r.a.name):(r.st=='pending'?'<span class="small">Friend previewed a gift</span>':'—')}<div class="small">${r.a.from?'by '+esc(r.a.from)+' · ':''} · ${r.a.type?(r.a.type=='bday'?'🎂 birthday':r.a.type=='diwali'?'🪔 Diwali':'🤝 friendship'):''}${r.a.gift?` · <a target="_blank" rel="noopener" href="${dir}index.html#c=${encodeURIComponent(r.a.gift)}">open</a>`:''}</div></td>
       <td>${payLink(r.a.pay)}</td><td data-chk="${esc(r.rid)}">${okS(r.st)?'<span class="small">checking…</span>':'—'}</td><td>${pillR(r.st)}${okS(r.st)?'<div class="small">+'+money(r.amt)+' · '+fmt(r.at)+'</div>':r.note?'<div class="small">'+esc(r.note)+'</div>':''}</td>
       <td><div class="acts">${!okS(r.st)?`<button class="btn s ok" data-a="ap" data-r="${esc(r.rcode)}" data-i="${esc(r.rid)}">Mark success</button>`:''}${r.st!='rejected'?`<button class="btn s r" data-a="rj" data-r="${esc(r.rcode)}" data-i="${esc(r.rid)}">Reject</button>`:''}${r.st!='pending'?`<button class="btn s g" data-a="pe" data-r="${esc(r.rcode)}" data-i="${esc(r.rid)}">Back to pending</button>`:''}</div></td></tr>`).join('');
     $('#emp').innerHTML=list.length?'':'<div class="empty">No referrals match.</div>';
